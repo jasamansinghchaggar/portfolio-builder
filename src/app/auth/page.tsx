@@ -3,6 +3,11 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"login" | "signup">("login");
@@ -41,18 +46,24 @@ export default function AuthPage() {
     }
   }
 
-  return <main className="auth-shell"><section className="auth-card">
-    <Link className="wordmark" href="/">forme<span>.</span></Link>
-    <span className="eyebrow">YOUR CREATIVE HOME</span>
-    <h1>{mode === "login" ? "Welcome back." : "Start building."}</h1>
-    <p>{mode === "login" ? "Sign in to continue shaping your portfolio." : "Create an account and make room for what you do."}</p>
-    <form onSubmit={submit}>
-      <label>Email<input type="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></label>
-      <label>Password<input type="password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} /></label>
-      <button className="button button-dark" disabled={busy}>{busy ? "Working…" : mode === "login" ? "Log in" : "Create account"}</button>
-    </form>
-    {mode === "login" && <button className="text-link auth-link" onClick={resetPassword}>Forgot your password?</button>}
-    {message && <p className="notice">{message}</p>}
-    <button className="auth-switch" onClick={() => setMode(mode === "login" ? "signup" : "login")}>{mode === "login" ? "Create an account" : "Already have an account? Log in"}</button>
-  </section></main>;
+  return <main className="auth-shell"><Card className="auth-card">
+    <CardHeader className="p-0">
+      <Link className="wordmark mb-4" href="/">forme<span>.</span></Link>
+      <span className="eyebrow">YOUR CREATIVE HOME</span>
+      <CardTitle className="auth-title">{mode === "login" ? "Welcome back." : "Start building."}</CardTitle>
+      <CardDescription>{mode === "login" ? "Sign in to continue shaping your portfolio." : "Create an account and make room for what you do."}</CardDescription>
+    </CardHeader>
+    <CardContent className="p-0">
+      <form onSubmit={submit} className="flex flex-col gap-4">
+        <FieldGroup>
+          <Field><FieldLabel htmlFor="email">Email</FieldLabel><Input id="email" type="email" required value={email} onChange={(event) => setEmail(event.target.value)} /></Field>
+          <Field><FieldLabel htmlFor="password">Password</FieldLabel><Input id="password" type="password" required minLength={8} value={password} onChange={(event) => setPassword(event.target.value)} /></Field>
+        </FieldGroup>
+        <Button type="submit" disabled={busy}>{busy ? "Working…" : mode === "login" ? "Log in" : "Create account"}</Button>
+      </form>
+      {mode === "login" && <Button variant="link" className="auth-link mt-3 px-0" onClick={resetPassword}>Forgot your password?</Button>}
+      {message && <Alert className="mt-4"><AlertDescription>{message}</AlertDescription></Alert>}
+      <Button variant="ghost" className="auth-switch mt-4 justify-start px-0" onClick={() => setMode(mode === "login" ? "signup" : "login")}>{mode === "login" ? "Create an account" : "Already have an account? Log in"}</Button>
+    </CardContent>
+  </Card></main>;
 }

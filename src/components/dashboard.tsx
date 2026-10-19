@@ -1,17 +1,36 @@
 "use client";
 
 import Link from "next/link";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
-import { ArrowDown, ArrowUp, Check, ChevronDown, CircleHelp, Eye, EyeOff, Globe2, LayoutTemplate, LogOut, MoreHorizontal, Settings2, Sparkles, Trash2, Upload, X } from "lucide-react";
+import { ChangeEvent, useEffect, useState } from "react";
+import { ArrowDown, ArrowUp, ArrowUpRight, Eye, EyeOff, Globe2, LayoutTemplate, LogOut, Settings2, Sparkles, Trash2, Upload, X } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
 import { sectionCatalog, templates } from "@/lib/portfolio/templates";
 import type { Portfolio, PortfolioSection } from "@/lib/portfolio/schema";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Field, FieldGroup, FieldLabel, FieldSet, FieldLegend } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { PortfolioShowcase } from "@/components/portfolio-showcase";
 
 const starter: Portfolio = {
   name: "Your name", slug: "your-name", kind: "individual", template: "atelier", accent: "#bc6545",
   sections: [{ id: "intro", type: "hero", title: "Introduction", visible: true, content: { headline: "Tell the world what you do.", subtitle: "" } }],
 };
+
+const accentPresets = [
+  { name: "Terracotta", value: "#bc6545" },
+  { name: "Forest", value: "#426b55" },
+  { name: "Ocean", value: "#39758a" },
+  { name: "Plum", value: "#805b83" },
+  { name: "Midnight", value: "#34415c" },
+  { name: "Charcoal", value: "#44413d" },
+];
 
 function sectionText(section: PortfolioSection) {
   return String(section.content.body ?? section.content.headline ?? "");
@@ -25,13 +44,13 @@ function SectionFields({ section, onChange, onUpload, uploading }: {
 }) {
   const set = (key: string, value: string) => onChange({ ...section.content, [key]: value });
   const bodyLabel = section.type === "hero" ? "Headline" : section.type === "projects" ? "Project summary" : "Content";
-  return <div className="section-fields">
-    <label>{bodyLabel}<textarea value={String(section.content[section.type === "hero" ? "headline" : "body"] ?? "")} onChange={(event) => set(section.type === "hero" ? "headline" : "body", event.target.value)} /></label>
-    {section.type === "hero" && <label>Subtitle<input value={String(section.content.subtitle ?? "")} onChange={(event) => set("subtitle", event.target.value)} /></label>}
-    {["projects", "case-studies", "contact", "resume"].includes(section.type) && <label>Link<input type="url" placeholder="https://example.com" value={String(section.content.url ?? "")} onChange={(event) => set("url", event.target.value)} /></label>}
-    {["hero", "about", "projects", "case-studies"].includes(section.type) && <label className="upload-field">Image (optional)<span><Upload size={14}/>{uploading ? "Uploading…" : "Choose image"}<input type="file" accept="image/jpeg,image/png,image/webp" onChange={onUpload} disabled={uploading} /></span></label>}
+  return <FieldGroup className="section-fields">
+    <Field><FieldLabel htmlFor={`${section.id}-body`}>{bodyLabel}</FieldLabel><Textarea id={`${section.id}-body`} value={String(section.content[section.type === "hero" ? "headline" : "body"] ?? "")} onChange={(event) => set(section.type === "hero" ? "headline" : "body", event.target.value)} /></Field>
+    {section.type === "hero" && <Field><FieldLabel htmlFor={`${section.id}-subtitle`}>Subtitle</FieldLabel><Input id={`${section.id}-subtitle`} value={String(section.content.subtitle ?? "")} onChange={(event) => set("subtitle", event.target.value)} /></Field>}
+    {["projects", "case-studies", "contact", "resume"].includes(section.type) && <Field><FieldLabel htmlFor={`${section.id}-url`}>Link</FieldLabel><Input id={`${section.id}-url`} type="url" placeholder="https://example.com" value={String(section.content.url ?? "")} onChange={(event) => set("url", event.target.value)} /></Field>}
+    {["hero", "about", "projects", "case-studies"].includes(section.type) && <Field><FieldLabel className="upload-field">Image (optional)<span><Upload data-icon="inline-start"/>{uploading ? "Uploading…" : "Choose image"}<Input type="file" accept="image/jpeg,image/png,image/webp" onChange={onUpload} disabled={uploading} /></span></FieldLabel></Field>}
     {typeof section.content.imagePath === "string" && <small className="field-help">Image uploaded securely.</small>}
-  </div>;
+  </FieldGroup>;
 }
 
 export function Dashboard() {
@@ -59,7 +78,6 @@ export function Dashboard() {
     }).catch(() => { setLoaded(true); setNotice("Unable to load your workspace. Check your connection and try again."); });
   }, []);
 
-  const template = useMemo(() => templates.find((item) => item.id === portfolio.template) ?? templates[0], [portfolio.template]);
   const update = (next: Portfolio) => { setPortfolio(next); setSaved(false); setNotice(""); };
   const save = async () => {
     setSaved(false);
@@ -108,38 +126,39 @@ export function Dashboard() {
   };
 
   if (!loaded) return <main className="auth-shell"><p>Loading your workspace…</p></main>;
-  if (!hasPortfolio) return <main className="auth-shell"><section className="auth-card onboarding-card">
-    <Link className="wordmark" href="/">forme<span>.</span></Link><span className="eyebrow">A GOOD PLACE TO BEGIN</span>
-    <h1>Let’s make a home for your work.</h1><p>Start with a few basics. You can shape every detail afterward.</p>
-    <label>What should we call you?<input value={profile.displayName} onChange={(event) => setProfile({ ...profile, displayName: event.target.value })} /></label>
-    <label>Portfolio name<input value={portfolio.name === "Your name" ? profile.displayName : portfolio.name} onChange={(event) => update({ ...portfolio, name: event.target.value })} /></label>
-    <fieldset><legend>This portfolio is for</legend><label><input type="radio" checked={onboardingKind === "individual"} onChange={() => { setOnboardingKind("individual"); update({ ...portfolio, kind: "individual" }); }} /> Me</label><label><input type="radio" checked={onboardingKind === "organization"} onChange={() => { setOnboardingKind("organization"); update({ ...portfolio, kind: "organization" }); }} /> An organisation</label></fieldset>
-    <button className="button button-dark" onClick={async () => { await updateProfile(); await save(); }}>Create my portfolio</button>
-    <button className="auth-switch" onClick={logout}><LogOut size={14}/> Sign out</button>
-  </section></main>;
+  if (!hasPortfolio) return <main className="auth-shell"><Card className="auth-card onboarding-card">
+    <CardHeader className="p-0"><Link className="wordmark mb-4" href="/">forme<span>.</span></Link><span className="eyebrow">A GOOD PLACE TO BEGIN</span>
+    <CardTitle className="auth-title">Let’s make a home for your work.</CardTitle><CardDescription>Start with a few basics. You can shape every detail afterward.</CardDescription></CardHeader>
+    <CardContent className="p-0"><FieldGroup>
+      <Field><FieldLabel htmlFor="display-name">What should we call you?</FieldLabel><Input id="display-name" value={profile.displayName} onChange={(event) => setProfile({ ...profile, displayName: event.target.value })} /></Field>
+      <Field><FieldLabel htmlFor="portfolio-name">Portfolio name</FieldLabel><Input id="portfolio-name" value={portfolio.name === "Your name" ? profile.displayName : portfolio.name} onChange={(event) => update({ ...portfolio, name: event.target.value })} /></Field>
+      <FieldSet><FieldLegend>This portfolio is for</FieldLegend><RadioGroup value={onboardingKind} onValueChange={(value) => { const kind = value as Portfolio["kind"]; setOnboardingKind(kind); update({ ...portfolio, kind }); }}><Field orientation="horizontal"><RadioGroupItem value="individual" id="individual" /><FieldLabel htmlFor="individual">Me</FieldLabel></Field><Field orientation="horizontal"><RadioGroupItem value="organization" id="organization" /><FieldLabel htmlFor="organization">An organisation</FieldLabel></Field></RadioGroup></FieldSet>
+      <Button onClick={async () => { await updateProfile(); await save(); }}>Create my portfolio</Button>
+      <Button variant="ghost" className="justify-start px-0" onClick={logout}><LogOut data-icon="inline-start"/> Sign out</Button>
+    </FieldGroup></CardContent>
+  </Card></main>;
 
-  return <main className="app-shell" style={{ "--accent": portfolio.accent } as React.CSSProperties}>
+  return <main className="app-shell" style={{ "--portfolio-accent": portfolio.accent } as React.CSSProperties}>
     <aside className="sidebar"><Link className="wordmark side-brand" href="/">forme<span>.</span></Link>
-      <button className="workspace-picker"><span className="workspace-icon">{portfolio.name.charAt(0)}</span><span><b>{portfolio.name}</b><small>{portfolio.kind === "organization" ? "Organisation workspace" : "Personal workspace"}</small></span><ChevronDown size={15}/></button>
+    <div className="workspace-picker workspace-identity"><span className="workspace-icon">{portfolio.name.charAt(0)}</span><span><b>{portfolio.name}</b><small>{portfolio.kind === "organization" ? "Organisation workspace" : "Personal workspace"}</small></span></div>
       <div className="side-label">WORKSPACE</div><nav className="side-nav">
-        <button className={activeNav === "My portfolio" ? "active" : ""} onClick={() => setActiveNav("My portfolio")}><LayoutTemplate size={17}/>My portfolio</button>
-        <button className={activeNav === "Settings" ? "active" : ""} onClick={() => setActiveNav("Settings")}><Settings2 size={17}/>Settings</button>
+        <Button variant="ghost" className={activeNav === "My portfolio" ? "active justify-start" : "justify-start"} onClick={() => setActiveNav("My portfolio")}><LayoutTemplate data-icon="inline-start"/>My portfolio</Button>
+        <Button variant="ghost" className={activeNav === "Settings" ? "active justify-start" : "justify-start"} onClick={() => setActiveNav("Settings")}><Settings2 data-icon="inline-start"/>Settings</Button>
       </nav>
-      <div className="sidebar-bottom"><button><CircleHelp size={17}/>Help & feedback</button><button className="profile-button" onClick={() => setActiveNav("Settings")}><span className="profile-avatar">{profile.displayName.slice(0, 2).toUpperCase() || "ME"}</span><span><b>{profile.displayName || "Your account"}</b><small>Account settings</small></span><MoreHorizontal size={18}/></button><button onClick={logout}><LogOut size={17}/>Sign out</button></div>
+      <div className="sidebar-bottom"><Button variant="ghost" className="justify-start" onClick={logout}><LogOut data-icon="inline-start"/>Sign out</Button></div>
     </aside>
-    <section className="editor-area"><header className="editor-topbar"><div className="breadcrumbs"><span>Workspace</span><b>/</b><strong>{activeNav}</strong></div><div className="top-actions"><span className="save-state"><i className={saved ? "saved-dot" : "pending-dot"}/>{saved ? (published ? "Published" : "All changes saved") : "Unsaved changes"}</span><button className="button button-outline" onClick={() => setPreview(!preview)}><Eye size={15}/>{preview ? "Editing" : "Preview"}</button>{published && <button className="button button-outline" onClick={unpublish}>Unpublish</button>}<button className="button button-primary" onClick={publish}><Globe2 size={15}/>Publish</button></div></header>
+    <section className="editor-area"><header className="editor-topbar"><div className="breadcrumbs"><span>Workspace</span><b>/</b><strong>{activeNav}</strong></div><div className="top-actions"><span className="save-state"><i className={saved ? "saved-dot" : "pending-dot"}/>{saved ? (published ? "Published" : "All changes saved") : "Unsaved changes"}</span><Button variant="outline" onClick={() => setPreview(!preview)}><Eye data-icon="inline-start"/>{preview ? "Editing" : "Preview"}</Button>{published && <Button asChild className="dashboard-publish" style={{ backgroundColor: portfolio.accent, color: "#fff" }}><Link href={`/${portfolio.slug}`} target="_blank" rel="noreferrer noopener">Visit portfolio <ArrowUpRight data-icon="inline-end"/></Link></Button>}{published && <Button variant="outline" onClick={unpublish}>Unpublish</Button>}<Button className="dashboard-publish" style={{ backgroundColor: portfolio.accent, color: "#fff" }} onClick={publish}><Globe2 data-icon="inline-start"/>Publish</Button></div></header>
       <div className="editor-content">
         <div className="editor-heading"><div><span className="eyebrow">YOUR CREATIVE HOME</span><h1>Make it <em>yours.</em></h1><p>Shape your story, one section at a time.</p></div></div>
-        {notice && <div className="notice"><span>{notice}</span><button onClick={() => setNotice("")} aria-label="Dismiss"><X size={15}/></button></div>}
-        {activeNav === "Settings" ? <section className="settings-panel"><h2>Account settings</h2><p>Keep your profile details up to date.</p><label>Display name<input value={profile.displayName} onChange={(event) => setProfile({ ...profile, displayName: event.target.value })}/></label><label>Short bio<textarea value={profile.bio} onChange={(event) => setProfile({ ...profile, bio: event.target.value })}/></label><button className="button button-primary" onClick={updateProfile}>Save settings</button></section> : <div className="editor-grid">
-          <div className="main-column"><div className="section-title-row"><div><h2>Your story</h2><p>Arrange the pieces that make you, you.</p></div><select className="button button-soft" defaultValue="" onChange={(event) => { if (event.target.value) addSection(event.target.value as PortfolioSection["type"]); event.target.value = ""; }}><option value="">Add section</option>{sectionCatalog.filter((item) => !portfolio.sections.some((section) => section.type === item.type)).map((item) => <option key={item.type} value={item.type}>{item.label}</option>)}</select></div>
-            <div className="sections-list">{portfolio.sections.map((section, index) => <article className={`section-card ${!section.visible ? "muted" : ""}`} key={section.id}><div className="section-grip"><span>0{index + 1}</span><div className="reorder"><button aria-label="Move up" onClick={() => move(index, -1)} disabled={index === 0}><ArrowUp size={13}/></button><button aria-label="Move down" onClick={() => move(index, 1)} disabled={index === portfolio.sections.length - 1}><ArrowDown size={13}/></button></div></div><div className="section-info"><div className="section-card-heading"><input aria-label="Section title" value={section.title} onChange={(event) => changeSection(section.id, { title: event.target.value })}/><span className="section-type">{section.type.replace("-", " ")}</span></div><SectionFields section={section} onChange={(content) => changeSection(section.id, { content })} onUpload={(event) => upload(section, event)} uploading={uploading === section.id}/><div className="section-card-footer"><span><i/> {section.visible ? "Visible on your page" : "Hidden from your page"}</span><div><button onClick={() => changeSection(section.id, { visible: !section.visible })}>{section.visible ? <EyeOff size={14}/> : <Eye size={14}/>} {section.visible ? "Hide" : "Show"}</button><button onClick={() => update({ ...portfolio, sections: portfolio.sections.filter((item) => item.id !== section.id) })}><Trash2 size={14}/>Remove</button></div></div></div></article>)}</div>
+        {notice && <Alert className="notice"><AlertDescription className="flex items-center justify-between"><span>{notice}</span><Button variant="ghost" size="icon" onClick={() => setNotice("")} aria-label="Dismiss"><X /></Button></AlertDescription></Alert>}
+        {activeNav === "Settings" ? <section className="settings-panel"><h2>Account settings</h2><p>Keep your profile details up to date.</p><FieldGroup><Field><FieldLabel htmlFor="settings-name">Display name</FieldLabel><Input id="settings-name" value={profile.displayName} onChange={(event) => setProfile({ ...profile, displayName: event.target.value })}/></Field><Field><FieldLabel htmlFor="settings-bio">Short bio</FieldLabel><Textarea id="settings-bio" value={profile.bio} onChange={(event) => setProfile({ ...profile, bio: event.target.value })}/></Field><Button onClick={updateProfile}>Save settings</Button></FieldGroup></section> : <div className="editor-grid">
+          <div className="main-column"><div className="section-title-row"><div><h2>Your story</h2><p>Arrange the pieces that make you, you.</p></div><Select defaultValue="" onValueChange={(value) => { if (value) addSection(value as PortfolioSection["type"]); }}><SelectTrigger className="button-soft"><SelectValue placeholder="Add section" /></SelectTrigger><SelectContent>{sectionCatalog.filter((item) => !portfolio.sections.some((section) => section.type === item.type)).map((item) => <SelectItem key={item.type} value={item.type}>{item.label}</SelectItem>)}</SelectContent></Select></div>
+            <div className="sections-list">{portfolio.sections.map((section, index) => <Card className={`section-card ${!section.visible ? "muted" : ""}`} key={section.id}><div className="section-grip"><span>0{index + 1}</span><div className="reorder"><Button variant="ghost" size="icon" aria-label="Move up" onClick={() => move(index, -1)} disabled={index === 0}><ArrowUp /></Button><Button variant="ghost" size="icon" aria-label="Move down" onClick={() => move(index, 1)} disabled={index === portfolio.sections.length - 1}><ArrowDown /></Button></div></div><div className="section-info"><div className="section-card-heading"><Input aria-label="Section title" value={section.title} onChange={(event) => changeSection(section.id, { title: event.target.value })}/><Badge variant="secondary" className="section-type">{section.type.replace("-", " ")}</Badge></div><SectionFields section={section} onChange={(content) => changeSection(section.id, { content })} onUpload={(event) => upload(section, event)} uploading={uploading === section.id}/><div className="section-card-footer"><span><i/> {section.visible ? "Visible on your page" : "Hidden from your page"}</span><div><Button variant="ghost" onClick={() => changeSection(section.id, { visible: !section.visible })}>{section.visible ? <EyeOff data-icon="inline-start"/> : <Eye data-icon="inline-start"/>} {section.visible ? "Hide" : "Show"}</Button><Button variant="ghost" onClick={() => update({ ...portfolio, sections: portfolio.sections.filter((item) => item.id !== section.id) })}><Trash2 data-icon="inline-start"/>Remove</Button></div></div></div></Card>)}</div>
           </div>
-          <aside className="settings-column"><div className="settings-card"><div className="settings-heading"><div><h3>Your web address</h3><p>A little corner of the internet, all yours.</p></div><Globe2 size={17}/></div><label className="field-label" htmlFor="portfolio-name">Portfolio name</label><input id="portfolio-name" className="text-field" value={portfolio.name} onChange={(event) => update({ ...portfolio, name: event.target.value })}/><label className="field-label" htmlFor="portfolio-url">Your address</label><div className="url-field"><input id="portfolio-url" value={portfolio.slug} onChange={(event) => update({ ...portfolio, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })}/><span>{(process.env.NEXT_PUBLIC_SITE_URL || "https://forme.site").replace(/^https?:\/\//, "").replace(/\/$/, "")}/</span></div></div><div className="settings-card"><div className="settings-heading"><div><h3>Pick your feel</h3><p>Every good story has a look.</p></div><Sparkles size={17}/></div><div className="template-list">{templates.map((item) => <button key={item.id} className={`template-option ${portfolio.template === item.id ? "selected" : ""}`} onClick={() => update({ ...portfolio, template: item.id })}><span className={`template-thumb ${item.tone}`}><i/><i/><i/></span><span><b>{item.name}</b><small>{item.description}</small></span><span className="radio-dot"/></button>)}</div><label className="field-label" htmlFor="accent">Accent colour</label><input id="accent" type="color" value={portfolio.accent} onChange={(event) => update({ ...portfolio, accent: event.target.value })}/></div></aside>
+          <aside className="settings-column"><Card className="settings-card"><CardHeader className="settings-heading"><div><CardTitle>Your web address</CardTitle><CardDescription>Choose the name and link for your page.</CardDescription></div><Globe2 /></CardHeader><CardContent className="flex flex-col gap-3"><Field><FieldLabel htmlFor="portfolio-name">Portfolio name</FieldLabel><Input id="portfolio-name" value={portfolio.name} onChange={(event) => update({ ...portfolio, name: event.target.value })}/></Field><Field><FieldLabel htmlFor="portfolio-url">Your address</FieldLabel><div className="url-field"><Input id="portfolio-url" value={portfolio.slug} onChange={(event) => update({ ...portfolio, slug: event.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })}/><span>{(process.env.NEXT_PUBLIC_SITE_URL || "https://forme.site").replace(/^https?:\/\//, "").replace(/\/$/, "")}/</span></div></Field></CardContent></Card><Card className="settings-card"><CardHeader className="settings-heading"><div><CardTitle>Pick your feel</CardTitle><CardDescription>Choose a layout and colors for your page.</CardDescription></div><Sparkles /></CardHeader><CardContent><div className="template-list">{templates.map((item) => <Button type="button" variant="ghost" key={item.id} aria-pressed={portfolio.template === item.id} className={`template-option ${portfolio.template === item.id ? "selected" : ""}`} onClick={() => update({ ...portfolio, template: item.id })}><span className={`template-thumb ${item.tone}`}><i/><i/><i/></span><span><b>{item.name}</b><small>{item.description}</small></span><span className="radio-dot"/></Button>)}</div><Field className="accent-control"><FieldLabel htmlFor="accent">Accent colour</FieldLabel><div className="accent-picker"><Input id="accent" type="color" value={portfolio.accent} aria-label="Choose a custom accent color" onChange={(event) => update({ ...portfolio, accent: event.target.value })}/><span>{portfolio.accent.toUpperCase()}</span></div><div className="accent-presets" aria-label="Accent color presets">{accentPresets.map((preset) => <Button key={preset.value} type="button" variant="ghost" size="icon" className={`accent-swatch ${portfolio.accent.toLowerCase() === preset.value ? "selected" : ""}`} style={{ "--swatch": preset.value } as React.CSSProperties} aria-label={`${preset.name} accent`} aria-pressed={portfolio.accent.toLowerCase() === preset.value} title={preset.name} onClick={() => update({ ...portfolio, accent: preset.value })}><span /></Button>)}</div></Field></CardContent></Card></aside>
         </div>}
-        <footer className="editor-footer"><span>{template.name} template</span><div><button onClick={save}>{saved ? <Check size={14}/> : null}{saved ? "Saved" : "Save draft"}</button><button className="button button-primary" onClick={publish}>Publish your page <ArrowUp size={14}/></button></div></footer>
       </div>
     </section>
-    {preview && <div className="preview-overlay"><div className={`preview-window preview-${previewMode}`}><div className="preview-toolbar"><span>{previewMode === "desktop" ? "Desktop preview" : "Mobile preview"}</span><div><button onClick={() => setPreviewMode("desktop")} className={previewMode === "desktop" ? "active" : ""}>Desktop</button><button onClick={() => setPreviewMode("mobile")} className={previewMode === "mobile" ? "active" : ""}>Mobile</button><button onClick={() => setPreview(false)} aria-label="Close preview"><X size={19}/></button></div></div><div className="preview-site"><div className="preview-nav">{portfolio.name}</div>{portfolio.sections.filter((section) => section.visible).map((section) => <div className={`preview-section preview-${section.type}`} key={section.id}><small>{section.title.toUpperCase()}</small><h2>{sectionText(section)}</h2>{typeof section.content.subtitle === "string" && <p>{section.content.subtitle}</p>}</div>)}</div></div></div>}
+    {preview && <div className="preview-overlay"><div className={`preview-window preview-${previewMode}`}><div className="preview-toolbar"><span>{previewMode === "desktop" ? "Desktop preview" : "Mobile preview"}</span><div><Button variant={previewMode === "desktop" ? "secondary" : "ghost"} onClick={() => setPreviewMode("desktop")}>Desktop</Button><Button variant={previewMode === "mobile" ? "secondary" : "ghost"} onClick={() => setPreviewMode("mobile")}>Mobile</Button><Button variant="ghost" size="icon" onClick={() => setPreview(false)} aria-label="Close preview"><X /></Button></div></div><PortfolioShowcase portfolio={portfolio} /></div></div>}
   </main>;
 }
