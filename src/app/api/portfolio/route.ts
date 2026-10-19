@@ -1,13 +1,26 @@
 import { NextResponse } from "next/server";
 import { portfolioSchema, validatePortfolioSlug } from "@/lib/portfolio/schema";
 import { requireApiUser } from "@/lib/supabase/require-api-user";
+import { refreshPortfolioImageUrls } from "@/lib/portfolio/media";
 
 export async function GET() {
   const auth = await requireApiUser();
   if (!auth.ok) return auth.response;
   const { data, error } = await auth.supabase.from("portfolios").select("*").eq("owner_id", auth.user.id).maybeSingle();
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json(data);
+  if (!data?.draft) return NextResponse.json(data);
+
+  const parsed = portfolioSchema.safeParse(data.draft);
+  if (!parsed.success) return NextResponse.json(data);
+
+  const draft = await refreshPortfolioImageUrls(parsed.data, async (path) => {
+    const { data: signed } = await auth.supabase.storage
+      .from("portfolio-media")
+      .createSignedUrl(path, 60 * 60);
+    return signed?.signedUrl ?? null;
+  });
+
+  return NextResponse.json({ ...data, draft });
 }
 
 export async function PUT(request: Request) {
