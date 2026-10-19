@@ -99,7 +99,15 @@ function sectionCopy(section?: PortfolioSection) {
   return text(section?.content.body) || text(section?.content.headline);
 }
 
-function SafeImage({ section, className }: { section?: PortfolioSection; className?: string }) {
+function SafeImage({
+  section,
+  className,
+  loading = 'lazy',
+}: {
+  section?: PortfolioSection;
+  className?: string;
+  loading?: 'eager' | 'lazy';
+}) {
   const imageUrl = text(section?.content.imageUrl);
   if (imageUrl && /^https?:\/\//i.test(imageUrl)) {
     return (
@@ -109,7 +117,7 @@ function SafeImage({ section, className }: { section?: PortfolioSection; classNa
         alt={text(section?.content.imageAlt) || section?.title || 'Portfolio image'}
         width={1200}
         height={800}
-        loading="lazy"
+        loading={loading}
         unoptimized
       />
     );
@@ -281,7 +289,11 @@ export function PortfolioShowcase({
               mobilePreview && 'h-55 min-h-45 rounded-[42%_42%_6px_6px]',
             )}
           >
-            <SafeImage section={hero ?? sections[0]} className="absolute inset-0 h-full min-h-0" />
+            <SafeImage
+              section={hero ?? sections[0]}
+              className="absolute inset-0 h-full min-h-0"
+              loading="eager"
+            />
             <span className={ui.caption}>
               {portfolio.name} <b>— 01</b>
             </span>
