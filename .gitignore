@@ -8,3 +8,4 @@ coverage/
 .agents
 .claude
 .vscode
+.gemini
