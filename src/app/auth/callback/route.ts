@@ -1,14 +1,17 @@
-import { NextResponse } from "next/server";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { NextResponse } from 'next/server';
+import { createSupabaseServerClient } from '@/lib/supabase/server';
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const code = url.searchParams.get("code");
+  const code = url.searchParams.get('code');
   if (code) {
     const supabase = await createSupabaseServerClient();
-    if (!supabase) return NextResponse.redirect(new URL("/auth?error=configuration", url));
+    if (!supabase) return NextResponse.redirect(new URL('/auth?error=configuration', url));
     const { error } = await supabase.auth.exchangeCodeForSession(code);
-    if (error) return NextResponse.redirect(new URL(`/auth?error=${encodeURIComponent(error.message)}`, url));
+    if (error)
+      return NextResponse.redirect(
+        new URL(`/auth?error=${encodeURIComponent(error.message)}`, url),
+      );
   }
-  return NextResponse.redirect(new URL("/dashboard", url));
+  return NextResponse.redirect(new URL('/dashboard', url));
 }

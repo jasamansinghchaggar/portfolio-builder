@@ -1,4 +1,4 @@
-import type { Portfolio } from "@/lib/portfolio/schema";
+import type { Portfolio } from '@/lib/portfolio/schema';
 
 export async function refreshPortfolioImageUrls(
   portfolio: Portfolio,
@@ -7,14 +7,14 @@ export async function refreshPortfolioImageUrls(
   const sections = await Promise.all(
     portfolio.sections.map(async (section) => {
       const imagePath = section.content.imagePath;
-      if (typeof imagePath !== "string" || !imagePath) return section;
+      if (typeof imagePath !== 'string' || !imagePath) return section;
 
       const imageUrl = await signImage(imagePath).catch(() => null);
       return {
         ...section,
         content: {
           ...section.content,
-          imageUrl: imageUrl ?? "",
+          imageUrl: imageUrl ?? '',
         },
       };
     }),

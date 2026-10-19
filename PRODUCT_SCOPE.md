@@ -29,10 +29,10 @@ workflow.
 
 ### Primary audiences
 
--   Individuals: students, developers, designers, freelancers, job
-    seekers, professionals, and creators.
--   Organisations: small businesses, agencies, and teams that want a
-    public-facing portfolio or showcase of their work.
+- Individuals: students, developers, designers, freelancers, job
+  seekers, professionals, and creators.
+- Organisations: small businesses, agencies, and teams that want a
+  public-facing portfolio or showcase of their work.
 
 ### MVP organisational model
 
@@ -155,36 +155,36 @@ configuration.
 
 ### In scope
 
--   One portfolio per account
--   Individual and organisation-branded portfolios
--   One account manages each portfolio
--   Authentication and onboarding
--   Template selection
--   Predefined section-based editor
--   Reordering and visibility controls for sections
--   Supported style customisation
--   Preview
--   Draft and published states
--   Explicit publish/unpublish actions
--   Public portfolio subdomains
--   Responsive public pages
--   Basic user dashboard
--   Simple admin dashboard
--   Fundamental access control and input validation
+- One portfolio per account
+- Individual and organisation-branded portfolios
+- One account manages each portfolio
+- Authentication and onboarding
+- Template selection
+- Predefined section-based editor
+- Reordering and visibility controls for sections
+- Supported style customisation
+- Preview
+- Draft and published states
+- Explicit publish/unpublish actions
+- Public portfolio subdomains
+- Responsive public pages
+- Basic user dashboard
+- Simple admin dashboard
+- Fundamental access control and input validation
 
 ### Out of scope
 
--   Free-form visual canvas
--   Multiple portfolios per account
--   Multi-user organisation workspaces
--   Custom domains
--   Payments and subscriptions
--   AI-generated portfolios or content
--   Advanced analytics
--   Moderation and abuse reporting
--   Platform settings and audit logs
--   Full version history
--   Complex approval workflows
+- Free-form visual canvas
+- Multiple portfolios per account
+- Multi-user organisation workspaces
+- Custom domains
+- Payments and subscriptions
+- AI-generated portfolios or content
+- Advanced analytics
+- Moderation and abuse reporting
+- Platform settings and audit logs
+- Full version history
+- Complex approval workflows
 
 ## 12. Success criteria for the internal MVP
 
@@ -194,35 +194,34 @@ portfolio and select a template. 3. A user can add and edit supported
 sections. 4. A user can reorder and hide sections. 5. A user can preview
 the portfolio responsively. 6. A user can save changes as a draft
 without changing the live version. 7. A user can publish and unpublish a
-portfolio. 8. A published portfolio resolves to the correct subdomain.
-9. A user cannot edit another user's portfolio. 10. Public visitors
+portfolio. 8. A published portfolio resolves to the correct subdomain. 9. A user cannot edit another user's portfolio. 10. Public visitors
 cannot access unpublished draft content. 11. An administrator can view
 and search users and portfolios. 12. The main flows have documented and
 passing tests.
 
 ## 13. Dependencies and risks
 
--   The chosen hosting plan must support the required wildcard-subdomain
-    setup or a workable equivalent.
--   Public URL routing must map each hostname to the correct portfolio.
--   Draft and published content must be separated reliably.
--   Template and section schemas must remain compatible as templates
-    evolve.
--   Organisation-focused content must work without introducing team
-    collaboration into the MVP.
--   The platform must prevent users from injecting unsafe markup or
-    accessing other users' data.
+- The chosen hosting plan must support the required wildcard-subdomain
+  setup or a workable equivalent.
+- Public URL routing must map each hostname to the correct portfolio.
+- Draft and published content must be separated reliably.
+- Template and section schemas must remain compatible as templates
+  evolve.
+- Organisation-focused content must work without introducing team
+  collaboration into the MVP.
+- The platform must prevent users from injecting unsafe markup or
+  accessing other users' data.
 
 ## 14. Items to finalise later
 
--   Main domain name and DNS provider
--   Exact hosting plan and cost
--   Final template designs and count
--   Final list and fields for each section type
--   Username/subdomain rules and reserved names
--   Exact onboarding fields
--   Draft autosave behaviour and failure states
--   Analytics scope, if any
--   Retention and deletion behaviour
--   Final database schema and relationships
--   Detailed technical architecture and deployment configuration
+- Main domain name and DNS provider
+- Exact hosting plan and cost
+- Final template designs and count
+- Final list and fields for each section type
+- Username/subdomain rules and reserved names
+- Exact onboarding fields
+- Draft autosave behaviour and failure states
+- Analytics scope, if any
+- Retention and deletion behaviour
+- Final database schema and relationships
+- Detailed technical architecture and deployment configuration

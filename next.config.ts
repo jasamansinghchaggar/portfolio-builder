@@ -1,4 +1,4 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from 'next';
 
 const supabaseStoragePattern = (() => {
   const configuredUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -6,16 +6,16 @@ const supabaseStoragePattern = (() => {
 
   try {
     const storageUrl = new URL(configuredUrl);
-    if (storageUrl.protocol !== "https:" && storageUrl.protocol !== "http:") {
+    if (storageUrl.protocol !== 'https:' && storageUrl.protocol !== 'http:') {
       return [];
     }
 
     return [
       {
-        protocol: storageUrl.protocol.slice(0, -1) as "https" | "http",
+        protocol: storageUrl.protocol.slice(0, -1) as 'https' | 'http',
         hostname: storageUrl.hostname,
         port: storageUrl.port,
-        pathname: "/storage/v1/**",
+        pathname: '/storage/v1/**',
       },
     ];
   } catch {

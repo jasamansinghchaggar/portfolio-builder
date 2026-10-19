@@ -26,12 +26,12 @@ and portfolio status.
 
 ## 3. Goals
 
--   Make portfolio creation possible without coding.
--   Provide meaningful customisation through templates and sections.
--   Let users preview changes before publishing.
--   Serve published portfolios at stable, shareable subdomain URLs.
--   Keep the user and admin experiences straightforward.
--   Enforce ownership and privacy boundaries.
+- Make portfolio creation possible without coding.
+- Provide meaningful customisation through templates and sections.
+- Let users preview changes before publishing.
+- Serve published portfolios at stable, shareable subdomain URLs.
+- Keep the user and admin experiences straightforward.
+- Enforce ownership and privacy boundaries.
 
 ## 4. Non-goals
 
@@ -69,13 +69,13 @@ mobile, and follow relevant project or contact links.
 
 ### Portfolio states
 
--   **Draft:** Editable content not currently exposed as a public
-    portfolio.
--   **Published:** A published version is available at the assigned
-    public URL.
--   **Unpublished:** The portfolio is not currently publicly accessible.
-    A previously published portfolio may retain saved content for later
-    republishing.
+- **Draft:** Editable content not currently exposed as a public
+  portfolio.
+- **Published:** A published version is available at the assigned
+  public URL.
+- **Unpublished:** The portfolio is not currently publicly accessible.
+  A previously published portfolio may retain saved content for later
+  republishing.
 
 The implementation must define the exact transition rules. Editing a
 published portfolio must not silently overwrite the currently live
@@ -83,10 +83,10 @@ version before the user publishes the changes.
 
 ### Account and portfolio limits
 
--   One portfolio per account in the MVP.
--   One account manages each portfolio.
--   An account may create an individual or organisation-branded
-    portfolio.
+- One portfolio per account in the MVP.
+- One account manages each portfolio.
+- An account may create an individual or organisation-branded
+  portfolio.
 
 ## 7. Functional requirements
 
@@ -321,45 +321,45 @@ belonging to another user.
 
 ### Security and privacy
 
--   Enforce ownership checks on server-side operations.
--   Configure database and storage access policies.
--   Keep unpublished portfolio content private.
--   Validate and sanitise user input before rendering.
--   Do not render arbitrary user-provided HTML or scripts.
--   Keep secrets and privileged service credentials on the server.
--   Ensure admin access cannot be obtained by changing frontend routes
-    or client-side state alone.
--   Make public/private field boundaries explicit.
+- Enforce ownership checks on server-side operations.
+- Configure database and storage access policies.
+- Keep unpublished portfolio content private.
+- Validate and sanitise user input before rendering.
+- Do not render arbitrary user-provided HTML or scripts.
+- Keep secrets and privileged service credentials on the server.
+- Ensure admin access cannot be obtained by changing frontend routes
+  or client-side state alone.
+- Make public/private field boundaries explicit.
 
 ### Performance
 
--   Optimise public portfolio images.
--   Avoid unnecessary client-side JavaScript on public pages.
--   Use caching where safe and appropriate.
--   Ensure cached content does not leak between different portfolios or
-    expose unpublished changes.
+- Optimise public portfolio images.
+- Avoid unnecessary client-side JavaScript on public pages.
+- Use caching where safe and appropriate.
+- Ensure cached content does not leak between different portfolios or
+  expose unpublished changes.
 
 ### Reliability
 
--   Show save progress and failures.
--   Prevent publishing partially saved content.
--   Handle invalid, missing, or reserved subdomains predictably.
--   Provide a backup and recovery approach appropriate to the chosen
-    infrastructure.
+- Show save progress and failures.
+- Prevent publishing partially saved content.
+- Handle invalid, missing, or reserved subdomains predictably.
+- Provide a backup and recovery approach appropriate to the chosen
+  infrastructure.
 
 ### Accessibility
 
--   Support keyboard navigation for core forms and dashboard flows.
--   Provide labels and useful validation messages.
--   Use semantic headings and accessible colour contrast in templates.
+- Support keyboard navigation for core forms and dashboard flows.
+- Provide labels and useful validation messages.
+- Use semantic headings and accessible colour contrast in templates.
 
 ### Maintainability
 
--   Use TypeScript types and runtime validation for section content.
--   Keep content models separate from template rendering.
--   Keep shared components reusable.
--   Document important product and technical decisions in
-    `DECISIONS.md`.
+- Use TypeScript types and runtime validation for section content.
+- Keep content models separate from template rendering.
+- Keep shared components reusable.
+- Document important product and technical decisions in
+  `DECISIONS.md`.
 
 ## 9. High-level acceptance criteria
 
@@ -369,8 +369,7 @@ portfolio and select a template. 3. A user can add, edit, remove, hide,
 and reorder supported sections. 4. A user can customise the supported
 design options. 5. A user can preview the portfolio at desktop and
 mobile sizes. 6. A user can save a draft and see whether saving
-succeeded. 7. Draft edits do not alter the currently published version.
-8. A user can publish and unpublish a portfolio. 9. The published
+succeeded. 7. Draft edits do not alter the currently published version. 8. A user can publish and unpublish a portfolio. 9. The published
 portfolio resolves through the correct subdomain. 10. Unpublished
 content is not available to public visitors. 11. A user cannot edit or
 access another user's private portfolio data. 12. An administrator can
@@ -379,43 +378,46 @@ enforced server-side. 14. Core flows are covered by tests.
 
 ## 10. Dependencies and assumptions
 
--   The platform will have one main domain.
--   Wildcard DNS and the chosen hosting arrangement must support
-    subdomain routing.
--   The exact hosting plan and cost have not yet been selected.
--   The stack direction is Next.js, TypeScript, PostgreSQL, Supabase
-    Auth/Storage, and Vercel hosting.
--   One account manages one portfolio in the MVP.
--   Organisation portfolios are managed by one account; team
-    collaboration is excluded.
--   The exact database schema is intentionally not defined in this PRD.
--   The final section fields, template designs, username rules, and
-    deletion behaviour will be refined in later stages.
+- The platform will have one main domain.
+- Wildcard DNS and the chosen hosting arrangement must support
+  subdomain routing.
+- The exact hosting plan and cost have not yet been selected.
+- The stack direction is Next.js, TypeScript, PostgreSQL, Supabase
+  Auth/Storage, and Vercel hosting.
+- One account manages one portfolio in the MVP.
+- Organisation portfolios are managed by one account; team
+  collaboration is excluded.
+- The exact database schema is intentionally not defined in this PRD.
+- The final section fields, template designs, username rules, and
+  deletion behaviour will be refined in later stages.
 
 ## 11. Risks
 
-  -----------------------------------------------------------------------
-  Risk                                Mitigation direction
-  ----------------------------------- -----------------------------------
-  Wildcard subdomain limitations on   Verify provider and plan
-  hosting plan                        requirements before implementation
+---
 
-  Draft content accidentally becoming Separate draft and published data
-  public                              paths and test access controls
+Risk Mitigation direction
 
-  User content causing unsafe         Use typed schemas, validation, and
-  rendering                           safe rendering practices
+---
 
-  Template changes breaking content   Keep content separate from
-                                      presentation and test template
-                                      compatibility
+Wildcard subdomain limitations on Verify provider and plan
+hosting plan requirements before implementation
 
-  Organisation scope expanding too    Keep one owner per portfolio and
-  far                                 defer team features
+Draft content accidentally becoming Separate draft and published data
+public paths and test access controls
 
-  Autosave failures losing work       Provide save state, retry/error
-                                      feedback, and test failure paths
-  -----------------------------------------------------------------------
+User content causing unsafe Use typed schemas, validation, and
+rendering safe rendering practices
+
+Template changes breaking content Keep content separate from
+presentation and test template
+compatibility
+
+Organisation scope expanding too Keep one owner per portfolio and
+far defer team features
+
+Autosave failures losing work Provide save state, retry/error
+feedback, and test failure paths
+-----------------------------------------------------------------------
 
 ## 12. Open questions for later stages
 
