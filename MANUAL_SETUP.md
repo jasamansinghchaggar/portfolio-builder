@@ -5,9 +5,10 @@ Supabase projects for local and production when possible.
 
 ## Local
 
-1. **Create/select a Supabase project** and apply both migrations:
+1. **Create/select a Supabase project** and apply all migrations:
    - `supabase/migrations/20261024000000_initial_schema.sql`
    - `supabase/migrations/20261024000100_publish_separate_snapshot.sql`
+   - `supabase/migrations/20261025000000_fix_revision_ambiguity.sql`
 
 2. **Create `.env.local`** from `.env.example` and set:
    ```dotenv
@@ -44,7 +45,7 @@ Supabase projects for local and production when possible.
 
 ## Production (Vercel)
 
-1. **Apply the two migrations** to the production Supabase project.
+1. **Apply all three migrations** to the production Supabase project.
 
 2. **Set Vercel environment variables**:
    ```dotenv

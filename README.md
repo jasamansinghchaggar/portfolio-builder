@@ -44,6 +44,7 @@ Open <http://localhost:3000>.
 2. Apply the SQL migrations in order:
    - `supabase/migrations/20261024000000_initial_schema.sql`
    - `supabase/migrations/20261024000100_publish_separate_snapshot.sql`
+   - `supabase/migrations/20261025000000_fix_revision_ambiguity.sql`
 3. In **Authentication → URL configuration**, set the Site URL to
    `NEXT_PUBLIC_SITE_URL` and add these redirect URLs:
    - `http://localhost:3000/auth/callback`
@@ -166,7 +167,7 @@ against the Supabase project (see `DECISIONS.md`).
 
 ## Deployment checklist
 
-1. Apply both migrations to the production Supabase project.
+1. Apply all three migrations to the production Supabase project.
 2. Add the production `/auth/callback` URL in Supabase.
 3. Set all environment variables in Vercel.
 4. For subdomain mode, add `*.your-domain` and its DNS record in Vercel.
