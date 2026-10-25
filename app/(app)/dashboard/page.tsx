@@ -129,6 +129,7 @@ export default async function DashboardPage({
           <Button
             variant="outline"
             className="h-9 text-sm"
+            nativeButton={false}
             render={<Link href="/preview" target="_blank" />}
           >
             <IconEye data-icon="inline-start" />
@@ -136,6 +137,7 @@ export default async function DashboardPage({
           </Button>
           <Button
             className="h-9 text-sm"
+            nativeButton={false}
             render={<Link href="/editor" />}
           >
             Open editor
@@ -210,6 +212,7 @@ export default async function DashboardPage({
                     <Button
                       variant="outline"
                       className="h-9 text-sm"
+                      nativeButton={false}
                       render={
                         <a href={url} target="_blank" rel="noreferrer" />
                       }
@@ -313,6 +316,7 @@ export default async function DashboardPage({
           <Button
             variant="outline"
             className="mt-4 h-8 w-full text-xs"
+            nativeButton={false}
             render={<Link href="/editor" />}
           >
             Finish in the editor

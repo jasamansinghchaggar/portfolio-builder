@@ -54,6 +54,7 @@ export function RegisterForm({
         <Button
           variant="outline"
           className="h-10 w-full text-sm"
+          nativeButton={false}
           render={<Link href="/login" />}
         >
           Back to sign in

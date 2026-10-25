@@ -35,6 +35,7 @@ export function PreviewShell({ username }: { username: string }) {
         <Button
           variant="ghost"
           className="h-8 text-xs text-[#cabfae] hover:bg-white/10 hover:text-white"
+          nativeButton={false}
           render={<Link href="/editor" />}
         >
           <IconArrowLeft data-icon="inline-start" />
@@ -88,6 +89,7 @@ export function PreviewShell({ username }: { username: string }) {
             aria-label="Open preview in a new tab"
             title="Open in a new tab"
             className="text-[#cabfae] hover:bg-white/10 hover:text-white"
+            nativeButton={false}
             render={<a href="/preview/frame" target="_blank" rel="noreferrer" />}
           >
             <IconExternalLink />
@@ -95,6 +97,7 @@ export function PreviewShell({ username }: { username: string }) {
 
           <Button
             className="ml-1 h-8 bg-[#f7f3ec] text-xs text-[#191510] hover:bg-white"
+            nativeButton={false}
             render={<Link href="/editor" />}
           >
             <IconPencil data-icon="inline-start" />

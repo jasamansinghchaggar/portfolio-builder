@@ -172,6 +172,7 @@ export function PublishButton({
             <Button
               variant="outline"
               className="h-9 text-sm"
+              nativeButton={false}
               render={<Link href="/editor" />}
             >
               Open editor
@@ -212,6 +213,7 @@ export function PublishButton({
             <Button
               variant="outline"
               className="h-9 text-sm"
+              nativeButton={false}
               render={<Link href="/editor" />}
             >
               Keep editing
@@ -219,6 +221,7 @@ export function PublishButton({
             {successUrl ? (
               <Button
                 className="h-9 text-sm"
+                nativeButton={false}
                 render={
                   <a href={successUrl} target="_blank" rel="noreferrer" />
                 }

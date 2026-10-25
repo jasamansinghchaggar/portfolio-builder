@@ -39,6 +39,7 @@ export function ForgotPasswordForm({ initialEmail = "" }: { initialEmail?: strin
         <Button
           variant="outline"
           className="h-10 w-full text-sm"
+          nativeButton={false}
           render={<Link href="/login" />}
         >
           Back to sign in
@@ -76,6 +77,7 @@ export function ForgotPasswordForm({ initialEmail = "" }: { initialEmail?: strin
       <Button
         variant="ghost"
         className="h-9 w-full text-sm text-muted-foreground"
+        nativeButton={false}
         render={<Link href="/login" />}
       >
         Back to sign in

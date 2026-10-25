@@ -45,7 +45,12 @@ export default async function TemplatePreviewPage({ params }: PageProps) {
       <div className="border-b bg-muted/40">
         <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div className="flex items-center gap-3">
-            <Button variant="outline" size="sm" render={<Link href="/#templates" />}>
+            <Button
+              variant="outline"
+              size="sm"
+              nativeButton={false}
+              render={<Link href="/#templates" />}
+            >
               <IconArrowLeft data-icon="inline-start" />
               Templates
             </Button>
@@ -57,6 +62,7 @@ export default async function TemplatePreviewPage({ params }: PageProps) {
           </div>
           <Button
             size="sm"
+            nativeButton={false}
             render={<Link href={`/register?template=${template.id}`} />}
           >
             Use this template

@@ -48,6 +48,7 @@ export default async function OnboardingPage({ searchParams }: PageProps) {
               variant="ghost"
               size="sm"
               className="h-8 text-xs"
+              nativeButton={false}
               render={<Link href="/" />}
             >
               <IconArrowLeft data-icon="inline-start" />

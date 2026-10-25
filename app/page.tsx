@@ -104,6 +104,7 @@ export default function HomePage() {
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Button
                   className="h-11 px-5 text-sm shadow-sm"
+                  nativeButton={false}
                   render={<Link href="/register" />}
                 >
                   Build your portfolio
@@ -112,6 +113,7 @@ export default function HomePage() {
                 <Button
                   variant="outline"
                   className="h-11 px-5 text-sm"
+                  nativeButton={false}
                   render={<Link href="/template-preview/atlas" />}
                 >
                   See a live example
@@ -307,6 +309,7 @@ export default function HomePage() {
               <Button
                 variant="outline"
                 className="mt-6 h-10 px-4 text-sm"
+                nativeButton={false}
                 render={<Link href="/register" />}
               >
                 Start with a template
@@ -363,6 +366,7 @@ export default function HomePage() {
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Button
                     className="h-11 bg-[#f7f3ec] px-5 text-sm text-[#191510] hover:bg-white"
+                    nativeButton={false}
                     render={<Link href="/register" />}
                   >
                     Create your portfolio
@@ -371,6 +375,7 @@ export default function HomePage() {
                   <Button
                     variant="outline"
                     className="h-11 border-white/20 bg-transparent px-5 text-sm text-[#f7f3ec] hover:bg-white/10 hover:text-white"
+                    nativeButton={false}
                     render={<Link href="/login" />}
                   >
                     I already have an account

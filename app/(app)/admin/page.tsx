@@ -227,6 +227,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
               variant={status === item.value ? "default" : "outline"}
               size="sm"
               className="h-7 text-xs"
+              nativeButton={false}
               render={<Link href={href} />}
             >
               {item.label}
@@ -298,6 +299,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
                               variant="ghost"
                               size="icon-xs"
                               aria-label="Open portfolio"
+                              nativeButton={false}
                               render={
                                 <a
                                   href={publicPortfolioUrl(portfolio.username)}

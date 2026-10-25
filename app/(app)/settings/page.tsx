@@ -88,6 +88,7 @@ export default async function SettingsPage() {
                   variant="ghost"
                   size="sm"
                   className="h-8 text-xs"
+                  nativeButton={false}
                   render={<a href={url} target="_blank" rel="noreferrer" />}
                 >
                   Open

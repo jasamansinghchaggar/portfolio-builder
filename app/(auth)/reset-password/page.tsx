@@ -34,6 +34,7 @@ export default async function ResetPasswordPage() {
           </p>
           <Button
             className="h-10 w-full text-sm"
+            nativeButton={false}
             render={<Link href="/forgot-password?expired=1" />}
           >
             Request a new link
@@ -41,6 +42,7 @@ export default async function ResetPasswordPage() {
           <Button
             variant="ghost"
             className="h-9 w-full text-sm"
+            nativeButton={false}
             render={<Link href="/login" />}
           >
             Back to sign in

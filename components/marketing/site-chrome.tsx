@@ -30,12 +30,14 @@ export function SiteHeader() {
           <Button
             variant="ghost"
             className="h-9 px-3 text-sm"
+            nativeButton={false}
             render={<Link href="/login" />}
           >
             Log in
           </Button>
           <Button
             className="h-9 px-3.5 text-sm"
+            nativeButton={false}
             render={<Link href="/register" />}
           >
             Start free

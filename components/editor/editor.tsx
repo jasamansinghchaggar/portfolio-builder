@@ -495,6 +495,7 @@ export function Editor({
             variant="ghost"
             size="sm"
             className="h-8 text-xs text-muted-foreground"
+            nativeButton={false}
             render={<Link href="/dashboard" />}
           >
             <IconArrowLeft data-icon="inline-start" />
@@ -996,6 +997,7 @@ export function Editor({
                 variant="ghost"
                 size="sm"
                 className="h-7 text-xs"
+                nativeButton={false}
                 render={<a href="/preview" target="_blank" rel="noreferrer" />}
               >
                 Full preview
@@ -1142,6 +1144,7 @@ export function Editor({
             </Button>
             <Button
               className="h-9 text-sm"
+              nativeButton={false}
               render={<Link href="/dashboard" />}
             >
               Dashboard
