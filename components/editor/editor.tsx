@@ -959,10 +959,23 @@ export function Editor({
       </Dialog>
 
       <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
-        <DialogContent className="flex h-[88vh] max-w-6xl flex-col gap-2 p-3 sm:max-w-6xl">
+        <DialogContent
+          showCloseButton={false}
+          className="flex h-[88vh] max-w-6xl flex-col gap-2 p-3 sm:max-w-6xl"
+        >
           <DialogHeader className="flex-row items-center gap-2 space-y-0">
             <DialogTitle className="text-sm">Draft preview</DialogTitle>
             <div className="ml-auto flex items-center gap-1">
+              <Button
+                variant="secondary"
+                size="default"
+                className="h-7 text-xs"
+                nativeButton={false}
+                render={<a href="/preview" target="_blank" rel="noreferrer" />}
+              >
+                Full preview
+                <IconArrowUpRight />
+              </Button>
               <div className="flex items-center rounded-md border bg-muted/40 p-0.5">
                 <button
                   type="button"
@@ -993,16 +1006,6 @@ export function Editor({
                   <IconDeviceMobile className="size-4" />
                 </button>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-7 text-xs"
-                nativeButton={false}
-                render={<a href="/preview" target="_blank" rel="noreferrer" />}
-              >
-                Full preview
-                <IconArrowUpRight />
-              </Button>
             </div>
           </DialogHeader>
 

@@ -15,6 +15,7 @@ import {
 import { SiteFooter, SiteHeader } from "@/components/marketing/site-chrome"
 import { TemplateThumbnail } from "@/components/marketing/template-thumbnail"
 import { Button } from "@/components/ui/button"
+import { getAuthUserId } from "@/lib/auth"
 import { APP_NAME } from "@/lib/config"
 import { TEMPLATES } from "@/lib/portfolio/templates"
 
@@ -65,13 +66,15 @@ const STEPS = [
   },
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
   const atlas = TEMPLATES[0]
   const signal = TEMPLATES[1]
+  const { userId } = await getAuthUserId()
+  const signedIn = Boolean(userId)
 
   return (
     <div className="min-h-screen bg-background">
-      <SiteHeader />
+      <SiteHeader signedIn={signedIn} />
 
       <main>
         <section className="relative overflow-hidden border-b">
@@ -105,9 +108,9 @@ export default function HomePage() {
                 <Button
                   className="h-11 px-5 text-sm shadow-sm"
                   nativeButton={false}
-                  render={<Link href="/register" />}
+                  render={<Link href={signedIn ? "/dashboard" : "/register"} />}
                 >
-                  Build your portfolio
+                  {signedIn ? "Go to your dashboard" : "Build your portfolio"}
                   <IconArrowRight />
                 </Button>
                 <Button
@@ -314,9 +317,9 @@ export default function HomePage() {
                 variant="outline"
                 className="mt-6 h-10 px-4 text-sm"
                 nativeButton={false}
-                render={<Link href="/register" />}
+                render={<Link href={signedIn ? "/editor" : "/register"} />}
               >
-                Start with a template
+                {signedIn ? "Continue in the editor" : "Start with a template"}
                 <IconArrowRight />
               </Button>
             </div>
@@ -367,25 +370,30 @@ export default function HomePage() {
                   Put the work where people can find it.
                 </h2>
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-[#cabfae] sm:text-base">
-                  Create an account, pick a template, and have a portfolio link
-                  to share before the day is out. Free to start.
+                  {signedIn
+                    ? "Your draft is exactly where you left it. Pick up the story, check the preview, and publish when it feels right."
+                    : "Create an account, pick a template, and have a portfolio link to share before the day is out. Free to start."}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Button
                     className="h-11 bg-[#f7f3ec] px-5 text-sm text-[#191510] hover:bg-white"
                     nativeButton={false}
-                    render={<Link href="/register" />}
+                    render={
+                      <Link href={signedIn ? "/dashboard" : "/register"} />
+                    }
                   >
-                    Create your portfolio
+                    {signedIn ? "Open your dashboard" : "Create your portfolio"}
                     <IconArrowRight />
                   </Button>
                   <Button
                     variant="outline"
                     className="h-11 border-white/20 bg-transparent px-5 text-sm text-[#f7f3ec] hover:bg-white/10 hover:text-white"
                     nativeButton={false}
-                    render={<Link href="/login" />}
+                    render={<Link href={signedIn ? "/#templates" : "/login"} />}
                   >
-                    I already have an account
+                    {signedIn
+                      ? "Browse templates"
+                      : "I already have an account"}
                   </Button>
                 </div>
               </div>
@@ -394,7 +402,7 @@ export default function HomePage() {
         </section>
       </main>
 
-      <SiteFooter />
+      <SiteFooter signedIn={signedIn} />
     </div>
   )
 }

@@ -1,9 +1,7 @@
 import Image from "next/image"
 import type { CSSProperties, ReactNode } from "react"
 
-import {
-  SECTION_LABELS,
-} from "@/lib/portfolio/constants"
+import { SECTION_LABELS } from "@/lib/portfolio/constants"
 import { designStyle } from "@/lib/portfolio/colors"
 import {
   formatDateRange,
@@ -94,7 +92,10 @@ export function PortfolioRenderer({
 
           <div className="pf-header-actions">
             {contact && contact.type === "contact" && contact.email ? (
-              <a className="pf-button pf-button-small" href={`mailto:${contact.email}`}>
+              <a
+                className="pf-button pf-button-small"
+                href={`mailto:${contact.email}`}
+              >
                 Say hello
               </a>
             ) : (
@@ -156,7 +157,9 @@ export function PortfolioRenderer({
             {content.basics.email ? (
               <a href={`mailto:${content.basics.email}`}>Email</a>
             ) : null}
-            {content.basics.location ? <span>{content.basics.location}</span> : null}
+            {content.basics.location ? (
+              <span>{content.basics.location}</span>
+            ) : null}
             <span>
               Made with{" "}
               <a href={SITE_URL} rel="noopener noreferrer">
@@ -317,10 +320,7 @@ function HeroSection({
 
           <div className="pf-hero-actions">
             {section.primaryCtaLabel && section.primaryCtaUrl ? (
-              <SmartLink
-                href={section.primaryCtaUrl}
-                className="pf-button"
-              >
+              <SmartLink href={section.primaryCtaUrl} className="pf-button">
                 {section.primaryCtaLabel}
                 <span aria-hidden="true">↗</span>
               </SmartLink>
@@ -382,9 +382,7 @@ function AboutBody({ section }: { section: SectionOfType<"about"> }) {
     <div className="pf-about">
       <div className="pf-prose">
         {paragraphs.length ? (
-          paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
-          ))
+          paragraphs.map((paragraph, index) => <p key={index}>{paragraph}</p>)
         ) : (
           <p className="pf-placeholder">A short story about you goes here.</p>
         )}
@@ -475,11 +473,7 @@ function ProjectsBody({
   )
 }
 
-function ExperienceBody({
-  section,
-}: {
-  section: SectionOfType<"experience">
-}) {
+function ExperienceBody({ section }: { section: SectionOfType<"experience"> }) {
   return (
     <ol className="pf-timeline">
       {section.items.map((item) => (
@@ -515,9 +509,7 @@ function SkillsBody({ section }: { section: SectionOfType<"skills"> }) {
     <div className="pf-skills">
       {section.groups.map((group, index) => (
         <div key={group.id} className="pf-skill-group">
-          <p className="pf-skill-index">
-            {String(index + 1).padStart(2, "0")}
-          </p>
+          <p className="pf-skill-index">{String(index + 1).padStart(2, "0")}</p>
           <h3>{group.name || "Skills"}</h3>
           <ul className="pf-chips">
             {group.items.map((item) => (
@@ -530,11 +522,7 @@ function SkillsBody({ section }: { section: SectionOfType<"skills"> }) {
   )
 }
 
-function EducationBody({
-  section,
-}: {
-  section: SectionOfType<"education">
-}) {
+function EducationBody({ section }: { section: SectionOfType<"education"> }) {
   return (
     <div className="pf-rows">
       {section.items.map((item) => (
@@ -618,7 +606,9 @@ function TestimonialsBody({
             <blockquote>{item.quote}</blockquote>
             <figcaption>
               <span className="pf-avatar">
-                {avatar && item.avatarMediaId && isImageMime(avatar.mimeType) ? (
+                {avatar &&
+                item.avatarMediaId &&
+                isImageMime(avatar.mimeType) ? (
                   <PortfolioImage
                     id={item.avatarMediaId}
                     meta={avatar}
@@ -657,7 +647,9 @@ function AchievementsBody({
           </div>
           <div>
             <div className="pf-achievement-meta">
-              <span>{[item.issuer, item.date].filter(Boolean).join(" · ")}</span>
+              <span>
+                {[item.issuer, item.date].filter(Boolean).join(" · ")}
+              </span>
             </div>
             <h3>{item.title || "Achievement"}</h3>
             {item.description ? <p>{item.description}</p> : null}
@@ -683,7 +675,9 @@ function ResumeBody({
   return (
     <div className="pf-resume">
       <div className="pf-resume-main">
-        {section.summary ? <p className="pf-resume-summary">{section.summary}</p> : null}
+        {section.summary ? (
+          <p className="pf-resume-summary">{section.summary}</p>
+        ) : null}
         {section.highlights.length ? (
           <ul className="pf-list">
             {section.highlights.map((highlight, index) => (
@@ -701,9 +695,7 @@ function ResumeBody({
           <span className="pf-file-type">PDF</span>
         </a>
       ) : (
-        <p className="pf-resume-note">
-          Full CV available on request.
-        </p>
+        <p className="pf-resume-note">Full CV available on request.</p>
       )}
     </div>
   )
@@ -742,11 +734,6 @@ function ContactBody({
         </div>
       </div>
       <div className="pf-contact-side">
-        {section.email ? (
-          <a className="pf-contact-email" href={`mailto:${section.email}`}>
-            {section.email}
-          </a>
-        ) : null}
         {section.links.length ? (
           <ul className="pf-contact-links">
             {section.links.map((link) => (

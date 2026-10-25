@@ -17,12 +17,16 @@ import { cn } from "@/lib/utils"
 
 type Device = "desktop" | "tablet" | "mobile"
 
-const DEVICES: { id: Device; label: string; icon: typeof IconDeviceDesktop; width: string }[] =
-  [
-    { id: "desktop", label: "Desktop", icon: IconDeviceDesktop, width: "100%" },
-    { id: "tablet", label: "Tablet", icon: IconDeviceTablet, width: "768px" },
-    { id: "mobile", label: "Mobile", icon: IconDeviceMobile, width: "390px" },
-  ]
+const DEVICES: {
+  id: Device
+  label: string
+  icon: typeof IconDeviceDesktop
+  width: string
+}[] = [
+  { id: "desktop", label: "Desktop", icon: IconDeviceDesktop, width: "100%" },
+  { id: "tablet", label: "Tablet", icon: IconDeviceTablet, width: "768px" },
+  { id: "mobile", label: "Mobile", icon: IconDeviceMobile, width: "390px" },
+]
 
 export function PreviewShell({ username }: { username: string }) {
   const [device, setDevice] = useState<Device>("desktop")
@@ -45,14 +49,14 @@ export function PreviewShell({ username }: { username: string }) {
         <span className="mx-1 hidden h-5 w-px bg-white/10 sm:block" />
 
         <div className="hidden items-center gap-1 sm:flex">
-          <span className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-[#7d7264]">
+          <span className="font-mono text-[0.65rem] tracking-[0.14em] text-[#7d7264] uppercase">
             Draft preview
           </span>
           <span className="font-mono text-xs text-[#cabfae]">/{username}</span>
         </div>
 
         <div className="ml-auto flex items-center gap-1">
-          <div className="flex items-center rounded-lg border border-white/10 bg-white/[0.04] p-0.5">
+          <div className="flex items-center rounded-lg border border-white/10 bg-white/4 p-0.5">
             {DEVICES.map((item) => (
               <button
                 key={item.id}
@@ -74,7 +78,7 @@ export function PreviewShell({ username }: { username: string }) {
 
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon-lg"
             aria-label="Reload preview"
             title="Reload preview"
             className="text-[#cabfae] hover:bg-white/10 hover:text-white"
@@ -85,12 +89,14 @@ export function PreviewShell({ username }: { username: string }) {
 
           <Button
             variant="ghost"
-            size="icon-sm"
+            size="icon-lg"
             aria-label="Open preview in a new tab"
             title="Open in a new tab"
             className="text-[#cabfae] hover:bg-white/10 hover:text-white"
             nativeButton={false}
-            render={<a href="/preview/frame" target="_blank" rel="noreferrer" />}
+            render={
+              <a href="/preview/frame" target="_blank" rel="noreferrer" />
+            }
           >
             <IconExternalLink />
           </Button>
@@ -115,7 +121,7 @@ export function PreviewShell({ username }: { username: string }) {
             key={frameKey}
             src="/preview/frame"
             title="Portfolio draft preview"
-            className="h-full min-h-[640px] w-full border-0"
+            className="h-full min-h-160 w-full border-0"
           />
         </div>
       </div>
@@ -124,7 +130,7 @@ export function PreviewShell({ username }: { username: string }) {
         <span>
           Previewing saved draft content. Publishing is a separate step.
         </span>
-        <span className="hidden font-mono uppercase tracking-[0.12em] sm:inline">
+        <span className="hidden font-mono tracking-[0.12em] uppercase sm:inline">
           {active.label}
         </span>
       </footer>

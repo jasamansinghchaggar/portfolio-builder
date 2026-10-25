@@ -4,15 +4,12 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   IconLayoutDashboard,
-  IconLogout,
   IconPencil,
   IconSettings,
   IconShieldLock,
 } from "@tabler/icons-react"
 
 import { Brand } from "@/components/marketing/brand"
-import { Button } from "@/components/ui/button"
-import { logoutAction } from "@/lib/actions/auth"
 import type { PortfolioStatus } from "@/lib/supabase/database.types"
 import { cn } from "@/lib/utils"
 
@@ -61,7 +58,7 @@ export function AppHeader({
   ]
 
   return (
-    <header className="fixed inset-x-0 top-0 z-40 flex h-[var(--app-header-height)] flex-col border-b bg-background/85 backdrop-blur-md">
+    <header className="fixed inset-x-0 top-0 z-40 flex h-(--app-header-height) flex-col border-b bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 items-center gap-3 px-4 sm:px-6">
         <Brand href={hasPortfolio ? "/dashboard" : "/onboarding"} />
 
@@ -113,18 +110,6 @@ export function AppHeader({
               </p>
             </div>
           </div>
-
-          <form action={logoutAction}>
-            <Button
-              variant="ghost"
-              size="icon-lg"
-              type="submit"
-              aria-label="Sign out"
-              title="Sign out"
-            >
-              <IconLogout />
-            </Button>
-          </form>
         </div>
       </div>
 

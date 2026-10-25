@@ -43,7 +43,7 @@ export default async function TemplatePreviewPage({ params }: PageProps) {
   return (
     <div className="bg-background">
       <div className="border-b bg-muted/40">
-        <div className="mx-auto flex w-full max-w-[1180px] flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <div className="mx-auto flex w-full max-w-295 flex-col gap-4 px-5 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8">
           <div className="flex items-center gap-3">
             <Button
               variant="outline"

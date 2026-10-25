@@ -4,7 +4,7 @@ import { Brand } from "@/components/marketing/brand"
 import { Button } from "@/components/ui/button"
 import { IconArrowRight } from "@tabler/icons-react"
 
-export function SiteHeader() {
+export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
   return (
     <header className="sticky top-0 z-50 border-b border-border/70 bg-background/85 backdrop-blur-xl">
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-5 sm:px-8">
@@ -36,29 +36,42 @@ export function SiteHeader() {
           </Link>
         </nav>
         <div className="ml-auto flex items-center gap-1.5">
-          <Button
-            variant="ghost"
-            className="h-9 px-3 text-sm"
-            nativeButton={false}
-            render={<Link href="/login" />}
-          >
-            Log in
-          </Button>
-          <Button
-            className="h-9 px-3.5 text-sm"
-            nativeButton={false}
-            render={<Link href="/register" />}
-          >
-            Start free
-            <IconArrowRight />
-          </Button>
+          {signedIn ? (
+            <Button
+              className="h-9 px-3.5 text-sm"
+              nativeButton={false}
+              render={<Link href="/dashboard" />}
+            >
+              Dashboard
+              <IconArrowRight />
+            </Button>
+          ) : (
+            <>
+              <Button
+                variant="ghost"
+                className="h-9 px-3 text-sm"
+                nativeButton={false}
+                render={<Link href="/login" />}
+              >
+                Log in
+              </Button>
+              <Button
+                className="h-9 px-3.5 text-sm"
+                nativeButton={false}
+                render={<Link href="/register" />}
+              >
+                Start free
+                <IconArrowRight />
+              </Button>
+            </>
+          )}
         </div>
       </div>
     </header>
   )
 }
 
-export function SiteFooter() {
+export function SiteFooter({ signedIn = false }: { signedIn?: boolean }) {
   return (
     <footer className="border-t">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-5 py-10 sm:px-8 md:flex-row md:items-end md:justify-between">
@@ -88,15 +101,31 @@ export function SiteFooter() {
             <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
               Account
             </p>
-            <Link className="hover:underline" href="/login">
-              Log in
-            </Link>
-            <Link className="hover:underline" href="/register">
-              Create account
-            </Link>
-            <Link className="hover:underline" href="/forgot-password">
-              Reset password
-            </Link>
+            {signedIn ? (
+              <>
+                <Link className="hover:underline" href="/dashboard">
+                  Dashboard
+                </Link>
+                <Link className="hover:underline" href="/editor">
+                  Editor
+                </Link>
+                <Link className="hover:underline" href="/settings">
+                  Settings
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link className="hover:underline" href="/login">
+                  Log in
+                </Link>
+                <Link className="hover:underline" href="/register">
+                  Create account
+                </Link>
+                <Link className="hover:underline" href="/forgot-password">
+                  Reset password
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
