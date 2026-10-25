@@ -99,7 +99,7 @@ export function PublishButton({
         <AlertDialogTrigger
           render={<Button className={className ?? "h-9 text-sm"} />}
         >
-          <IconWorldUpload data-icon="inline-start" />
+          <IconWorldUpload />
           {label}
         </AlertDialogTrigger>
         <AlertDialogContent>

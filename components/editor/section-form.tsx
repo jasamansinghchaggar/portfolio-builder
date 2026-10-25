@@ -59,13 +59,7 @@ function ItemCard({
   )
 }
 
-function AddButton({
-  label,
-  onClick,
-}: {
-  label: string
-  onClick: () => void
-}) {
+function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
   return (
     <Button
       type="button"
@@ -74,7 +68,7 @@ function AddButton({
       className="h-8 w-full border-dashed text-xs"
       onClick={onClick}
     >
-      <IconPlus data-icon="inline-start" />
+      <IconPlus />
       {label}
     </Button>
   )
@@ -149,7 +143,9 @@ export function SectionForm({
             <MediaField
               label="Hero image"
               value={section.imageMediaId}
-              onChange={(imageMediaId) => onChange({ ...section, imageMediaId })}
+              onChange={(imageMediaId) =>
+                onChange({ ...section, imageMediaId })
+              }
               media={media}
               onMediaAdded={onMediaAdded}
               kind="avatar"
@@ -225,7 +221,9 @@ export function SectionForm({
             label="Highlights"
             value={section.highlights}
             onChange={(highlights) => onChange({ ...section, highlights })}
-            placeholder={"10 years designing products\nPreviously at Northwind\nBased in London"}
+            placeholder={
+              "10 years designing products\nPreviously at Northwind\nBased in London"
+            }
             hint="Short facts that add texture. One per line."
             rows={4}
           />
@@ -258,7 +256,9 @@ export function SectionForm({
                 onRemove={() =>
                   onChange({
                     ...section,
-                    items: section.items.filter((entry) => entry.id !== item.id),
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
                   })
                 }
               >
@@ -365,7 +365,9 @@ export function SectionForm({
                     onChange({
                       ...section,
                       items: section.items.map((entry) =>
-                        entry.id === item.id ? { ...entry, imageMediaId } : entry
+                        entry.id === item.id
+                          ? { ...entry, imageMediaId }
+                          : entry
                       ),
                     })
                   }
@@ -425,7 +427,9 @@ export function SectionForm({
                 onRemove={() =>
                   onChange({
                     ...section,
-                    items: section.items.filter((entry) => entry.id !== item.id),
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
                   })
                 }
               >
@@ -591,7 +595,9 @@ export function SectionForm({
                 onRemove={() =>
                   onChange({
                     ...section,
-                    groups: section.groups.filter((entry) => entry.id !== group.id),
+                    groups: section.groups.filter(
+                      (entry) => entry.id !== group.id
+                    ),
                   })
                 }
               >
@@ -655,7 +661,9 @@ export function SectionForm({
                 onRemove={() =>
                   onChange({
                     ...section,
-                    items: section.items.filter((entry) => entry.id !== item.id),
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
                   })
                 }
               >
@@ -681,7 +689,9 @@ export function SectionForm({
                       onChange({
                         ...section,
                         items: section.items.map((entry) =>
-                          entry.id === item.id ? { ...entry, institution } : entry
+                          entry.id === item.id
+                            ? { ...entry, institution }
+                            : entry
                         ),
                       })
                     }
@@ -779,7 +789,9 @@ export function SectionForm({
                 onRemove={() =>
                   onChange({
                     ...section,
-                    items: section.items.filter((entry) => entry.id !== item.id),
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
                   })
                 }
               >
@@ -883,7 +895,9 @@ export function SectionForm({
                 onRemove={() =>
                   onChange({
                     ...section,
-                    items: section.items.filter((entry) => entry.id !== item.id),
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
                   })
                 }
               >
@@ -947,7 +961,9 @@ export function SectionForm({
                 onRemove={() =>
                   onChange({
                     ...section,
-                    items: section.items.filter((entry) => entry.id !== item.id),
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
                   })
                 }
               >
@@ -1013,7 +1029,9 @@ export function SectionForm({
                     onChange({
                       ...section,
                       items: section.items.map((entry) =>
-                        entry.id === item.id ? { ...entry, avatarMediaId } : entry
+                        entry.id === item.id
+                          ? { ...entry, avatarMediaId }
+                          : entry
                       ),
                     })
                   }
@@ -1053,7 +1071,9 @@ export function SectionForm({
                 onRemove={() =>
                   onChange({
                     ...section,
-                    items: section.items.filter((entry) => entry.id !== item.id),
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
                   })
                 }
               >
@@ -1107,7 +1127,9 @@ export function SectionForm({
                       onChange({
                         ...section,
                         items: section.items.map((entry) =>
-                          entry.id === item.id ? { ...entry, description } : entry
+                          entry.id === item.id
+                            ? { ...entry, description }
+                            : entry
                         ),
                       })
                     }

@@ -51,11 +51,16 @@ export default async function OnboardingPage({ searchParams }: PageProps) {
               nativeButton={false}
               render={<Link href="/" />}
             >
-              <IconArrowLeft data-icon="inline-start" />
+              <IconArrowLeft />
               Home
             </Button>
             <form action={logoutAction}>
-              <Button variant="outline" size="sm" className="h-8 text-xs" type="submit">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs"
+                type="submit"
+              >
                 Sign out
               </Button>
             </form>

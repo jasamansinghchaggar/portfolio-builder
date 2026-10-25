@@ -28,7 +28,7 @@ export default function NotFound() {
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [mask-image:linear-gradient(to_bottom,black,transparent_80%)] [background-size:64px_64px] opacity-[0.16]"
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] mask-[linear-gradient(to_bottom,black,transparent_80%)] bg-size-[64px_64px] opacity-[0.16]"
         />
 
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-14 px-5 py-20 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
@@ -58,7 +58,7 @@ export default function NotFound() {
                 nativeButton={false}
                 render={<Link href="/" />}
               >
-                <IconArrowLeft data-icon="inline-start" />
+                <IconArrowLeft />
                 Back to home
               </Button>
               <Button
@@ -86,7 +86,7 @@ export default function NotFound() {
           <div className="relative mx-auto w-full max-w-md" aria-hidden="true">
             <div className="absolute -inset-6 rounded-[2.5rem] bg-amber-200/25 blur-3xl dark:bg-amber-500/10" />
 
-            <div className="relative -rotate-[2deg] rounded-2xl border bg-card p-2.5 shadow-2xl">
+            <div className="relative -rotate-2 rounded-2xl border bg-card p-2.5 shadow-2xl">
               <div className="rounded-xl border bg-background/80 p-5">
                 <div className="flex items-center gap-1.5">
                   <span className="size-2 rounded-full bg-red-400/70" />

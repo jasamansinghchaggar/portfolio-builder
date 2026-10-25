@@ -55,13 +55,10 @@ export function UnpublishButton({
     <AlertDialog open={open} onOpenChange={setOpen}>
       <AlertDialogTrigger
         render={
-          <Button
-            variant="outline"
-            className={className ?? "h-9 text-sm"}
-          />
+          <Button variant="outline" className={className ?? "h-9 text-sm"} />
         }
       >
-        <IconEyeOff data-icon="inline-start" />
+        <IconEyeOff />
         Unpublish
       </AlertDialogTrigger>
       <AlertDialogContent>

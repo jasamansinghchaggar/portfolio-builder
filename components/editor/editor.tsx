@@ -553,7 +553,7 @@ export function Editor({
               className="h-8 text-xs"
               onClick={() => void openPreview()}
             >
-              <IconDeviceDesktop data-icon="inline-start" />
+              <IconDeviceDesktop />
               Preview
             </Button>
 
@@ -561,7 +561,7 @@ export function Editor({
               className="h-8 text-xs"
               onClick={() => setPublishOpen(true)}
             >
-              <IconWorldUpload data-icon="inline-start" />
+              <IconWorldUpload />
               {status === "published" ? "Publish changes" : "Publish"}
             </Button>
           </div>
@@ -786,7 +786,7 @@ export function Editor({
               onClick={() => setAddOpen(true)}
               disabled={!availableTypes.length}
             >
-              <IconPlus data-icon="inline-start" />
+              <IconPlus />
               Add section
             </Button>
           </div>

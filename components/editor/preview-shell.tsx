@@ -42,7 +42,7 @@ export function PreviewShell({ username }: { username: string }) {
           nativeButton={false}
           render={<Link href="/editor" />}
         >
-          <IconArrowLeft data-icon="inline-start" />
+          <IconArrowLeft />
           Editor
         </Button>
 
@@ -106,7 +106,7 @@ export function PreviewShell({ username }: { username: string }) {
             nativeButton={false}
             render={<Link href="/editor" />}
           >
-            <IconPencil data-icon="inline-start" />
+            <IconPencil />
             Edit
           </Button>
         </div>

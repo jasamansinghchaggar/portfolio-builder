@@ -51,7 +51,7 @@ export default async function TemplatePreviewPage({ params }: PageProps) {
               nativeButton={false}
               render={<Link href="/#templates" />}
             >
-              <IconArrowLeft data-icon="inline-start" />
+              <IconArrowLeft />
               Templates
             </Button>
             <div className="h-5 w-px bg-border" />

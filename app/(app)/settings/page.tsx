@@ -35,7 +35,7 @@ export default async function SettingsPage() {
   return (
     <div className="space-y-5">
       <div>
-        <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+        <p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
           Settings
         </p>
         <h1 className="mt-1.5 font-heading text-3xl font-semibold tracking-[-0.035em]">
@@ -142,7 +142,9 @@ export default async function SettingsPage() {
               </div>
               <div className="flex items-center justify-between gap-3">
                 <dt className="text-muted-foreground">Member since</dt>
-                <dd className="font-medium">{formatDate(profile?.created_at)}</dd>
+                <dd className="font-medium">
+                  {formatDate(profile?.created_at)}
+                </dd>
               </div>
               <div className="flex items-center justify-between gap-3">
                 <dt className="text-muted-foreground">Account type</dt>
@@ -156,7 +158,7 @@ export default async function SettingsPage() {
                 variant="outline"
                 className="h-9 w-full text-sm"
               >
-                <IconLogout data-icon="inline-start" />
+                <IconLogout />
                 Sign out
               </Button>
             </form>

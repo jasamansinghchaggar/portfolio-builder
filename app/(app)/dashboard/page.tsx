@@ -131,7 +131,7 @@ export default async function DashboardPage({
             nativeButton={false}
             render={<Link href="/preview" target="_blank" />}
           >
-            <IconEye data-icon="inline-start" />
+            <IconEye />
             Preview
           </Button>
           <Button

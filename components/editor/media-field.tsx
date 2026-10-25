@@ -54,7 +54,9 @@ export function MediaField({
 
   const selected = media.find((item) => item.id === value)
   const options = media.filter((item) =>
-    accept === "pdf" ? item.mimeType === "application/pdf" : isImageMime(item.mimeType)
+    accept === "pdf"
+      ? item.mimeType === "application/pdf"
+      : isImageMime(item.mimeType)
   )
 
   async function upload(file: File) {
@@ -137,11 +139,7 @@ export function MediaField({
               onClick={() => inputRef.current?.click()}
               disabled={uploading}
             >
-              {uploading ? (
-                <Spinner className="size-3" />
-              ) : (
-                <IconUpload data-icon="inline-start" />
-              )}
+              {uploading ? <Spinner className="size-3" /> : <IconUpload />}
               {uploading ? "Uploading" : "Upload"}
             </Button>
           </div>
@@ -226,7 +224,7 @@ export function MediaField({
                 inputRef.current?.click()
               }}
             >
-              <IconUpload data-icon="inline-start" />
+              <IconUpload />
               Upload new
             </Button>
           </div>

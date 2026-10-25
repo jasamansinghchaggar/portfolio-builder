@@ -1,11 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import {
-  IconFileTypePdf,
-  IconFolder,
-  IconPhoto,
-} from "@tabler/icons-react"
+import { IconFileTypePdf, IconFolder, IconPhoto } from "@tabler/icons-react"
 
 import { DeleteMediaButton } from "@/components/editor/media-field"
 import { Button } from "@/components/ui/button"
@@ -16,11 +12,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  isImageMime,
-  mediaHref,
-  type EditorMedia,
-} from "@/lib/portfolio/media"
+import { isImageMime, mediaHref, type EditorMedia } from "@/lib/portfolio/media"
 
 function fileSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`
@@ -45,9 +37,9 @@ export function MediaLibrary({
         className="h-8 text-xs"
         onClick={() => setOpen(true)}
       >
-        <IconFolder data-icon="inline-start" />
+        <IconFolder />
         Files
-        <span className="ml-1 rounded-full bg-muted px-1.5 text-[0.6rem] tabular-nums text-muted-foreground">
+        <span className="ml-1 rounded-full bg-muted px-1.5 text-[0.6rem] text-muted-foreground tabular-nums">
           {media.length}
         </span>
       </Button>

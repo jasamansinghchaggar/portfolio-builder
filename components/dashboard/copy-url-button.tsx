@@ -43,11 +43,7 @@ export function CopyUrlButton({
       onClick={copy}
       className={cn("h-8 text-xs", className)}
     >
-      {copied ? (
-        <IconCheck data-icon="inline-start" />
-      ) : (
-        <IconCopy data-icon="inline-start" />
-      )}
+      {copied ? <IconCheck /> : <IconCopy />}
       {copied ? "Copied" : label}
     </Button>
   )
