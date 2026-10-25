@@ -43,7 +43,7 @@ export function PortfolioRenderer({
   media = {},
   preview = false,
 }: PortfolioRendererProps) {
-  const template = getTemplate(content.templateId)
+  // const template = getTemplate(content.templateId)
   const sections = renderedSections(content.sections)
   const navSections = navigationSections(content.sections)
   const contact = navSections.find((section) => section.type === "contact")
@@ -76,9 +76,9 @@ export function PortfolioRenderer({
               <span className="pf-brand-name">
                 {content.basics.fullName || "Portfolio"}
               </span>
-              <span className="pf-brand-meta">
+              {/* <span className="pf-brand-meta">
                 {content.basics.headline || template.name}
-              </span>
+              </span> */}
             </span>
           </a>
 
