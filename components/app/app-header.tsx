@@ -23,7 +23,8 @@ const STATUS_LABEL: Record<PortfolioStatus, string> = {
 }
 
 const STATUS_STYLE: Record<PortfolioStatus, string> = {
-  draft: "border-amber-600/25 bg-amber-500/10 text-amber-800 dark:text-amber-300",
+  draft:
+    "border-amber-600/25 bg-amber-500/10 text-amber-800 dark:text-amber-300",
   published:
     "border-emerald-600/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
   unpublished: "border-muted-foreground/25 bg-muted text-muted-foreground",
@@ -60,8 +61,8 @@ export function AppHeader({
   ]
 
   return (
-    <header className="sticky top-0 z-40 border-b bg-background/85 backdrop-blur-md">
-      <div className="mx-auto flex w-full max-w-6xl items-center gap-3 px-4 py-2.5 sm:px-6">
+    <header className="fixed inset-x-0 top-0 z-40 flex h-[var(--app-header-height)] flex-col border-b bg-background/85 backdrop-blur-md">
+      <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 items-center gap-3 px-4 sm:px-6">
         <Brand href={hasPortfolio ? "/dashboard" : "/onboarding"} />
 
         <nav className="ml-3 hidden items-center gap-0.5 md:flex">
@@ -116,7 +117,7 @@ export function AppHeader({
           <form action={logoutAction}>
             <Button
               variant="ghost"
-              size="icon-sm"
+              size="icon-lg"
               type="submit"
               aria-label="Sign out"
               title="Sign out"
@@ -127,7 +128,7 @@ export function AppHeader({
         </div>
       </div>
 
-      <nav className="flex items-center gap-0.5 overflow-x-auto border-t px-4 py-1.5 md:hidden">
+      <nav className="flex h-10 shrink-0 items-center gap-0.5 overflow-x-auto border-t px-4 md:hidden">
         {links.map((link) => {
           const active =
             pathname === link.href || pathname.startsWith(`${link.href}/`)

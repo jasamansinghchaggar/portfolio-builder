@@ -108,7 +108,9 @@ export function PublishButton({
               <IconWorldUpload />
             </AlertDialogMedia>
             <AlertDialogTitle>
-              {status === "published" ? "Publish these changes?" : "Publish your portfolio?"}
+              {status === "published"
+                ? "Publish these changes?"
+                : "Publish your portfolio?"}
             </AlertDialogTitle>
             <AlertDialogDescription>
               {status === "published"
@@ -145,8 +147,8 @@ export function PublishButton({
             </div>
             <DialogTitle>Almost there — a few loose ends</DialogTitle>
             <DialogDescription>
-              Publishing is paused so visitors don&apos;t see an unfinished page.
-              Fix these, then publish again.
+              Publishing is paused so visitors don&apos;t see an unfinished
+              page. Fix these, then publish again.
             </DialogDescription>
           </DialogHeader>
           <ul className="max-h-[45vh] space-y-2 overflow-y-auto pr-1">
@@ -227,7 +229,7 @@ export function PublishButton({
                 }
               >
                 View portfolio
-                <IconArrowUpRight data-icon="inline-end" />
+                <IconArrowUpRight />
               </Button>
             ) : null}
           </DialogFooter>

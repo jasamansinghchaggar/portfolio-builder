@@ -57,7 +57,9 @@ export default async function TemplatePreviewPage({ params }: PageProps) {
             <div className="h-5 w-px bg-border" />
             <div>
               <p className="text-sm font-medium">{template.name}</p>
-              <p className="text-xs text-muted-foreground">{template.tagline}</p>
+              <p className="text-xs text-muted-foreground">
+                {template.tagline}
+              </p>
             </div>
           </div>
           <Button
@@ -66,7 +68,7 @@ export default async function TemplatePreviewPage({ params }: PageProps) {
             render={<Link href={`/register?template=${template.id}`} />}
           >
             Use this template
-            <IconArrowUpRight data-icon="inline-end" />
+            <IconArrowUpRight />
           </Button>
         </div>
       </div>

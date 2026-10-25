@@ -10,13 +10,22 @@ export function SiteHeader() {
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-5 sm:px-8">
         <Brand />
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-          <Link className="transition-colors hover:text-foreground" href="/#templates">
+          <Link
+            className="transition-colors hover:text-foreground"
+            href="/#templates"
+          >
             Templates
           </Link>
-          <Link className="transition-colors hover:text-foreground" href="/#features">
+          <Link
+            className="transition-colors hover:text-foreground"
+            href="/#features"
+          >
             Features
           </Link>
-          <Link className="transition-colors hover:text-foreground" href="/#how-it-works">
+          <Link
+            className="transition-colors hover:text-foreground"
+            href="/#how-it-works"
+          >
             How it works
           </Link>
           <Link
@@ -41,7 +50,7 @@ export function SiteHeader() {
             render={<Link href="/register" />}
           >
             Start free
-            <IconArrowRight data-icon="inline-end" />
+            <IconArrowRight />
           </Button>
         </div>
       </div>
@@ -62,7 +71,7 @@ export function SiteFooter() {
         </div>
         <div className="flex flex-wrap gap-x-10 gap-y-6 text-sm">
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
               Product
             </p>
             <Link className="hover:underline" href="/#templates">
@@ -76,7 +85,7 @@ export function SiteFooter() {
             </Link>
           </div>
           <div className="flex flex-col gap-2">
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted-foreground">
+            <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
               Account
             </p>
             <Link className="hover:underline" href="/login">
@@ -93,7 +102,10 @@ export function SiteFooter() {
       </div>
       <div className="border-t">
         <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8">
-          <p>© {new Date().getFullYear()} Folio. Built for people with something to show.</p>
+          <p>
+            © {new Date().getFullYear()} Folio. Built for people with something
+            to show.
+          </p>
           <p>Next.js · Supabase · Vercel</p>
         </div>
       </div>

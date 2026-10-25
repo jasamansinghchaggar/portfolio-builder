@@ -142,6 +142,19 @@ for every template. Database RLS/RPC tests are not automated in this MVP; they
 are verified manually against the Supabase project and should be added before
 the platform grows beyond a single-owner portfolio.
 
+## The app header is fixed; editor chrome is sticky beneath it
+
+The authenticated header is `position: fixed` with a shared
+`--app-header-height` variable (mobile includes a second nav row). Standard app
+pages reserve that space plus normal top padding. The editor is the exception:
+its main element is full-bleed so the toolbar's background and border span the
+viewport, while both the app header and the editor toolbar contents are
+constrained to `max-w-6xl`. The editor toolbar sticks at
+`top: var(--app-header-height)` with a lower z-index than the app header, so it
+can never cover it. `AppMain` decides between the padded and full-bleed
+variants from the pathname, which avoids duplicating the layout in a route
+group.
+
 ## Known limitations
 
 - Email delivery uses Supabase’s default SMTP until a custom provider is set.

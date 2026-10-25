@@ -81,9 +81,9 @@ export default function HomePage() {
           />
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-[0.16] [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_bottom,black,transparent_72%)]"
+            className="pointer-events-none absolute inset-0 bg-[linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] mask-[linear-gradient(to_bottom,black,transparent_72%)] bg-size-[64px_64px] opacity-[0.16]"
           />
-          <div className="relative mx-auto grid w-full max-w-6xl items-center gap-14 px-5 pb-20 pt-14 sm:px-8 lg:grid-cols-[1.02fr_0.98fr] lg:pb-28 lg:pt-24">
+          <div className="relative mx-auto grid w-full max-w-6xl items-center gap-14 px-5 pt-14 pb-20 sm:px-8 lg:grid-cols-[1.02fr_0.98fr] lg:pt-24 lg:pb-28">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full border bg-background/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
                 <IconSparkles className="size-3.5 text-amber-700 dark:text-amber-400" />
@@ -108,7 +108,7 @@ export default function HomePage() {
                   render={<Link href="/register" />}
                 >
                   Build your portfolio
-                  <IconArrowRight data-icon="inline-end" />
+                  <IconArrowRight />
                 </Button>
                 <Button
                   variant="outline"
@@ -117,30 +117,32 @@ export default function HomePage() {
                   render={<Link href="/template-preview/atlas" />}
                 >
                   See a live example
-                  <IconArrowUpRight data-icon="inline-end" />
+                  <IconArrowUpRight />
                 </Button>
               </div>
               <ul className="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
-                {["Free to start", "No code", "Publish in minutes"].map((item) => (
-                  <li key={item} className="flex items-center gap-1.5">
-                    <IconCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
-                    {item}
-                  </li>
-                ))}
+                {["Free to start", "No code", "Publish in minutes"].map(
+                  (item) => (
+                    <li key={item} className="flex items-center gap-1.5">
+                      <IconCheck className="size-3.5 text-emerald-600 dark:text-emerald-400" />
+                      {item}
+                    </li>
+                  )
+                )}
               </ul>
             </div>
 
-            <div className="relative mx-auto w-full max-w-[560px] pb-14 lg:pb-10">
+            <div className="relative mx-auto w-full max-w-140 pb-14 lg:pb-10">
               <div
                 aria-hidden="true"
                 className="absolute inset-x-6 top-8 bottom-8 rounded-full bg-amber-200/30 blur-3xl dark:bg-amber-500/10"
               />
               <Link
                 href={`/template-preview/${atlas.id}`}
-                className="relative block w-[84%] -rotate-[2.5deg] rounded-2xl border bg-card p-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1 hover:rotate-0"
+                className="relative block w-[84%] rotate-[-2.5deg] rounded-2xl border bg-card p-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1 hover:rotate-0"
               >
                 <TemplateThumbnail template={atlas} className="rounded-xl" />
-                <span className="flex items-center justify-between px-1.5 pb-0.5 pt-2 text-xs">
+                <span className="flex items-center justify-between px-1.5 pt-2 pb-0.5 text-xs">
                   <span className="font-medium">Atlas</span>
                   <span className="flex items-center gap-1 text-muted-foreground">
                     Preview <IconArrowUpRight className="size-3.5" />
@@ -149,32 +151,28 @@ export default function HomePage() {
               </Link>
               <Link
                 href={`/template-preview/${signal.id}`}
-                className="absolute right-0 bottom-0 w-[58%] rotate-[3deg] rounded-2xl border bg-card p-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1 hover:rotate-0"
+                className="absolute right-0 bottom-0 w-[58%] rotate-3 rounded-2xl border bg-card p-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1 hover:rotate-0"
               >
                 <TemplateThumbnail template={signal} className="rounded-xl" />
-                <span className="flex items-center justify-between px-1.5 pb-0.5 pt-2 text-xs">
+                <span className="flex items-center justify-between px-1.5 pt-2 pb-0.5 text-xs">
                   <span className="font-medium">Signal</span>
                   <span className="flex items-center gap-1 text-muted-foreground">
                     Preview <IconArrowUpRight className="size-3.5" />
                   </span>
                 </span>
               </Link>
-              <div className="absolute top-4 right-0 flex items-center gap-2 rounded-full border bg-background/90 px-3 py-1.5 text-xs shadow-sm backdrop-blur">
-                <span className="relative flex size-2">
-                  <span className="absolute inline-flex size-full animate-ping rounded-full bg-emerald-500 opacity-60" />
-                  <span className="relative inline-flex size-2 rounded-full bg-emerald-500" />
-                </span>
-                Live at folio.site/avery
-              </div>
             </div>
           </div>
         </section>
 
-        <section id="templates" className="scroll-mt-20 border-b py-20 sm:py-28">
+        <section
+          id="templates"
+          className="scroll-mt-20 border-b py-20 sm:py-28"
+        >
           <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
             <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
               <div>
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-800 dark:text-amber-400">
+                <p className="text-xs font-medium tracking-[0.18em] text-amber-800 uppercase dark:text-amber-400">
                   Templates
                 </p>
                 <h2 className="mt-3 max-w-[16ch] font-heading text-4xl leading-[1.02] font-semibold tracking-[-0.04em] sm:text-5xl">
@@ -198,7 +196,7 @@ export default function HomePage() {
                     template={template}
                     className="rounded-xl transition-transform duration-500 group-hover:scale-[1.005]"
                   />
-                  <div className="flex flex-1 flex-col px-2 pb-1 pt-4">
+                  <div className="flex flex-1 flex-col px-2 pt-4 pb-1">
                     <div className="flex items-center justify-between gap-4">
                       <h3 className="font-heading text-xl font-semibold tracking-tight">
                         {template.name}
@@ -230,7 +228,7 @@ export default function HomePage() {
         <section id="features" className="scroll-mt-20 border-b py-20 sm:py-28">
           <div className="mx-auto w-full max-w-6xl px-5 sm:px-8">
             <div className="max-w-2xl">
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-800 dark:text-amber-400">
+              <p className="text-xs font-medium tracking-[0.18em] text-amber-800 uppercase dark:text-amber-400">
                 Built deliberately
               </p>
               <h2 className="mt-3 font-heading text-4xl leading-[1.02] font-semibold tracking-[-0.04em] sm:text-5xl">
@@ -245,7 +243,10 @@ export default function HomePage() {
 
             <div className="mt-10 grid gap-px overflow-hidden rounded-2xl border bg-border sm:grid-cols-2 lg:grid-cols-4">
               {FEATURES.map((feature) => (
-                <div key={feature.title} className="flex flex-col bg-background p-6">
+                <div
+                  key={feature.title}
+                  className="flex flex-col bg-background p-6"
+                >
                   <span className="grid size-9 place-items-center rounded-lg border bg-muted/40">
                     <feature.icon className="size-4" />
                   </span>
@@ -293,10 +294,13 @@ export default function HomePage() {
           </div>
         </section>
 
-        <section id="how-it-works" className="scroll-mt-20 border-b py-20 sm:py-28">
+        <section
+          id="how-it-works"
+          className="scroll-mt-20 border-b py-20 sm:py-28"
+        >
           <div className="mx-auto grid w-full max-w-6xl gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr]">
             <div className="lg:sticky lg:top-28 lg:self-start">
-              <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-800 dark:text-amber-400">
+              <p className="text-xs font-medium tracking-[0.18em] text-amber-800 uppercase dark:text-amber-400">
                 How it works
               </p>
               <h2 className="mt-3 max-w-[13ch] font-heading text-4xl leading-[1.02] font-semibold tracking-[-0.04em] sm:text-5xl">
@@ -313,7 +317,7 @@ export default function HomePage() {
                 render={<Link href="/register" />}
               >
                 Start with a template
-                <IconArrowRight data-icon="inline-end" />
+                <IconArrowRight />
               </Button>
             </div>
 
@@ -323,7 +327,10 @@ export default function HomePage() {
                 className="absolute top-3 bottom-3 left-[1.1rem] w-px bg-border sm:left-[1.35rem]"
               />
               {STEPS.map((step) => (
-                <li key={step.number} className="relative flex gap-5 pb-10 last:pb-0 sm:gap-7">
+                <li
+                  key={step.number}
+                  className="relative flex gap-5 pb-10 last:pb-0 sm:gap-7"
+                >
                   <span className="relative z-10 grid size-9 shrink-0 place-items-center rounded-full border bg-background font-mono text-[0.65rem] text-muted-foreground sm:size-11">
                     {step.number}
                   </span>
@@ -350,10 +357,10 @@ export default function HomePage() {
               />
               <div
                 aria-hidden="true"
-                className="absolute inset-0 opacity-[0.08] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:48px_48px]"
+                className="absolute inset-0 bg-[linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] bg-size-[48px_48px] opacity-[0.08]"
               />
               <div className="relative max-w-2xl">
-                <p className="text-xs font-medium uppercase tracking-[0.18em] text-amber-300">
+                <p className="text-xs font-medium tracking-[0.18em] text-amber-300 uppercase">
                   Ready when you are
                 </p>
                 <h2 className="mt-4 font-heading text-4xl leading-[0.98] font-semibold tracking-[-0.045em] sm:text-6xl">
@@ -370,7 +377,7 @@ export default function HomePage() {
                     render={<Link href="/register" />}
                   >
                     Create your portfolio
-                    <IconArrowRight data-icon="inline-end" />
+                    <IconArrowRight />
                   </Button>
                   <Button
                     variant="outline"

@@ -12,18 +12,13 @@ import {
 } from "@tabler/icons-react"
 
 import { CopyUrlButton } from "@/components/dashboard/copy-url-button"
-import { PublishButton } from "@/components/dashboard/publish-button"
-import { UnpublishButton } from "@/components/dashboard/unpublish-button"
 import { TemplateThumbnail } from "@/components/marketing/template-thumbnail"
 import { Button } from "@/components/ui/button"
 import { requirePortfolio, getProfile } from "@/lib/auth"
 import { publicPortfolioUrl } from "@/lib/config"
 import { formatDateTime } from "@/lib/format"
 import { coercePortfolioContent } from "@/lib/portfolio/defaults"
-import {
-  checklistProgress,
-  publishChecklist,
-} from "@/lib/portfolio/publish"
+import { checklistProgress, publishChecklist } from "@/lib/portfolio/publish"
 import { renderedSections } from "@/lib/portfolio/sections"
 import { getTemplate } from "@/lib/portfolio/templates"
 import type { PortfolioStatus } from "@/lib/supabase/database.types"
@@ -59,7 +54,10 @@ const STATUS_COPY: Record<
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: Promise<{ welcome?: string | string[]; password?: string | string[] }>
+  searchParams: Promise<{
+    welcome?: string | string[]
+    password?: string | string[]
+  }>
 }) {
   const params = await searchParams
   const welcome = params.welcome === "1" || params.welcome === "true"
@@ -82,7 +80,8 @@ export default async function DashboardPage({
   const hasUnpublishedChanges =
     portfolio.status === "published" &&
     (!publishedContent ||
-      JSON.stringify(publishedContent) !== JSON.stringify(portfolio.draft_content))
+      JSON.stringify(publishedContent) !==
+        JSON.stringify(portfolio.draft_content))
 
   const { count: mediaCount } = await supabase
     .from("portfolio_media")
@@ -113,7 +112,7 @@ export default async function DashboardPage({
 
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+          <p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
             Overview
           </p>
           <h1 className="mt-1.5 font-heading text-3xl font-semibold tracking-[-0.035em]">
@@ -141,98 +140,67 @@ export default async function DashboardPage({
             render={<Link href="/editor" />}
           >
             Open editor
-            <IconArrowUpRight data-icon="inline-end" />
+            <IconArrowUpRight />
           </Button>
         </div>
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.45fr_1fr]">
-        <section className="overflow-hidden rounded-2xl border bg-card">
-          <div className="flex flex-col gap-5 p-5 sm:flex-row">
-            <div className="w-full max-w-[210px] shrink-0">
-              <TemplateThumbnail
-                template={template}
-                className="rounded-xl"
-              />
-              <p className="mt-2 text-center text-[0.7rem] text-muted-foreground">
-                {template.name} template
-              </p>
-            </div>
-            <div className="flex min-w-0 flex-1 flex-col">
-              <div className="flex flex-wrap items-center gap-2">
-                <span
-                  className={cn(
-                    "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.65rem] font-medium",
-                    status.className
-                  )}
-                >
-                  <span className="size-1.5 rounded-full bg-current" />
-                  {status.label}
-                </span>
-                {hasUnpublishedChanges ? (
-                  <span className="rounded-full border border-amber-600/25 bg-amber-500/5 px-2 py-0.5 text-[0.65rem] font-medium text-amber-800 dark:text-amber-300">
-                    Unpublished edits
-                  </span>
-                ) : null}
-              </div>
-
-              <h2 className="mt-3 truncate font-heading text-xl font-semibold tracking-[-0.02em]">
-                {content.basics.fullName || "Untitled portfolio"}
-              </h2>
-              <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
-                {content.basics.headline ||
-                  "Add a headline in the editor to say what you do."}
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                {status.hint}
-              </p>
-
-              <div className="mt-4 rounded-lg border bg-muted/30 px-3 py-2">
-                <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                  Public address
+        <section className="flex flex-col justify-between overflow-hidden rounded-2xl border bg-card">
+          <div className="flex flex-col p-5">
+            <div className="flex flex-col gap-5 sm:flex-row">
+              <div className="w-full max-w-52.5 shrink-0">
+                <TemplateThumbnail template={template} className="rounded-xl" />
+                <p className="mt-2 text-center text-[0.7rem] text-muted-foreground">
+                  {template.name} template
                 </p>
-                <div className="mt-1 flex items-center gap-2">
-                  <span className="min-w-0 flex-1 truncate font-mono text-xs">
-                    {url}
-                  </span>
-                  <CopyUrlButton url={url} label="Copy" size="xs" />
-                </div>
               </div>
+              <div className="flex min-w-0 flex-1 flex-col">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.65rem] font-medium",
+                      status.className
+                    )}
+                  >
+                    <span className="size-1.5 rounded-full bg-current" />
+                    {status.label}
+                  </span>
+                  {hasUnpublishedChanges ? (
+                    <span className="rounded-full border border-amber-600/25 bg-amber-500/5 px-2 py-0.5 text-[0.65rem] font-medium text-amber-800 dark:text-amber-300">
+                      Unpublished edits
+                    </span>
+                  ) : null}
+                </div>
 
-              <div className="mt-auto flex flex-wrap items-center gap-2 pt-4">
-                <PublishButton
-                  portfolioId={portfolio.id}
-                  revision={portfolio.revision}
-                  content={content}
-                  status={portfolio.status}
-                  hasUnpublishedChanges={hasUnpublishedChanges}
-                />
-                {portfolio.status === "published" ? (
-                  <>
-                    <Button
-                      variant="outline"
-                      className="h-9 text-sm"
-                      nativeButton={false}
-                      render={
-                        <a href={url} target="_blank" rel="noreferrer" />
-                      }
-                    >
-                      View live
-                      <IconArrowUpRight data-icon="inline-end" />
-                    </Button>
-                    <UnpublishButton
-                      portfolioId={portfolio.id}
-                      revision={portfolio.revision}
-                    />
-                  </>
-                ) : null}
+                <h2 className="mt-3 truncate font-heading text-xl font-semibold tracking-[-0.02em]">
+                  {content.basics.fullName || "Untitled portfolio"}
+                </h2>
+                <p className="mt-0.5 line-clamp-2 text-sm text-muted-foreground">
+                  {content.basics.headline ||
+                    "Add a headline in the editor to say what you do."}
+                </p>
+                <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
+                  {status.hint}
+                </p>
+              </div>
+            </div>
+            <div className="mt-4 rounded-lg border bg-muted/30 px-3 py-2">
+              <p className="text-[0.65rem] font-medium tracking-[0.12em] text-muted-foreground uppercase">
+                Public address
+              </p>
+              <div className="mt-1 flex items-center gap-2">
+                <span className="min-w-0 flex-1 truncate font-mono text-xs">
+                  {url}
+                </span>
+                <CopyUrlButton url={url} label="Copy" size="xs" />
               </div>
             </div>
           </div>
 
           <dl className="grid grid-cols-2 border-t bg-muted/20 text-xs sm:grid-cols-4">
             <div className="border-r px-4 py-3">
-              <dt className="text-[0.65rem] uppercase tracking-[0.1em] text-muted-foreground">
+              <dt className="text-[0.65rem] tracking-widest text-muted-foreground uppercase">
                 Sections
               </dt>
               <dd className="mt-0.5 text-sm font-medium tabular-nums">
@@ -240,7 +208,7 @@ export default async function DashboardPage({
               </dd>
             </div>
             <div className="border-r px-4 py-3">
-              <dt className="text-[0.65rem] uppercase tracking-[0.1em] text-muted-foreground">
+              <dt className="text-[0.65rem] tracking-widest text-muted-foreground uppercase">
                 Files
               </dt>
               <dd className="mt-0.5 text-sm font-medium tabular-nums">
@@ -248,7 +216,7 @@ export default async function DashboardPage({
               </dd>
             </div>
             <div className="border-r px-4 py-3">
-              <dt className="text-[0.65rem] uppercase tracking-[0.1em] text-muted-foreground">
+              <dt className="text-[0.65rem] tracking-widest text-muted-foreground uppercase">
                 Last saved
               </dt>
               <dd className="mt-0.5 text-sm font-medium">
@@ -256,7 +224,7 @@ export default async function DashboardPage({
               </dd>
             </div>
             <div className="px-4 py-3">
-              <dt className="text-[0.65rem] uppercase tracking-[0.1em] text-muted-foreground">
+              <dt className="text-[0.65rem] tracking-widest text-muted-foreground uppercase">
                 Published
               </dt>
               <dd className="mt-0.5 text-sm font-medium">
@@ -300,7 +268,8 @@ export default async function DashboardPage({
                   <p
                     className={cn(
                       "text-sm font-medium",
-                      item.done && "text-muted-foreground line-through decoration-muted-foreground/40"
+                      item.done &&
+                        "text-muted-foreground line-through decoration-muted-foreground/40"
                     )}
                   >
                     {item.label}

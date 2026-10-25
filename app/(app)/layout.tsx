@@ -1,4 +1,5 @@
 import { AppHeader } from "@/components/app/app-header"
+import { AppMain } from "@/components/app/app-main"
 import { getMyPortfolio, getProfile, requireUser } from "@/lib/auth"
 import { initials } from "@/lib/portfolio/sections"
 
@@ -23,9 +24,7 @@ export default async function AppLayout({
         status={portfolio?.status ?? null}
         initials={initials(profile?.full_name ?? "")}
       />
-      <main className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8">
-        {children}
-      </main>
+      <AppMain>{children}</AppMain>
     </div>
   )
 }

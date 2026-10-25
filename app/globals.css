@@ -5,6 +5,17 @@
 @custom-variant dark (&:is(.dark *));
 
 :root {
+    --app-header-height: 6rem;
+    --editor-header-height: 3.25rem;
+}
+
+@media (min-width: 48rem) {
+    :root {
+        --app-header-height: 3.5rem;
+    }
+}
+
+:root {
     --background: oklch(1 0 0);
     --foreground: oklch(0.145 0 0);
     --card: oklch(1 0 0);

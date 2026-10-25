@@ -1,6 +1,10 @@
 import type { Metadata } from "next"
 import Link from "next/link"
-import { IconArrowLeft, IconArrowUpRight, IconCompass } from "@tabler/icons-react"
+import {
+  IconArrowLeft,
+  IconArrowUpRight,
+  IconCompass,
+} from "@tabler/icons-react"
 
 import { SiteFooter, SiteHeader } from "@/components/marketing/site-chrome"
 import { Button } from "@/components/ui/button"
@@ -24,7 +28,7 @@ export default function NotFound() {
         />
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.16] [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [background-size:64px_64px] [mask-image:linear-gradient(to_bottom,black,transparent_80%)]"
+          className="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_right,currentColor_1px,transparent_1px),linear-gradient(to_bottom,currentColor_1px,transparent_1px)] [mask-image:linear-gradient(to_bottom,black,transparent_80%)] [background-size:64px_64px] opacity-[0.16]"
         />
 
         <div className="relative mx-auto grid w-full max-w-6xl items-center gap-14 px-5 py-20 sm:px-8 lg:grid-cols-[1.05fr_0.95fr] lg:py-28">
@@ -64,7 +68,7 @@ export default function NotFound() {
                 render={<Link href="/#templates" />}
               >
                 Browse templates
-                <IconArrowUpRight data-icon="inline-end" />
+                <IconArrowUpRight />
               </Button>
             </div>
 
@@ -95,10 +99,10 @@ export default function NotFound() {
 
                 <div className="mt-12 flex items-end justify-between gap-4">
                   <div>
-                    <p className="text-[0.65rem] font-medium uppercase tracking-[0.18em] text-muted-foreground">
+                    <p className="text-[0.65rem] font-medium tracking-[0.18em] text-muted-foreground uppercase">
                       Page not found
                     </p>
-                    <p className="mt-1 font-serif text-8xl leading-none italic text-amber-800 dark:text-amber-400">
+                    <p className="mt-1 font-serif text-8xl leading-none text-amber-800 italic dark:text-amber-400">
                       404
                     </p>
                   </div>

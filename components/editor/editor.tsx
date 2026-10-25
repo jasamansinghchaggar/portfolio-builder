@@ -6,7 +6,6 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import {
   IconAlertTriangle,
   IconArrowDown,
-  IconArrowLeft,
   IconArrowUp,
   IconArrowUpRight,
   IconCheck,
@@ -42,7 +41,6 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-import { Brand } from "@/components/marketing/brand"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -217,7 +215,11 @@ export function Editor({
   // Debounced autosave.
   useEffect(() => {
     if (!dirtyRef.current) return
-    if (saveState === "conflict" || saveState === "saving" || saveState === "error") {
+    if (
+      saveState === "conflict" ||
+      saveState === "saving" ||
+      saveState === "error"
+    ) {
       return
     }
     const timer = window.setTimeout(() => {
@@ -294,7 +296,7 @@ export function Editor({
 
   const selectedSection =
     view !== "page" && view !== "design"
-      ? content.sections.find((section) => section.id === view) ?? null
+      ? (content.sections.find((section) => section.id === view) ?? null)
       : null
 
   const activeLabel =
@@ -451,7 +453,7 @@ export function Editor({
         description:
           saveStateRef.current === "conflict"
             ? "Another version was saved elsewhere. Load it or keep your version first."
-            : saveError ?? "Check your connection and try again.",
+            : (saveError ?? "Check your connection and try again."),
       })
       return
     }
@@ -488,24 +490,13 @@ export function Editor({
   const saveCopy = SAVE_COPY[saveState]
 
   return (
-    <div className="min-h-screen bg-muted/25">
-      <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur-md">
-        <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center gap-2 px-3 py-2 sm:px-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 text-xs text-muted-foreground"
-            nativeButton={false}
-            render={<Link href="/dashboard" />}
-          >
-            <IconArrowLeft data-icon="inline-start" />
-            Dashboard
-          </Button>
-
-          <span className="hidden h-5 w-px bg-border sm:block" />
-          <Brand href="/dashboard" className="hidden sm:inline-flex" />
-
-          <div className="ml-1 hidden min-w-0 flex-col sm:flex">
+    <div className="min-h-screen">
+      <header className="sticky top-(--app-header-height) z-30 border-b bg-background/90 backdrop-blur-md">
+        <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-2 px-4 py-2 sm:px-6">
+          <div className="flex min-w-0 items-baseline gap-1.5">
+            <span className="hidden font-heading text-xs font-semibold sm:inline">
+              Editing
+            </span>
             <span className="truncate font-mono text-[0.65rem] text-muted-foreground">
               /{username}
             </span>
@@ -516,7 +507,9 @@ export function Editor({
               aria-live="polite"
               className="mr-1 hidden items-center gap-1.5 text-[0.65rem] text-muted-foreground md:flex"
             >
-              <span className={cn("size-1.5 rounded-full", saveCopy.className)} />
+              <span
+                className={cn("size-1.5 rounded-full", saveCopy.className)}
+              />
               {saveCopy.label}
               {saveState === "saved" ? (
                 <span className="text-muted-foreground/60">
@@ -587,7 +580,7 @@ export function Editor({
 
       {bannerOpen ? (
         <div className="border-b border-emerald-600/20 bg-emerald-500/5">
-          <div className="mx-auto flex w-full max-w-7xl items-start gap-3 px-4 py-2.5">
+          <div className="mx-auto flex w-full max-w-6xl items-start gap-3 px-4 py-2.5 sm:px-6">
             <IconCheck className="mt-0.5 size-4 shrink-0 text-emerald-700 dark:text-emerald-400" />
             <p className="flex-1 text-xs leading-relaxed">
               Start wherever you like. Every change saves automatically; your
@@ -607,7 +600,7 @@ export function Editor({
 
       {saveState === "conflict" || saveState === "error" ? (
         <div className="border-b border-destructive/20 bg-destructive/5">
-          <div className="mx-auto flex w-full max-w-7xl flex-wrap items-start gap-3 px-4 py-2.5">
+          <div className="mx-auto flex w-full max-w-6xl flex-wrap items-start gap-3 px-4 py-2.5 sm:px-6">
             <IconAlertTriangle className="mt-0.5 size-4 shrink-0 text-destructive" />
             <div className="min-w-0 flex-1">
               <p className="text-xs font-medium">
@@ -625,7 +618,11 @@ export function Editor({
                 <AlertDialog open={reloadOpen} onOpenChange={setReloadOpen}>
                   <AlertDialogTrigger
                     render={
-                      <Button variant="outline" size="sm" className="h-7 text-xs" />
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-7 text-xs"
+                      />
                     }
                   >
                     Load latest
@@ -679,8 +676,8 @@ export function Editor({
         </div>
       ) : null}
 
-      <div className="mx-auto grid w-full max-w-7xl gap-4 px-3 py-4 sm:px-4 lg:grid-cols-[240px_minmax(0,1fr)]">
-        <aside className="space-y-3 lg:sticky lg:top-[3.6rem] lg:self-start">
+      <div className="mx-auto grid w-full max-w-6xl gap-4 px-4 py-4 sm:px-6 lg:grid-cols-[240px_minmax(0,1fr)]">
+        <aside className="space-y-3 lg:sticky lg:top-[calc(var(--app-header-height)+var(--editor-header-height)+0.75rem)] lg:self-start">
           <div className="rounded-xl border bg-card p-1.5">
             <button
               type="button"
@@ -711,12 +708,12 @@ export function Editor({
           </div>
 
           <div className="rounded-xl border bg-card p-1.5">
-            <div className="flex items-center justify-between px-1.5 pb-1.5 pt-1">
-              <span className="flex items-center gap-1.5 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
+            <div className="flex items-center justify-between px-1.5 pt-1 pb-1.5">
+              <span className="flex items-center gap-1.5 text-[0.65rem] font-semibold tracking-widest text-muted-foreground uppercase">
                 <IconLayoutSidebar className="size-3" />
                 Sections
               </span>
-              <span className="text-[0.6rem] tabular-nums text-muted-foreground">
+              <span className="text-[0.6rem] text-muted-foreground tabular-nums">
                 {content.sections.length}
               </span>
             </div>
@@ -804,7 +801,7 @@ export function Editor({
                     {activeLabel}
                   </h1>
                   {selectedSection ? (
-                    <span className="rounded-full border bg-muted/40 px-1.5 py-0.5 text-[0.55rem] uppercase tracking-[0.1em] text-muted-foreground">
+                    <span className="rounded-full border bg-muted/40 px-1.5 py-0.5 text-[0.55rem] tracking-widest text-muted-foreground uppercase">
                       {selectedSection.type}
                     </span>
                   ) : null}
@@ -864,8 +861,8 @@ export function Editor({
                           Remove {sectionLabel(selectedSection)}?
                         </AlertDialogTitle>
                         <AlertDialogDescription>
-                          Its content is deleted from this draft. Changes won&apos;t
-                          affect the live page until you publish.
+                          Its content is deleted from this draft. Changes
+                          won&apos;t affect the live page until you publish.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -921,7 +918,8 @@ export function Editor({
           </div>
 
           <p className="mt-3 text-center text-[0.65rem] text-muted-foreground lg:text-left">
-            Draft changes are private. {status === "published"
+            Draft changes are private.{" "}
+            {status === "published"
               ? "Your live page keeps its last published version until you publish again."
               : "Nothing is public until you publish."}
           </p>
@@ -946,7 +944,9 @@ export function Editor({
                 className="rounded-lg border bg-background px-3 py-2.5 text-left transition-colors hover:border-foreground/30 hover:bg-muted/40"
               >
                 <span className="flex items-center justify-between gap-2">
-                  <span className="text-sm font-medium">{sectionIcon(type)}</span>
+                  <span className="text-sm font-medium">
+                    {sectionIcon(type)}
+                  </span>
                   <IconPlus className="size-3.5 text-muted-foreground" />
                 </span>
                 <span className="mt-0.5 block text-[0.65rem] leading-relaxed text-muted-foreground">
@@ -1001,7 +1001,7 @@ export function Editor({
                 render={<a href="/preview" target="_blank" rel="noreferrer" />}
               >
                 Full preview
-                <IconArrowUpRight data-icon="inline-end" />
+                <IconArrowUpRight />
               </Button>
             </div>
           </DialogHeader>
@@ -1013,9 +1013,7 @@ export function Editor({
               title="Portfolio draft preview"
               className={cn(
                 "h-full rounded-md border bg-white shadow-sm transition-[width] duration-200",
-                previewDevice === "mobile"
-                  ? "w-[390px] max-w-full"
-                  : "w-full"
+                previewDevice === "mobile" ? "w-97.5 max-w-full" : "w-full"
               )}
             />
           </div>
@@ -1071,8 +1069,8 @@ export function Editor({
             </div>
             <DialogTitle>Almost there — a few loose ends</DialogTitle>
             <DialogDescription>
-              Publishing is paused so visitors don&apos;t see an unfinished page.
-              Fix these, then publish again.
+              Publishing is paused so visitors don&apos;t see an unfinished
+              page. Fix these, then publish again.
             </DialogDescription>
           </DialogHeader>
           <ul className="max-h-[45vh] space-y-2 overflow-y-auto pr-1">
@@ -1099,10 +1097,7 @@ export function Editor({
             ))}
           </ul>
           <div className="flex justify-end">
-            <Button
-              className="h-8 text-xs"
-              onClick={() => setIssues(null)}
-            >
+            <Button className="h-8 text-xs" onClick={() => setIssues(null)}>
               Got it
             </Button>
           </div>
