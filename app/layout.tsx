@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next"
 import {
-  Fraunces,
-  Geist,
-  Geist_Mono,
-  Instrument_Serif,
-  Space_Grotesk,
+  IBM_Plex_Sans,
+  Lato,
+  Libre_Franklin,
+  Merriweather,
+  Poppins,
+  Source_Sans_3,
+  Source_Serif_4,
 } from "next/font/google"
+import { Geist_Mono } from "next/font/google"
 
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
@@ -14,28 +17,60 @@ import { TooltipProvider } from "@/components/ui/tooltip"
 import { APP_DESCRIPTION, APP_NAME, SITE_URL } from "@/lib/config"
 import { cn } from "@/lib/utils"
 
-const spaceGroteskHeading = Space_Grotesk({
+/**
+ * The product UI is tuned for a wide, middle-aged and older audience:
+ * a highly legible sans for body copy and a warm serif for headings.
+ */
+const sourceSans = Source_Sans_3({
   subsets: ["latin"],
-  variable: "--font-heading",
+  variable: "--font-sans",
+  display: "swap",
 })
 
-const geist = Geist({ subsets: ["latin"], variable: "--font-sans" })
+const sourceSerif = Source_Serif_4({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+})
 
 const fontMono = Geist_Mono({
   subsets: ["latin"],
   variable: "--font-mono",
-})
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-editorial",
   display: "swap",
 })
 
-const instrumentSerif = Instrument_Serif({
+/** Portfolio font pairs. */
+const poppins = Poppins({
   subsets: ["latin"],
-  weight: "400",
-  variable: "--font-instrument",
+  weight: ["400", "500", "600", "700", "800"],
+  variable: "--font-poppins",
+  display: "swap",
+})
+
+const merriweather = Merriweather({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-merriweather",
+  display: "swap",
+})
+
+const lato = Lato({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-lato",
+  display: "swap",
+})
+
+const libreFranklin = Libre_Franklin({
+  subsets: ["latin"],
+  variable: "--font-libre",
+  display: "swap",
+})
+
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-plex",
   display: "swap",
 })
 
@@ -65,8 +100,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f7f3ec" },
-    { media: "(prefers-color-scheme: dark)", color: "#14110e" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1220" },
   ],
 }
 
@@ -81,12 +116,15 @@ export default function RootLayout({
       suppressHydrationWarning
       className={cn(
         "antialiased",
-        fontMono.variable,
         "font-sans",
-        geist.variable,
-        spaceGroteskHeading.variable,
-        fraunces.variable,
-        instrumentSerif.variable
+        sourceSans.variable,
+        sourceSerif.variable,
+        fontMono.variable,
+        poppins.variable,
+        merriweather.variable,
+        lato.variable,
+        libreFranklin.variable,
+        ibmPlexSans.variable
       )}
     >
       <body>

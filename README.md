@@ -1,9 +1,11 @@
 # Folio — dynamic portfolio builder
 
-Folio is a small portfolio platform built with Next.js. An account owns one
-portfolio, writes it in a section-based editor, previews it, and publishes it to
-a public address. Draft edits never touch the live page until the owner
-publishes. An admin dashboard lists users and portfolios.
+Folio is a small business website and portfolio platform built with Next.js. An
+account owns one portfolio, writes it in a section-based editor, previews it, and
+publishes it to a public address. Draft edits never touch the live page until the
+owner publishes. Every public site uses the business-first **Studio** design and
+includes a contact form that delivers enquiries to an in-app inbox. Admins can
+review the platform, edit any portfolio, and audit administrative changes.
 
 ## Stack
 
@@ -45,6 +47,7 @@ Open <http://localhost:3000>.
    - `supabase/migrations/20261024000000_initial_schema.sql`
    - `supabase/migrations/20261024000100_publish_separate_snapshot.sql`
    - `supabase/migrations/20261025000000_fix_revision_ambiguity.sql`
+   - `supabase/migrations/20261028000000_business_platform.sql`
 3. In **Authentication → URL configuration**, set the Site URL to
    `NEXT_PUBLIC_SITE_URL` and add these redirect URLs:
    - `http://localhost:3000/auth/callback`
@@ -85,6 +88,26 @@ where email = 'you@example.com';
 ```
 
 Sign out and back in, then open `/admin`. There is no in-app way to grant admin.
+
+Admins can open any portfolio at `/admin/portfolios/<id>` and edit it with the
+same editor owners use. Saves, publishes, and unpublishes go through
+`admin_*` RPCs that re-check `public.is_admin()` and append to
+`admin_audit_log`. Recent entries are listed at `/admin/audit`. Admin MFA is not
+implemented yet.
+
+## Messages
+
+The public contact form stores enquiries in `portfolio_messages` via the
+`send_portfolio_message` function. Owners read their own inbox at `/messages`;
+admins see enquiries across every portfolio. Messages can be marked read/unread
+or deleted, and replies use the visitor's email, phone, or WhatsApp link.
+
+## Public site
+
+Published portfolios use the **Studio** design: hero, quick actions, about,
+mission, services, events, products, gallery, videos, payment QR, contact form,
+share QR codes, a floating contact widget, and a platform promotion banner. The
+banner is fixed, rotates short messages, and is excluded from preview.
 
 ## Public URL modes
 
@@ -132,7 +155,7 @@ npm run test:watch # Vitest in watch mode
 app/                 routes: marketing, auth, onboarding, app shell, public pages
 components/editor/   editor shell, section forms, design/media panels
 components/portfolio/ public renderer and template CSS
-lib/actions/         server actions (auth, portfolio, media)
+lib/actions/         server actions (auth, portfolio, media, admin, inbox, messages)
 lib/portfolio/       Zod schemas, defaults, publish rules, templates, media helpers
 lib/supabase/        browser/server/proxy clients and database types
 supabase/migrations/ database schema, policies, RPCs, storage policies
@@ -159,7 +182,7 @@ See `DECISIONS.md` for the reasoning and trade-offs.
 - username/reserved-name/redirect safety rules,
 - Zod content validation (unsafe URLs, duplicate sections, palette values),
 - draft/published isolation, media collection, and publish validation,
-- renderer smoke tests across all four templates, hidden sections, and escaped
+- renderer smoke tests for the Studio design, hidden sections, and escaped
   markup.
 
 The tests do not spin up a database. RLS/RPC behaviour should also be verified
@@ -167,7 +190,7 @@ against the Supabase project (see `DECISIONS.md`).
 
 ## Deployment checklist
 
-1. Apply all three migrations to the production Supabase project.
+1. Apply all four migrations to the production Supabase project.
 2. Add the production `/auth/callback` URL in Supabase.
 3. Set all environment variables in Vercel.
 4. For subdomain mode, add `*.your-domain` and its DNS record in Vercel.

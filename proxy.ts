@@ -8,6 +8,7 @@ const APP_ROUTE_PREFIXES = [
   "/editor",
   "/settings",
   "/admin",
+  "/admin-preview",
   "/onboarding",
   "/login",
   "/register",

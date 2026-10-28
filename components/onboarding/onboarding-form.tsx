@@ -127,9 +127,9 @@ export function OnboardingForm({
               Step 1 of 2
             </p>
             <h1 className="mt-3 font-heading text-4xl leading-[1.02] font-semibold tracking-[-0.04em]">
-              Give the page
+              Give your
               <br />
-              a name.
+              business a name.
             </h1>
             <p className="mt-3 max-w-sm text-sm leading-relaxed text-muted-foreground">
               This is the groundwork. Everything here can be changed later in
@@ -139,14 +139,14 @@ export function OnboardingForm({
 
           <div className="space-y-5 rounded-2xl border bg-card p-5 shadow-sm">
             <Field>
-              <FieldLabel htmlFor="fullName">Your name</FieldLabel>
+              <FieldLabel htmlFor="fullName">Business or owner name</FieldLabel>
               <Input
                 id="fullName"
                 name="fullName"
                 value={name}
                 onChange={(event) => setName(event.target.value)}
-                autoComplete="name"
-                placeholder="Avery Morgan"
+                autoComplete="organization"
+                placeholder="Quinn Studio"
                 required
                 minLength={2}
                 maxLength={80}
@@ -203,12 +203,12 @@ export function OnboardingForm({
 
             <Field>
               <FieldLabel htmlFor="headline">
-                Headline <span className="font-normal text-muted-foreground">(optional)</span>
+                What you do <span className="font-normal text-muted-foreground">(optional)</span>
               </FieldLabel>
               <Input
                 id="headline"
                 name="headline"
-                placeholder="Product designer & occasional writer"
+                placeholder="Interior design studio"
                 maxLength={160}
                 className="h-10 text-sm"
               />
@@ -234,16 +234,17 @@ export function OnboardingForm({
               Step 2 of 2
             </p>
             <h2 className="mt-3 font-heading text-2xl font-semibold tracking-[-0.03em]">
-              Pick a starting point.
+              Your design is ready.
             </h2>
             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-              Switch templates whenever you like — your words stay put.
+              Studio is built for service businesses. Add colour, type, and
+              content in the editor.
             </p>
           </div>
 
           <div
             role="radiogroup"
-            aria-label="Portfolio template"
+            aria-label="Website design"
             className="grid gap-3 sm:grid-cols-2"
           >
             {TEMPLATES.map((item) => {
@@ -301,7 +302,8 @@ export function OnboardingForm({
 
       <div className="flex flex-col-reverse items-stretch justify-between gap-4 border-t pt-6 sm:flex-row sm:items-center">
         <p className="text-xs text-muted-foreground">
-          Not sure yet? Start anywhere. The template is never permanent.
+          Not sure yet? Start anywhere. Colours, type, and content are never
+          permanent.
         </p>
         <Button
           type="submit"
@@ -309,7 +311,7 @@ export function OnboardingForm({
           disabled={pending || usernameBlocked}
         >
           {pending ? <Spinner className="size-4" /> : null}
-          {pending ? "Building your page…" : "Create my portfolio"}
+          {pending ? "Building your site…" : "Create my website"}
         </Button>
       </div>
     </form>

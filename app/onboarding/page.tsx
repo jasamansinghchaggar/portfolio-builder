@@ -8,27 +8,14 @@ import { OnboardingForm } from "@/components/onboarding/onboarding-form"
 import { Button } from "@/components/ui/button"
 import { logoutAction } from "@/lib/actions/auth"
 import { getMyPortfolio, requireUser, getProfile } from "@/lib/auth"
-import { TEMPLATE_IDS, type TemplateId } from "@/lib/portfolio/constants"
+import { DEFAULT_TEMPLATE_ID } from "@/lib/portfolio/templates"
 
 export const metadata: Metadata = {
   title: "Set up your portfolio",
-  description: "Name your portfolio, choose a template, and start writing.",
+  description: "Name your business, add your details, and start building.",
 }
 
-type PageProps = {
-  searchParams: Promise<{ template?: string | string[] }>
-}
-
-export default async function OnboardingPage({ searchParams }: PageProps) {
-  const params = await searchParams
-  const requested = Array.isArray(params.template)
-    ? params.template[0]
-    : params.template
-  const templateId =
-    requested && TEMPLATE_IDS.includes(requested as TemplateId)
-      ? (requested as TemplateId)
-      : "atlas"
-
+export default async function OnboardingPage() {
   const { userId } = await requireUser("/onboarding")
   const portfolio = await getMyPortfolio(userId)
   if (portfolio) redirect("/dashboard")
@@ -71,7 +58,7 @@ export default async function OnboardingPage({ searchParams }: PageProps) {
       <main className="relative mx-auto w-full max-w-5xl px-5 py-10 sm:px-8 sm:py-14">
         <OnboardingForm
           fullName={profile?.full_name ?? ""}
-          templateId={templateId}
+          templateId={DEFAULT_TEMPLATE_ID}
         />
       </main>
     </div>

@@ -11,16 +11,25 @@ export function createSampleContent(
   templateId: TemplateId = DEFAULT_TEMPLATE_ID
 ): PortfolioContent {
   return {
-    version: 1,
-    templateId,
+    version: 2,
+    templateId: "studio",
     design: templateDesign(templateId),
     basics: {
       fullName: "Avery Quinn",
       headline: "Product designer & systems thinker",
       location: "Brooklyn, NY",
       email: "hello@averyquinn.design",
-      phone: "",
+      phone: "+1 555 014 2200",
       avatarMediaId: null,
+      businessName: "Quinn Studio",
+      ownerName: "Avery Quinn",
+      role: "Independent product designer",
+      tagline: "Calm, useful products for teams who care about the details.",
+      whatsapp: "+1 555 014 2200",
+      website: "https://example.com",
+      address: "82 Dean Street, Brooklyn, NY",
+      heroMediaId: null,
+      logoMediaId: null,
     },
     sections: [
       {
@@ -52,6 +61,10 @@ export function createSampleContent(
           "Comfortable leading research through to shipped UI",
           "Fluent in Figma, code, and cross-functional translation",
         ],
+        tag: "A little about us",
+        messageTitle: "A personal note",
+        message:
+          "If you are not sure where to start, that is completely fine. Most good projects begin with an unfinished thought and a short conversation.",
       },
       {
         id: sampleId(3),
@@ -223,6 +236,163 @@ export function createSampleContent(
               "A focused review of your current product, with clear recommendations and a working session for your team.",
           },
         ],
+        ctaText:
+          "Tell us what you are working on. We will reply with a clear plan, a timeline, and the next step.",
+        ctaLabel: "Start a conversation",
+        ctaUrl: "#section-contact",
+      },
+      {
+        id: sampleId(13),
+        type: "mission",
+        visible: true,
+        title: "Our mission",
+        intro: "Three promises we keep on every project.",
+        items: [
+          {
+            id: sampleId(1001),
+            title: "Listen first",
+            text: "We start with your customers, your constraints, and the outcome you actually need.",
+          },
+          {
+            id: sampleId(1002),
+            title: "Make it clear",
+            text: "Every decision is explained in plain language. No jargon and no surprises.",
+          },
+          {
+            id: sampleId(1003),
+            title: "Leave it stronger",
+            text: "You get a system your team can run without us in the room.",
+          },
+        ],
+      },
+      {
+        id: sampleId(14),
+        type: "events",
+        visible: true,
+        title: "Events & announcements",
+        intro: "A few things coming up this season.",
+        items: [
+          {
+            id: sampleId(1101),
+            title: "Studio open week",
+            theme: "Meet the team",
+            text: "A relaxed hour to talk through your project, see recent work, and ask anything.",
+            meta: ["12 November", "Brooklyn studio", "Free"],
+            list: ["Bring a rough idea", "Tea and pastries", "No pitch deck needed"],
+            quote: "The best conversations usually start with a question, not a proposal.",
+          },
+        ],
+      },
+      {
+        id: sampleId(15),
+        type: "products",
+        visible: true,
+        title: "Products",
+        intro: "Small, useful things we make alongside client work.",
+        items: [
+          {
+            id: sampleId(1201),
+            title: "Fieldnotes workbook",
+            description: "A printed workbook for running calmer customer interviews.",
+            price: "$28",
+            imageMediaId: null,
+            url: "https://example.com/fieldnotes",
+          },
+          {
+            id: sampleId(1202),
+            title: "Orbit pattern library",
+            description: "Twelve composable scheduling patterns with the decisions behind them.",
+            price: "$42",
+            imageMediaId: null,
+            url: "https://example.com/orbit",
+          },
+        ],
+      },
+      {
+        id: sampleId(16),
+        type: "gallery",
+        visible: true,
+        title: "Our work",
+        intro: "A look at recent projects, spaces, and details.",
+        items: [
+          {
+            id: sampleId(1301),
+            title: "Northwind cockpit",
+            caption: "A calmer daily view for a treasury team.",
+            imageMediaId: null,
+          },
+          {
+            id: sampleId(1302),
+            title: "Loomwork studio",
+            caption: "A tactile brand and product system.",
+            imageMediaId: null,
+          },
+          {
+            id: sampleId(1303),
+            title: "Fieldnotes kit",
+            caption: "Research tools that work offline.",
+            imageMediaId: null,
+          },
+        ],
+      },
+      {
+        id: sampleId(17),
+        type: "videos",
+        visible: true,
+        title: "Videos",
+        intro: "Short walkthroughs and conversations.",
+        items: [
+          {
+            id: sampleId(1401),
+            title: "How we start a project",
+            youtubeId: "dQw4w9WgXcQ",
+          },
+        ],
+      },
+      {
+        id: sampleId(18),
+        type: "payment",
+        visible: true,
+        title: "Payments",
+        subtitle: "Pay a deposit or a small invoice in a few seconds.",
+        heading: "Scan to pay with any UPI app",
+        upiId: "quinnstudio@example",
+        payeeName: "Quinn Studio",
+        qrMediaId: null,
+      },
+      {
+        id: sampleId(19),
+        type: "socials",
+        visible: true,
+        title: "Follow us",
+        intro: "New work, notes, and the occasional studio photo.",
+        items: [
+          {
+            id: sampleId(1501),
+            platform: "Instagram",
+            url: "https://www.instagram.com",
+          },
+          {
+            id: sampleId(1502),
+            platform: "Facebook",
+            url: "https://www.facebook.com",
+          },
+          {
+            id: sampleId(1503),
+            platform: "LinkedIn",
+            url: "https://www.linkedin.com",
+          },
+        ],
+      },
+      {
+        id: sampleId(20),
+        type: "qr",
+        visible: true,
+        title: "Scan and connect",
+        intro: "Save our website, WhatsApp, and Instagram with a single scan.",
+        websiteUrl: "https://example.com",
+        whatsappUrl: "https://wa.me/15550142200",
+        instagramUrl: "https://www.instagram.com",
       },
       {
         id: sampleId(7),
@@ -335,7 +505,7 @@ export function createSampleContent(
         message:
           "I'm currently booking projects for the next quarter. If you have something tangled and interesting, I'd love to hear about it.",
         email: "hello@averyquinn.design",
-        phone: "",
+        phone: "+1 555 014 2200",
         location: "Brooklyn, NY",
         links: [
           {
@@ -354,6 +524,11 @@ export function createSampleContent(
             url: "https://read.cv",
           },
         ],
+        subtitle: "We usually reply within one working day.",
+        whatsapp: "+1 555 014 2200",
+        address: "82 Dean Street, Brooklyn, NY",
+        formTitle: "Send us a message",
+        formNote: "Tell us a little about what you need. We will take it from there.",
       },
     ],
   }

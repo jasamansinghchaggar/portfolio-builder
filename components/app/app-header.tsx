@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   IconLayoutDashboard,
+  IconMessage,
   IconPencil,
   IconSettings,
   IconShieldLock,
@@ -49,9 +50,12 @@ export function AppHeader({
     ...(hasPortfolio
       ? [
           { href: "/editor", label: "Editor", icon: IconPencil },
+          { href: "/messages", label: "Messages", icon: IconMessage },
           { href: "/settings", label: "Settings", icon: IconSettings },
         ]
-      : []),
+      : isAdmin
+        ? [{ href: "/messages", label: "Messages", icon: IconMessage }]
+        : []),
     ...(isAdmin
       ? [{ href: "/admin", label: "Admin", icon: IconShieldLock }]
       : []),

@@ -20,55 +20,54 @@ import { APP_NAME } from "@/lib/config"
 import { TEMPLATES } from "@/lib/portfolio/templates"
 
 export const metadata: Metadata = {
-  title: "A portfolio that feels like you",
+  title: "A website that works as hard as you do",
   description:
-    "Build a polished portfolio in an afternoon. Write your story, choose a template, preview every detail, and publish one link.",
+    "Build a polished business website in an afternoon. Show your services, photos, products, and payment QR code, take enquiries, and publish one link.",
 }
 
 const FEATURES = [
   {
     icon: IconLayoutGrid,
-    title: "Sections that fit",
-    body: "Twelve purpose-built section types — from projects and experience to services and testimonials. Add, hide, and reorder without touching layout code.",
+    title: "Sections that fit a business",
+    body: "Services, events, products, photos, videos, a payment QR code, and a contact form — add, hide, and reorder without touching layout code.",
   },
   {
     icon: IconEye,
     title: "Preview before you publish",
-    body: "See the real page at desktop and mobile sizes. Your published site only changes when you say so.",
+    body: "See the real page at desktop and mobile sizes. Your live site only changes when you say so.",
   },
   {
     icon: IconShieldLock,
-    title: "Drafts stay private",
-    body: "Editing never quietly rewrites your live page. Draft and published content live separately until you hit publish.",
+    title: "Enquiries in one inbox",
+    body: "Messages from your contact form arrive in the app. Reply by email, phone, or WhatsApp without losing the thread.",
   },
   {
     icon: IconPhoto,
     title: "Images, handled",
-    body: "Upload a portrait, project shots, or a CV. Files are validated, resized, and served privately until they belong to a published page.",
+    body: "Upload a logo, hero photo, gallery, or product shots. Files are validated, resized, and served privately until they belong to a published page.",
   },
 ]
 
 const STEPS = [
   {
     number: "01",
-    title: "Pick a starting point",
-    body: "Choose one of four distinct templates, then make it yours with a colour, type pairing, and corner style.",
+    title: "Add your business",
+    body: "Your name, role, tagline, phone, WhatsApp, and address. Pick a colour and a readable font pair.",
   },
   {
     number: "02",
-    title: "Tell the story",
-    body: "Add the sections that matter. Write in plain language, reorder the page, and leave anything unfinished hidden.",
+    title: "Show what you offer",
+    body: "Add services, products, events, photos, and a payment QR code. Write in plain language and hide anything unfinished.",
   },
   {
     number: "03",
     title: "Publish the link",
-    body: "Preview desktop and mobile, fix anything the publish check flags, and share your own corner of the web.",
+    body: "Preview desktop and mobile, fix anything the publish check flags, and share one link everywhere.",
   },
 ]
 
 export default async function HomePage() {
-  const atlas = TEMPLATES[0]
-  const signal = TEMPLATES[1]
+  const studio = TEMPLATES[0]
   const { userId } = await getAuthUserId()
   const signedIn = Boolean(userId)
 
@@ -90,19 +89,19 @@ export default async function HomePage() {
             <div>
               <p className="inline-flex items-center gap-2 rounded-full border bg-background/60 px-3 py-1 text-xs text-muted-foreground backdrop-blur">
                 <IconSparkles className="size-3.5 text-amber-700 dark:text-amber-400" />
-                Four hand-built templates. One honest story.
+                One beautiful business website. Built in minutes.
               </p>
               <h1 className="mt-6 max-w-[15ch] font-heading text-5xl leading-[0.94] font-semibold tracking-[-0.045em] sm:text-6xl lg:text-7xl">
-                Your work deserves a{" "}
+                Your business deserves a{" "}
                 <span className="font-serif text-amber-800 italic dark:text-amber-400">
                   proper
                 </span>{" "}
                 home.
               </h1>
               <p className="mt-6 max-w-xl text-base leading-relaxed text-muted-foreground sm:text-lg">
-                {APP_NAME} is a focused portfolio builder for designers,
-                engineers, writers, and anyone with something worth showing.
-                Choose a shape, write the story, publish one link.
+                {APP_NAME} is a focused website builder for shops, studios,
+                trades, and independent services. Show what you do, take
+                enquiries, and publish one link.
               </p>
               <div className="mt-8 flex flex-wrap items-center gap-3">
                 <Button
@@ -110,14 +109,14 @@ export default async function HomePage() {
                   nativeButton={false}
                   render={<Link href={signedIn ? "/dashboard" : "/register"} />}
                 >
-                  {signedIn ? "Go to your dashboard" : "Build your portfolio"}
+                  {signedIn ? "Go to your dashboard" : "Build your website"}
                   <IconArrowRight />
                 </Button>
                 <Button
                   variant="outline"
                   className="h-11 px-5 text-sm"
                   nativeButton={false}
-                  render={<Link href="/template-preview/atlas" />}
+                  render={<Link href="/template-preview/studio" />}
                 >
                   See a live example
                   <IconArrowUpRight />
@@ -141,29 +140,28 @@ export default async function HomePage() {
                 className="absolute inset-x-6 top-8 bottom-8 rounded-full bg-amber-200/30 blur-3xl dark:bg-amber-500/10"
               />
               <Link
-                href={`/template-preview/${atlas.id}`}
-                className="relative block w-[84%] rotate-[-2.5deg] rounded-2xl border bg-card p-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1 hover:rotate-0"
+                href={`/template-preview/${studio.id}`}
+                className="relative block rounded-2xl border bg-card p-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1"
               >
-                <TemplateThumbnail template={atlas} className="rounded-xl" />
+                <TemplateThumbnail template={studio} className="rounded-xl" />
                 <span className="flex items-center justify-between px-1.5 pt-2 pb-0.5 text-xs">
-                  <span className="font-medium">Atlas</span>
+                  <span className="font-medium">{studio.name}</span>
                   <span className="flex items-center gap-1 text-muted-foreground">
                     Preview <IconArrowUpRight className="size-3.5" />
                   </span>
                 </span>
               </Link>
-              <Link
-                href={`/template-preview/${signal.id}`}
-                className="absolute right-0 bottom-0 w-[58%] rotate-3 rounded-2xl border bg-card p-2 shadow-2xl transition-transform duration-300 hover:-translate-y-1 hover:rotate-0"
-              >
-                <TemplateThumbnail template={signal} className="rounded-xl" />
-                <span className="flex items-center justify-between px-1.5 pt-2 pb-0.5 text-xs">
-                  <span className="font-medium">Signal</span>
-                  <span className="flex items-center gap-1 text-muted-foreground">
-                    Preview <IconArrowUpRight className="size-3.5" />
+              <div className="absolute -bottom-2 left-3 flex items-center gap-2 rounded-xl border bg-background px-3 py-2 text-xs shadow-lg sm:left-6">
+                <span className="grid size-7 place-items-center rounded-full bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
+                  <IconCheck className="size-4" />
+                </span>
+                <span>
+                  <span className="block font-medium">Contact form included</span>
+                  <span className="text-muted-foreground">
+                    Enquiries land in your inbox
                   </span>
                 </span>
-              </Link>
+              </div>
             </div>
           </div>
         </section>
@@ -176,19 +174,21 @@ export default async function HomePage() {
             <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
               <div>
                 <p className="text-xs font-medium tracking-[0.18em] text-amber-800 uppercase dark:text-amber-400">
-                  Templates
+                  The design
                 </p>
                 <h2 className="mt-3 max-w-[16ch] font-heading text-4xl leading-[1.02] font-semibold tracking-[-0.04em] sm:text-5xl">
-                  Four starting points. One you.
+                  One thoughtful design. Made yours.
                 </h2>
               </div>
               <p className="max-w-xl text-sm leading-relaxed text-muted-foreground lg:justify-self-end lg:text-base">
-                Each template has its own voice and layout logic. Switch at any
-                time — your words, sections, and media stay put.
+                Studio is built for real businesses: clear sections, readable
+                type, and room for photos, products, and payment details. Make
+                it yours with colour, font pair, corners, and a light or dark
+                look.
               </p>
             </div>
 
-            <div className="mt-10 grid gap-5 sm:grid-cols-2">
+            <div className="mt-10 grid gap-5 sm:max-w-2xl">
               {TEMPLATES.map((template) => (
                 <Link
                   key={template.id}
@@ -273,7 +273,7 @@ export default async function HomePage() {
                     Responsive by default
                   </h3>
                   <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                    Every template is built for real phones, not just a narrow
+                    The page is built for real phones, not just a narrow
                     browser window. Type scales, grids collapse, navigation
                     becomes a menu.
                   </p>
@@ -319,7 +319,7 @@ export default async function HomePage() {
                 nativeButton={false}
                 render={<Link href={signedIn ? "/editor" : "/register"} />}
               >
-                {signedIn ? "Continue in the editor" : "Start with a template"}
+                {signedIn ? "Continue in the editor" : "Start building"}
                 <IconArrowRight />
               </Button>
             </div>
@@ -372,7 +372,7 @@ export default async function HomePage() {
                 <p className="mt-5 max-w-xl text-sm leading-relaxed text-[#cabfae] sm:text-base">
                   {signedIn
                     ? "Your draft is exactly where you left it. Pick up the story, check the preview, and publish when it feels right."
-                    : "Create an account, pick a template, and have a portfolio link to share before the day is out. Free to start."}
+                    : "Create an account, add your business details, and have a website link to share before the day is out. Free to start."}
                 </p>
                 <div className="mt-8 flex flex-wrap gap-3">
                   <Button
@@ -382,7 +382,7 @@ export default async function HomePage() {
                       <Link href={signedIn ? "/dashboard" : "/register"} />
                     }
                   >
-                    {signedIn ? "Open your dashboard" : "Create your portfolio"}
+                    {signedIn ? "Open your dashboard" : "Create your website"}
                     <IconArrowRight />
                   </Button>
                   <Button
@@ -392,7 +392,7 @@ export default async function HomePage() {
                     render={<Link href={signedIn ? "/#templates" : "/login"} />}
                   >
                     {signedIn
-                      ? "Browse templates"
+                      ? "See the design"
                       : "I already have an account"}
                   </Button>
                 </div>

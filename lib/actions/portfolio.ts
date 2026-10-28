@@ -16,6 +16,7 @@ import {
 import { buildPublishSnapshot } from "@/lib/portfolio/publish"
 import { formatZodIssues } from "@/lib/portfolio/schemas"
 import { TEMPLATE_IDS, type TemplateId } from "@/lib/portfolio/constants"
+import { DEFAULT_TEMPLATE_ID } from "@/lib/portfolio/templates"
 import { getAuthUserId } from "@/lib/auth"
 
 import type { ActionState, PublishResult, SaveResult } from "./state"
@@ -98,7 +99,7 @@ export async function createPortfolioAction(
   const requestedTemplate = text(formData, "templateId")
   const templateId = TEMPLATE_IDS.includes(requestedTemplate as TemplateId)
     ? (requestedTemplate as TemplateId)
-    : "atlas"
+    : DEFAULT_TEMPLATE_ID
 
   if (fullName.length < 2) {
     return { status: "error", message: "Enter your full name." }

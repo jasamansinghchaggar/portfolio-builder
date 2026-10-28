@@ -65,6 +65,7 @@ describe("publish validation", () => {
   it("requires a name and some visible substance", () => {
     const content = createSampleContent()
     content.basics.fullName = ""
+    content.basics.businessName = ""
     content.sections = content.sections.map((section) => ({
       ...section,
       visible: false,
@@ -86,11 +87,14 @@ describe("publish validation", () => {
       throw new Error("Sample content needs a contact section.")
     }
     contact.email = ""
+    contact.phone = ""
+    contact.whatsapp = ""
+    contact.address = ""
     contact.links = []
 
     const issues = validateForPublish(content)
     expect(
-      issues.some((issue) => issue.message.includes("email address or at least one contact link"))
+      issues.some((issue) => issue.message.includes("at least one contact link"))
     ).toBe(true)
   })
 

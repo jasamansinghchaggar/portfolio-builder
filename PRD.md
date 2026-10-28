@@ -1,9 +1,9 @@
 # Product Requirements Document (PRD) --- Dynamic Portfolio Builder
 
-**Document version:** 0.1\
-**Status:** Initial draft based on the agreed product scope\
+**Document version:** 0.2\
+**Status:** Updated for the business-first template and admin editing release\
 **Project type:** Internal project\
-**Last updated:** 17 October 2026
+**Last updated:** 28 October 2026
 
 ## 1. Purpose
 
@@ -16,36 +16,60 @@ produced in the following stages.
 
 ## 2. Product summary
 
-Users sign in to a central platform, create one portfolio, select a template, manage predefined sections, customise supported design settings, preview changes, and publish the result to a unique URL of the platform's main domain.
+Small businesses and service providers sign in to a central platform, create one
+website, manage business-focused sections (services, events, products, gallery,
+videos, payment QR, contact), customise supported design settings, preview
+changes, and publish the result to a unique URL on the platform's main domain.
+Every published site uses one business-first design, **Studio**.
 
-Administrators use a separate, simple dashboard to view registered users and portfolio status.
+Public visitors can browse the site and send an enquiry through a contact form;
+enquiries are stored in the owner's in-app inbox. Every public site also carries
+a fixed, platform-owned promotion banner.
+
+Administrators use a separate workspace to view registered users and portfolio
+status, edit any portfolio's draft, publish or unpublish on the owner's behalf,
+read the shared inbox, and review an audit log of administrative changes.
 
 ## 3. Goals
 
-- Make portfolio creation possible without coding.
-- Provide meaningful customisation through templates and sections.
-- Let users preview changes before publishing.
-- Serve published portfolios at stable, shareable subdomain URLs.
-- Keep the user and admin experiences straightforward.
-- Enforce ownership and privacy boundaries.
+- Make a credible business website possible without coding.
+- Give service businesses the sections they actually use: services, events,
+  products, photos, videos, payment QR codes, and contact.
+- Let owners receive and manage enquiries without a separate form service.
+- Provide meaningful customisation through colour, type, and content.
+- Let owners preview changes before publishing.
+- Serve published portfolios at stable, shareable URLs.
+- Let administrators support owners by editing and publishing safely.
+- Keep the user and admin experiences readable for a middle-aged and older
+  audience.
+- Enforce ownership, privacy, and audit boundaries.
 
 ## 4. Non-goals
 
-The MVP will not include: - A free-form drag-and-drop website canvas - Multiple portfolios per account - Custom domains - Payments, subscriptions, or billing - AI portfolio generation - Advanced analytics - Moderation or abuse reporting - Platform settings or audit logs - Full version history or complex approval workflows
+The MVP will not include: - A free-form drag-and-drop website canvas - Multiple
+portfolios per account - Custom domains - Payment processing (payment QR codes
+are displayed, not charged) - AI website generation - Advanced analytics -
+Admin MFA or step-up authentication - Full version history or complex approval
+workflows
 
 ## 5. Personas
 
-### Persona A: Individual portfolio owner
+### Persona A: Small-business owner
 
-Wants to present skills, projects, experience, education, and contact information in a professional public page.
+Wants to present a business, its owner, services, opening details, photos,
+products, and a way to get in touch, without learning a website builder.
 
 ### Persona B: Administrator
 
-Needs a simple overview of platform usage and the ability to find users and portfolios, inspect their statuses, and access relevant records.
+Needs an overview of platform usage, the ability to find users and portfolios,
+open and edit any portfolio, publish or unpublish it, read enquiries, and see a
+record of administrative changes.
 
 ### Persona C: Public visitor
 
-Wants to open a portfolio link, view its published content on desktop or mobile, and follow relevant project or contact links.
+Wants to open a business link, understand what the business offers, view photos
+or products, contact the owner, or scan a payment/contact QR code on desktop or
+mobile.
 
 ## 6. Core concepts and states
 
@@ -118,18 +142,27 @@ The user shall be able to hide a section from the public presentation without ne
 The system shall validate section fields and reject malformed or unsupported content.
 
 **FR-EDIT-07 --- Section library (P0)**\
-The initial library should support core sections such as Hero, About, Projects, Experience, Skills, Education, Certifications, Services, Testimonials, Achievements, Contact, and Resume/CV. Team and Case Studies may be included to support organisation-branded portfolios, subject to final MVP planning.
+The section library supports Hero, About, Mission, Services, Events, Products,
+Gallery, Videos, Payments, Socials, Contact, and QR sharing as business-first
+sections. Legacy section types (Projects, Experience, Skills, Education,
+Certifications, Testimonials, Achievements, Resume/CV) remain valid so existing
+content is preserved and renders inside the Studio design.
 
 ### 7.4 Template and design customisation
 
-**FR-DESIGN-01 --- Template rendering (P0)**\
-The public renderer shall present portfolio content according to the selected template.
+**FR-DESIGN-01 --- Single business template (P0)**\
+Every published site shall use the Studio design. Legacy template identifiers
+shall remain readable but resolve to Studio, and existing content shall be
+upgraded without loss.
 
 **FR-DESIGN-02 --- Content/presentation separation (P0)**\
-Portfolio content shall be stored independently from template-specific presentation rules.
+Portfolio content shall be stored independently from template-specific
+presentation rules.
 
-**FR-DESIGN-04 --- Template switching (P0)**\
-The system should preserve compatible content when a user changes templates.Unsupported fields must not be silently lost.
+**FR-DESIGN-04 --- Design customisation (P0)**\
+The owner shall be able to choose colours, a font pair, corner style, and light
+or dark appearance. Font pairs shall use readable families suitable for a
+middle-aged and older audience.
 
 **FR-DESIGN-05 --- Free-form canvas (Future)**\
 The MVP shall not provide arbitrary drag-and-drop positioning or
@@ -196,7 +229,21 @@ be handled safely.
 The system should support suitable page titles, descriptions, and
 social-sharing metadata for published portfolios.
 
-**FR-PUBLIC-07 --- Custom domains (Future)**\
+**FR-PUBLIC-07 --- Promotion banner (P0)**\
+Every public portfolio shall show a fixed, non-dismissible platform promotion
+banner with rotating messages. It shall be excluded from the editor and draft
+preview and shall not cover the site navigation.
+
+**FR-PUBLIC-08 --- Contact enquiries (P0)**\
+The public contact form shall store enquiries in the platform database and show
+them in the owner's inbox. It shall validate the visitor's name, message, and at
+least one contact method, and apply a light rate limit.
+
+**FR-PUBLIC-09 --- Payment QR display (P0)**\
+A portfolio may display either a generated UPI payment QR code or an uploaded
+QR image. The platform displays the code only and does not process payments.
+
+**FR-PUBLIC-10 --- Custom domains (Future)**\
 Users may eventually connect domains they own. This is not required for
 the MVP.
 
@@ -236,6 +283,20 @@ creation/update timestamps, and public URL where available.
 **FR-ADMIN-05 --- Basic filtering (P1)**\
 The dashboard should support basic filtering by portfolio status and
 search by user or portfolio identifier.
+
+**FR-ADMIN-06 --- Edit any portfolio (P0)**\
+An administrator shall be able to open any portfolio in an admin-scoped editor,
+save drafts, upload or delete media, and publish or unpublish it. All writes
+shall be checked against the administrator role in the database.
+
+**FR-ADMIN-07 --- Audit log (P0)**\
+Administrative saves, publishes, and unpublishes shall be recorded in an audit
+log with the actor, action, target, timestamp, and a short detail payload. The
+log shall be readable by administrators and not editable from the app.
+
+**FR-ADMIN-08 --- Shared inbox (P0)**\
+An administrator shall be able to read enquiries across every portfolio, mark
+them read or unread, and delete them.
 
 ### 7.9 Media
 
@@ -297,19 +358,24 @@ belonging to another user.
 The MVP is ready for internal evaluation when:
 
 1. A user can register, log in, and access their own dashboard.
-2. A user can create one portfolio and select a template.
+2. A user can create one business website on the Studio design.
 3. A user can add, edit, remove, hide, and reorder supported sections.
 4. A user can customise the supported design options.
 5. A user can preview the portfolio at desktop and mobile sizes.
 6. A user can save a draft and see whether saving succeeded.
 7. Draft edits do not alter the currently published version.
 8. A user can publish and unpublish a portfolio.
-9. The published portfolio resolves through the correct subdomain.
+9. The published portfolio resolves through the correct URL.
 10. Unpublished content is not available to public visitors.
 11. A user cannot edit or access another user's private portfolio data.
-12. An administrator can view basic user and portfolio information.
-13. Admin-only operations are enforced server-side.
-14. Core flows are covered by tests.
+12. A visitor can send a contact enquiry and the owner can read it at
+    `/messages`.
+13. Every public portfolio shows the non-dismissible promotion banner.
+14. An administrator can view basic user and portfolio information.
+15. An administrator can edit, publish, and unpublish any portfolio, and the
+    change appears in the audit log.
+16. Admin-only operations are enforced server-side.
+17. Core flows are covered by tests.
 
 ## 10. Dependencies and assumptions
 

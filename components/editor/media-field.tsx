@@ -20,6 +20,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Spinner } from "@/components/ui/spinner"
+import { useEditorMode } from "@/components/editor/editor-mode"
+import { adminDeleteMediaAction, adminUploadMediaAction } from "@/lib/actions/admin"
 import { deleteMediaAction, uploadMediaAction } from "@/lib/actions/media"
 import {
   isImageMime,
@@ -51,6 +53,7 @@ export function MediaField({
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const { admin, portfolioId } = useEditorMode()
 
   const selected = media.find((item) => item.id === value)
   const options = media.filter((item) =>
@@ -65,7 +68,10 @@ export function MediaField({
       const formData = new FormData()
       formData.set("file", file)
       formData.set("kind", kind)
-      const result = await uploadMediaAction(formData)
+      const result =
+        admin && portfolioId
+          ? await adminUploadMediaAction(portfolioId, formData)
+          : await uploadMediaAction(formData)
       if (!result.ok) {
         toast.error("Upload failed", { description: result.error })
         return
@@ -243,6 +249,7 @@ export function DeleteMediaButton({
 }) {
   const [open, setOpen] = useState(false)
   const [deleting, setDeleting] = useState(false)
+  const { admin } = useEditorMode()
 
   return (
     <>
@@ -283,7 +290,9 @@ export function DeleteMediaButton({
               disabled={deleting}
               onClick={async () => {
                 setDeleting(true)
-                const result = await deleteMediaAction(media.id)
+                const result = admin
+                  ? await adminDeleteMediaAction(media.id)
+                  : await deleteMediaAction(media.id)
                 setDeleting(false)
                 if (!result.ok) {
                   toast.error("Couldn't delete file", {

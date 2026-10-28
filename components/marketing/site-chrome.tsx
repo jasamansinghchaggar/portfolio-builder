@@ -30,7 +30,7 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
           </Link>
           <Link
             className="transition-colors hover:text-foreground"
-            href="/template-preview/atlas"
+            href="/template-preview/studio"
           >
             Live example
           </Link>
@@ -93,7 +93,7 @@ export function SiteFooter({ signedIn = false }: { signedIn?: boolean }) {
             <Link className="hover:underline" href="/#features">
               Features
             </Link>
-            <Link className="hover:underline" href="/template-preview/atlas">
+            <Link className="hover:underline" href="/template-preview/studio">
               Example
             </Link>
           </div>

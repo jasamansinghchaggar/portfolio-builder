@@ -60,10 +60,31 @@ export async function GET(
       .eq("user_id", userId)
       .maybeSingle()
 
-    if (!media) return notFound()
-    storagePath = media.storage_path
-    mimeType = media.mime_type
-    fileName = media.file_name
+    if (media) {
+      storagePath = media.storage_path
+      mimeType = media.mime_type
+      fileName = media.file_name
+    } else {
+      // Administrators may inspect any portfolio's private draft media.
+      const { data: profile } = await ownerClient
+        .from("profiles")
+        .select("role")
+        .eq("id", userId)
+        .maybeSingle()
+
+      if (profile?.role !== "admin") return notFound()
+
+      const { data: adminMedia } = await ownerClient
+        .from("portfolio_media")
+        .select("storage_path, mime_type, file_name")
+        .eq("id", id)
+        .maybeSingle()
+
+      if (!adminMedia) return notFound()
+      storagePath = adminMedia.storage_path
+      mimeType = adminMedia.mime_type
+      fileName = adminMedia.file_name
+    }
   }
 
   const client = ownerClient ?? createPublicClient()

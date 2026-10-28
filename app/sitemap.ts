@@ -1,8 +1,8 @@
 import type { MetadataRoute } from "next"
 
 import { SITE_URL, publicPortfolioUrl } from "@/lib/config"
-import { TEMPLATE_IDS } from "@/lib/portfolio/constants"
 import { getPublishedPortfolios } from "@/lib/portfolio/queries"
+import { TEMPLATES } from "@/lib/portfolio/templates"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -18,8 +18,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: "weekly",
       priority: 1,
     },
-    ...TEMPLATE_IDS.map((id) => ({
-      url: `${SITE_URL}/template-preview/${id}`,
+    ...TEMPLATES.map((template) => ({
+      url: `${SITE_URL}/template-preview/${template.id}`,
       lastModified: now,
       changeFrequency: "monthly" as const,
       priority: 0.6,

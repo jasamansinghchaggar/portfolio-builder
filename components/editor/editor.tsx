@@ -52,11 +52,19 @@ import {
 import { Spinner } from "@/components/ui/spinner"
 import { Switch } from "@/components/ui/switch"
 import {
+  adminLoadDraftAction,
+  adminOverwriteDraftAction,
+  adminPublishAction,
+  adminSaveDraftAction,
+  adminUnpublishAction,
+} from "@/lib/actions/admin"
+import {
   loadDraftAction,
   overwriteDraftAction,
   publishPortfolioAction,
   saveDraftAction,
 } from "@/lib/actions/portfolio"
+import { EditorModeProvider } from "@/components/editor/editor-mode"
 import { formatDateTime } from "@/lib/format"
 import { createSection } from "@/lib/portfolio/defaults"
 import type { EditorMedia } from "@/lib/portfolio/media"
@@ -93,6 +101,20 @@ function sectionIcon(type: SectionType) {
   return SECTION_LABELS[type]
 }
 
+const OWNER_ACTIONS = {
+  save: saveDraftAction,
+  overwrite: overwriteDraftAction,
+  load: loadDraftAction,
+  publish: publishPortfolioAction,
+}
+
+const ADMIN_ACTIONS = {
+  save: adminSaveDraftAction,
+  overwrite: adminOverwriteDraftAction,
+  load: adminLoadDraftAction,
+  publish: adminPublishAction,
+}
+
 export function Editor({
   portfolioId,
   username,
@@ -105,6 +127,7 @@ export function Editor({
   media: initialMedia,
   initialSectionId,
   welcome,
+  admin = false,
 }: {
   portfolioId: string
   username: string
@@ -117,8 +140,10 @@ export function Editor({
   media: EditorMedia[]
   initialSectionId?: string
   welcome?: boolean
+  admin?: boolean
 }) {
   const router = useRouter()
+  const actions = admin ? ADMIN_ACTIONS : OWNER_ACTIONS
   const [content, setContent] = useState(initialContent)
   const [media, setMedia] = useState(initialMedia)
   const [view, setView] = useState<View>(() => {
@@ -166,7 +191,7 @@ export function Editor({
       setSaveError(null)
       const snapshot = contentRef.current
       const snapshotJson = JSON.stringify(snapshot)
-      const result = await saveDraftAction({
+      const result = await actions.save({
         portfolioId,
         revision: revisionRef.current,
         content: snapshot,
@@ -200,7 +225,7 @@ export function Editor({
     } finally {
       savePromiseRef.current = null
     }
-  }, [portfolioId])
+  }, [actions, portfolioId])
 
   const persist = useCallback(async () => {
     if (saveStateRef.current === "conflict") return false
@@ -286,13 +311,13 @@ export function Editor({
   useEffect(() => {
     return () => {
       if (!dirtyRef.current) return
-      void saveDraftAction({
+      void actions.save({
         portfolioId,
         revision: revisionRef.current,
         content: contentRef.current,
       })
     }
-  }, [portfolioId])
+  }, [actions, portfolioId])
 
   const selectedSection =
     view !== "page" && view !== "design"
@@ -325,6 +350,8 @@ export function Editor({
   const [previewKey, setPreviewKey] = useState(0)
   const [publishOpen, setPublishOpen] = useState(false)
   const [publishing, setPublishing] = useState(false)
+  const [unpublishOpen, setUnpublishOpen] = useState(false)
+  const [unpublishing, setUnpublishing] = useState(false)
   const [issues, setIssues] = useState<PublishIssue[] | null>(null)
   const [successUrl, setSuccessUrl] = useState<string | null>(null)
 
@@ -369,8 +396,8 @@ export function Editor({
     updateSection({ ...section, visible })
   }
 
-  function updateDesign(templateId: TemplateId, design: DesignSettings) {
-    commit({ ...contentRef.current, templateId, design })
+  function updateDesign(_templateId: TemplateId, design: DesignSettings) {
+    commit({ ...contentRef.current, templateId: "studio", design })
   }
 
   async function retrySave() {
@@ -380,7 +407,7 @@ export function Editor({
 
   async function reloadLatest() {
     setResolving(true)
-    const result = await loadDraftAction(portfolioId)
+    const result = await actions.load(portfolioId)
     setResolving(false)
     if (!result.ok) {
       toast.error("Couldn't load the latest draft", {
@@ -407,7 +434,7 @@ export function Editor({
 
   async function keepMine() {
     setResolving(true)
-    const result = await overwriteDraftAction({
+    const result = await actions.overwrite({
       portfolioId,
       content: contentRef.current,
     })
@@ -458,7 +485,7 @@ export function Editor({
       return
     }
 
-    const result = await publishPortfolioAction({
+    const result = await actions.publish({
       portfolioId,
       revision: revisionRef.current,
       content: contentRef.current,
@@ -484,18 +511,40 @@ export function Editor({
     dirtyRef.current = false
     setSaveState("saved")
     setSuccessUrl(result.url)
-    toast.success("Your portfolio is live")
+    toast.success(admin ? "Portfolio published" : "Your portfolio is live")
+  }
+
+  async function unpublish() {
+    setUnpublishing(true)
+    const result = await adminUnpublishAction({
+      portfolioId,
+      revision: revisionRef.current,
+    })
+    setUnpublishing(false)
+    setUnpublishOpen(false)
+
+    if (!result.ok) {
+      toast.error("Couldn't unpublish", { description: result.error })
+      return
+    }
+
+    revisionRef.current = result.revision
+    setRevision(result.revision)
+    setStatus("unpublished")
+    setPublishedAt(null)
+    toast.success("Portfolio taken offline")
   }
 
   const saveCopy = SAVE_COPY[saveState]
 
   return (
-    <div className="min-h-screen">
+    <EditorModeProvider admin={admin} portfolioId={portfolioId}>
+      <div className="min-h-screen">
       <header className="sticky top-(--app-header-height) z-30 border-b bg-background/90 backdrop-blur-md">
         <div className="mx-auto flex w-full max-w-6xl flex-wrap items-center gap-2 px-4 py-2 sm:px-6">
           <div className="flex min-w-0 items-baseline gap-1.5">
             <span className="hidden font-heading text-xs font-semibold sm:inline">
-              Editing
+              {admin ? "Admin editing" : "Editing"}
             </span>
             <span className="truncate font-mono text-[0.65rem] text-muted-foreground">
               /{username}
@@ -564,6 +613,16 @@ export function Editor({
               <IconWorldUpload />
               {status === "published" ? "Publish changes" : "Publish"}
             </Button>
+            {admin && status === "published" ? (
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-8 text-xs"
+                onClick={() => setUnpublishOpen(true)}
+              >
+                Unpublish
+              </Button>
+            ) : null}
           </div>
         </div>
 
@@ -577,6 +636,19 @@ export function Editor({
           ) : null}
         </div>
       </header>
+
+      {admin ? (
+        <div className="border-b border-amber-600/20 bg-amber-500/5">
+          <div className="mx-auto flex w-full max-w-6xl items-start gap-3 px-4 py-2.5 sm:px-6">
+            <IconAlertTriangle className="mt-0.5 size-4 shrink-0 text-amber-700 dark:text-amber-400" />
+            <p className="flex-1 text-xs leading-relaxed">
+              You are editing <span className="font-mono">/{username}</span> as
+              an administrator. Saves and publishes are written to this
+              owner&apos;s portfolio and recorded in the audit log.
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       {bannerOpen ? (
         <div className="border-b border-emerald-600/20 bg-emerald-500/5">
@@ -918,10 +990,14 @@ export function Editor({
           </div>
 
           <p className="mt-3 text-center text-[0.65rem] text-muted-foreground lg:text-left">
-            Draft changes are private.{" "}
-            {status === "published"
-              ? "Your live page keeps its last published version until you publish again."
-              : "Nothing is public until you publish."}
+            {admin
+              ? "Changes save to this owner's draft. Publishing updates their live page."
+              : "Draft changes are private. "}
+            {admin ? null : status === "published" ? (
+              "Your live page keeps its last published version until you publish again."
+            ) : (
+              "Nothing is public until you publish."
+            )}
           </p>
         </main>
       </div>
@@ -971,7 +1047,17 @@ export function Editor({
                 size="default"
                 className="h-7 text-xs"
                 nativeButton={false}
-                render={<a href="/preview" target="_blank" rel="noreferrer" />}
+                render={
+                  <a
+                    href={
+                      admin
+                        ? `/admin-preview/${portfolioId}`
+                        : "/preview"
+                    }
+                    target="_blank"
+                    rel="noreferrer"
+                  />
+                }
               >
                 Full preview
                 <IconArrowUpRight />
@@ -1012,7 +1098,11 @@ export function Editor({
           <div className="flex min-h-0 flex-1 justify-center overflow-hidden rounded-lg border bg-muted/40 p-2">
             <iframe
               key={`${previewKey}-${previewDevice}`}
-              src={`/preview/frame?v=${previewKey}`}
+              src={
+                admin
+                  ? `/admin-preview/${portfolioId}?v=${previewKey}`
+                  : `/preview/frame?v=${previewKey}`
+              }
               title="Portfolio draft preview"
               className={cn(
                 "h-full rounded-md border bg-white shadow-sm transition-[width] duration-200",
@@ -1054,6 +1144,36 @@ export function Editor({
             >
               {publishing ? <Spinner className="size-4" /> : null}
               {publishing ? "Publishing…" : "Publish now"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <AlertDialog open={unpublishOpen} onOpenChange={setUnpublishOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogMedia>
+              <IconWorldUpload />
+            </AlertDialogMedia>
+            <AlertDialogTitle>Take this portfolio offline?</AlertDialogTitle>
+            <AlertDialogDescription>
+              The public page for /{username} will stop loading immediately. The
+              draft and media stay intact, and the owner can publish again.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={unpublishing}>
+              Keep it live
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={unpublishing}
+              onClick={(event) => {
+                event.preventDefault()
+                void unpublish()
+              }}
+            >
+              {unpublishing ? <Spinner className="size-4" /> : null}
+              {unpublishing ? "Unpublishing…" : "Unpublish"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -1118,10 +1238,13 @@ export function Editor({
             <div className="mb-1 grid size-9 place-items-center rounded-lg bg-emerald-500/10 text-emerald-700 dark:text-emerald-400">
               <IconCircleCheck className="size-5" />
             </div>
-            <DialogTitle>Your portfolio is live.</DialogTitle>
+            <DialogTitle>
+              {admin ? "The portfolio is live." : "Your portfolio is live."}
+            </DialogTitle>
             <DialogDescription>
-              Share the link anywhere. Further draft edits stay private until
-              you publish again.
+              {admin
+                ? "The owner's public page now shows this version. Further draft edits stay private until the next publish."
+                : "Share the link anywhere. Further draft edits stay private until you publish again."}
             </DialogDescription>
           </DialogHeader>
           {successUrl ? (
@@ -1143,9 +1266,9 @@ export function Editor({
             <Button
               className="h-9 text-sm"
               nativeButton={false}
-              render={<Link href="/dashboard" />}
+              render={<Link href={admin ? "/admin" : "/dashboard"} />}
             >
-              Dashboard
+              {admin ? "Admin" : "Dashboard"}
             </Button>
           </div>
         </DialogContent>
@@ -1162,6 +1285,7 @@ export function Editor({
       </div>
 
       <span className="hidden">{publicUrl}</span>
-    </div>
+      </div>
+    </EditorModeProvider>
   )
 }

@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input"
 import { ACCENT_PRESETS } from "@/lib/portfolio/colors"
 import type {
   Appearance,
-  Backdrop,
   CornerStyle,
   FontPair,
   TemplateId,
@@ -18,22 +17,16 @@ import { TEMPLATES, templateDesign } from "@/lib/portfolio/templates"
 import { cn } from "@/lib/utils"
 
 const FONT_PAIRS: { value: FontPair; label: string; note: string }[] = [
-  { value: "modern", label: "Modern", note: "Space Grotesk" },
-  { value: "editorial", label: "Editorial", note: "Fraunces serif" },
-  { value: "classic", label: "Classic", note: "Instrument Serif" },
-  { value: "technical", label: "Technical", note: "Geist Mono" },
+  { value: "modern", label: "Modern", note: "Poppins + Source Sans 3" },
+  { value: "editorial", label: "Editorial", note: "Source Serif 4 + Source Sans 3" },
+  { value: "classic", label: "Classic", note: "Merriweather + Lato" },
+  { value: "technical", label: "Technical", note: "Libre Franklin + IBM Plex Sans" },
 ]
 
 const CORNERS: { value: CornerStyle; label: string }[] = [
   { value: "sharp", label: "Sharp" },
   { value: "soft", label: "Soft" },
   { value: "round", label: "Round" },
-]
-
-const BACKDROPS: { value: Backdrop; label: string }[] = [
-  { value: "clean", label: "Clean" },
-  { value: "grid", label: "Grid" },
-  { value: "glow", label: "Glow" },
 ]
 
 function ChoiceButton({
@@ -78,7 +71,7 @@ export function DesignPanel({
     <div className="space-y-7">
       <FormSection
         title="Template"
-        description="Templates set the layout and a matching design preset. Your content stays the same."
+        description="Your portfolio uses the Studio design. It adapts to your colours, type, and corner style."
       >
         <div className="grid grid-cols-2 gap-2">
           {TEMPLATES.map((template) => {
@@ -230,22 +223,6 @@ export function DesignPanel({
               }
             >
               {corner.label}
-            </ChoiceButton>
-          ))}
-        </div>
-      </FormSection>
-
-      <FormSection title="Background">
-        <div className="grid grid-cols-3 gap-2">
-          {BACKDROPS.map((backdrop) => (
-            <ChoiceButton
-              key={backdrop.value}
-              active={design.backdrop === backdrop.value}
-              onClick={() =>
-                onChange(templateId, { ...design, backdrop: backdrop.value })
-              }
-            >
-              {backdrop.label}
             </ChoiceButton>
           ))}
         </div>

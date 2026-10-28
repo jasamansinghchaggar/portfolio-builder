@@ -5,13 +5,19 @@ import {
   type CertificationItem,
   type ContactLink,
   type EducationItem,
+  type EventItem,
   type ExperienceItem,
+  type GalleryItem,
+  type MissionItem,
   type PortfolioContent,
+  type ProductItem,
   type ProjectItem,
   type Section,
   type ServiceItem,
   type SkillGroup,
+  type SocialItem,
   type TestimonialItem,
+  type VideoItem,
   type AchievementItem,
 } from "./schemas"
 import { getTemplate, templateDesign, DEFAULT_TEMPLATE_ID } from "./templates"
@@ -118,6 +124,62 @@ export function createSkillGroup(): SkillGroup {
   }
 }
 
+export function createMissionItem(): MissionItem {
+  return {
+    id: newId(),
+    title: "",
+    text: "",
+  }
+}
+
+export function createEventItem(): EventItem {
+  return {
+    id: newId(),
+    title: "",
+    theme: "",
+    text: "",
+    meta: [],
+    list: [],
+    quote: "",
+  }
+}
+
+export function createProductItem(): ProductItem {
+  return {
+    id: newId(),
+    title: "",
+    description: "",
+    price: "",
+    imageMediaId: null,
+    url: "",
+  }
+}
+
+export function createGalleryItem(): GalleryItem {
+  return {
+    id: newId(),
+    title: "",
+    caption: "",
+    imageMediaId: null,
+  }
+}
+
+export function createVideoItem(): VideoItem {
+  return {
+    id: newId(),
+    title: "",
+    youtubeId: "",
+  }
+}
+
+export function createSocialItem(): SocialItem {
+  return {
+    id: newId(),
+    platform: "Instagram",
+    url: "",
+  }
+}
+
 export function createSection(type: SectionType): Section {
   const base = { id: newId(), visible: true }
 
@@ -145,6 +207,105 @@ export function createSection(type: SectionType): Section {
         title: "About",
         body: "",
         highlights: [],
+        tag: "",
+        messageTitle: "",
+        message: "",
+      }
+    case "mission":
+      return {
+        ...base,
+        type: "mission",
+        title: "Our mission",
+        intro: "",
+        items: [],
+      }
+    case "services":
+      return {
+        ...base,
+        type: "services",
+        title: "Services",
+        intro: "",
+        items: [],
+        ctaText: "",
+        ctaLabel: "Get in touch",
+        ctaUrl: "",
+      }
+    case "events":
+      return {
+        ...base,
+        type: "events",
+        title: "Events & announcements",
+        intro: "",
+        items: [],
+      }
+    case "products":
+      return {
+        ...base,
+        type: "products",
+        title: "Products",
+        intro: "",
+        items: [],
+      }
+    case "gallery":
+      return {
+        ...base,
+        type: "gallery",
+        title: "Gallery",
+        intro: "",
+        items: [],
+      }
+    case "videos":
+      return {
+        ...base,
+        type: "videos",
+        title: "Videos",
+        intro: "",
+        items: [],
+      }
+    case "payment":
+      return {
+        ...base,
+        type: "payment",
+        title: "Payments",
+        subtitle: "",
+        heading: "",
+        upiId: "",
+        payeeName: "",
+        qrMediaId: null,
+      }
+    case "socials":
+      return {
+        ...base,
+        type: "socials",
+        title: "Follow us",
+        intro: "",
+        items: [],
+      }
+    case "contact":
+      return {
+        ...base,
+        type: "contact",
+        title: "Let's work together",
+        message: "",
+        email: "",
+        phone: "",
+        location: "",
+        links: [],
+        subtitle: "",
+        whatsapp: "",
+        address: "",
+        formTitle: "Send us a message",
+        formNote: "",
+      }
+    case "qr":
+      return {
+        ...base,
+        type: "qr",
+        title: "Scan and connect",
+        intro: "",
+        websiteUrl: "",
+        whatsappUrl: "",
+        instagramUrl: "",
       }
     case "projects":
       return {
@@ -183,14 +344,6 @@ export function createSection(type: SectionType): Section {
         title: "Certifications",
         items: [],
       }
-    case "services":
-      return {
-        ...base,
-        type: "services",
-        title: "Services",
-        intro: "",
-        items: [],
-      }
     case "testimonials":
       return {
         ...base,
@@ -204,17 +357,6 @@ export function createSection(type: SectionType): Section {
         type: "achievements",
         title: "Achievements",
         items: [],
-      }
-    case "contact":
-      return {
-        ...base,
-        type: "contact",
-        title: "Let's work together",
-        message: "",
-        email: "",
-        phone: "",
-        location: "",
-        links: [],
       }
     case "resume":
       return {
@@ -236,6 +378,15 @@ export function emptyBasics(fullName = ""): Basics {
     email: "",
     phone: "",
     avatarMediaId: null,
+    businessName: fullName,
+    ownerName: fullName,
+    role: "",
+    tagline: "",
+    whatsapp: "",
+    website: "",
+    address: "",
+    heroMediaId: null,
+    logoMediaId: null,
   }
 }
 
@@ -256,37 +407,57 @@ export function createDefaultContent({
 }: DefaultContentInput): PortfolioContent {
   const name = fullName.trim()
   const firstName = name.split(/\s+/)[0] || name
+  const businessName = name || "Your business"
   const hero = createSection("hero")
   const about = createSection("about")
-  const projects = createSection("projects")
-  const experience = createSection("experience")
-  const skills = createSection("skills")
+  const mission = createSection("mission")
+  const services = createSection("services")
+  const gallery = createSection("gallery")
   const contact = createSection("contact")
+  const qr = createSection("qr")
 
   if (hero.type === "hero") {
-    hero.headline = headline.trim() || `Hi, I'm ${firstName}.`
+    hero.eyebrow = headline.trim()
+    hero.headline = businessName
+    hero.subheadline = ""
+    hero.bio = ""
     hero.location = location.trim()
+    hero.primaryCtaLabel = "Chat on WhatsApp"
+    hero.secondaryCtaLabel = "Book an appointment"
+    hero.secondaryCtaUrl = "#section-contact"
   }
   if (about.type === "about") {
+    about.title = "About"
+    about.tag = "Our story"
     about.body = ""
   }
-  if (projects.type === "projects") {
-    projects.items = [createProjectItem()]
+  if (mission.type === "mission") {
+    mission.title = "Our mission"
+    mission.items = [createMissionItem(), createMissionItem(), createMissionItem()]
   }
-  if (experience.type === "experience") {
-    experience.items = [createExperienceItem()]
+  if (services.type === "services") {
+    services.title = "How we can help"
+    services.ctaText =
+      "Tell us what you need. We will reply with a clear plan and next steps."
   }
-  if (skills.type === "skills") {
-    skills.groups = [createSkillGroup()]
+  if (gallery.type === "gallery") {
+    gallery.title = "Our work"
   }
   if (contact.type === "contact") {
+    contact.title = "Get in touch"
+    contact.subtitle = "We usually reply within one working day."
     contact.email = email.trim()
     contact.location = location.trim()
+    contact.message = ""
+  }
+  if (qr.type === "qr") {
+    qr.title = "Scan and connect"
+    qr.intro = "Save our website, WhatsApp, and social links with a single scan."
   }
 
   return {
-    version: 1,
-    templateId,
+    version: 2,
+    templateId: "studio",
     basics: {
       fullName: name,
       headline: headline.trim(),
@@ -294,9 +465,18 @@ export function createDefaultContent({
       email: email.trim(),
       phone: "",
       avatarMediaId: null,
+      businessName,
+      ownerName: name,
+      role: headline.trim() || (firstName ? `${firstName}'s business` : ""),
+      tagline: "",
+      whatsapp: "",
+      website: "",
+      address: "",
+      heroMediaId: null,
+      logoMediaId: null,
     },
     design: templateDesign(templateId),
-    sections: [hero, about, projects, experience, skills, contact],
+    sections: [hero, about, mission, services, gallery, contact, qr],
   }
 }
 
@@ -318,7 +498,11 @@ export function coercePortfolioContent(
 }
 
 export function displayName(content: PortfolioContent) {
-  return content.basics.fullName.trim() || "Your name"
+  return (
+    content.basics.businessName.trim() ||
+    content.basics.fullName.trim() ||
+    "Your business"
+  )
 }
 
 export function templateDefaults(templateId: TemplateId) {

@@ -2,8 +2,10 @@ import type { Metadata } from "next"
 import { notFound } from "next/navigation"
 
 import { PortfolioRenderer } from "@/components/portfolio/portfolio-renderer"
+import { PromoBar } from "@/components/portfolio/promo-bar"
 import { APP_NAME, SITE_URL, portfolioPath, publicPortfolioUrl } from "@/lib/config"
 import { getPublicPortfolio } from "@/lib/portfolio/queries"
+import { businessName } from "@/lib/portfolio/sections"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -22,13 +24,15 @@ export async function generateMetadata({
   }
 
   const { content } = portfolio
-  const name = content.basics.fullName || `@${portfolio.username}`
+  const name = businessName(content) || `@${portfolio.username}`
+  const summary =
+    content.basics.tagline ||
+    content.basics.headline ||
+    content.basics.role ||
+    `${name} on ${APP_NAME}`
   const hero = content.sections.find((section) => section.type === "hero")
   const description =
-    (hero && hero.type === "hero"
-      ? hero.subheadline || hero.bio || content.basics.headline
-      : content.basics.headline) ||
-    `${name}'s portfolio on ${APP_NAME}.`
+    (hero?.type === "hero" ? hero.subheadline || hero.bio : "") || summary
   const canonical = publicPortfolioUrl(portfolio.username)
   const ogImage = `${SITE_URL}${portfolioPath(portfolio.username)}/opengraph-image`
 
@@ -38,7 +42,7 @@ export async function generateMetadata({
     alternates: { canonical },
     openGraph: {
       type: "profile",
-      title: `${name} — ${content.basics.headline || "Portfolio"}`,
+      title: `${name} — ${content.basics.role || content.basics.headline || "Business"}`,
       description,
       url: canonical,
       siteName: APP_NAME,
@@ -47,13 +51,13 @@ export async function generateMetadata({
           url: ogImage,
           width: 1200,
           height: 630,
-          alt: `${name}'s portfolio`,
+          alt: `${name}`,
         },
       ],
     },
     twitter: {
       card: "summary_large_image",
-      title: `${name} — ${content.basics.headline || "Portfolio"}`,
+      title: `${name} — ${content.basics.role || content.basics.headline || "Business"}`,
       description,
       images: [ogImage],
     },
@@ -67,9 +71,13 @@ export default async function PublicPortfolioPage({ params }: PageProps) {
   if (!portfolio) notFound()
 
   return (
-    <PortfolioRenderer
-      content={portfolio.content}
-      media={portfolio.media}
-    />
+    <div className="pf-public">
+      <PromoBar />
+      <PortfolioRenderer
+        content={portfolio.content}
+        media={portfolio.media}
+        username={portfolio.username}
+      />
+    </div>
   )
 }

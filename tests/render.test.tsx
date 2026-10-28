@@ -35,14 +35,14 @@ import { createSampleContent } from "@/lib/portfolio/sample"
 import { TEMPLATE_IDS } from "@/lib/portfolio/constants"
 
 describe("portfolio renderer", () => {
-  it("renders every template with the published sample content", () => {
+  it("renders every template through the Studio design", () => {
     for (const templateId of TEMPLATE_IDS) {
       const html = renderToStaticMarkup(
         <PortfolioRenderer content={createSampleContent(templateId)} />
       )
 
-      expect(html).toContain(`data-template="${templateId}"`)
-      expect(html).toContain("Avery Quinn")
+      expect(html).toContain(`data-template="studio"`)
+      expect(html).toContain("Quinn Studio")
       expect(html).toContain("pf-site")
       expect(html).toContain(`class="pf-hero"`)
     }
@@ -62,6 +62,8 @@ describe("portfolio renderer", () => {
   it("escapes user-provided markup instead of rendering it", () => {
     const content = createSampleContent()
     content.basics.fullName = "<script>alert(1)</script>"
+    content.basics.businessName = "<script>alert(1)</script>"
+    content.basics.role = "<img src=x onerror=alert(1)>"
     const hero = content.sections.find((section) => section.type === "hero")
     if (hero?.type !== "hero") throw new Error("Sample content needs a hero.")
     hero.headline = "<img src=x onerror=alert(1)>"

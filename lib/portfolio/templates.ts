@@ -15,7 +15,33 @@ export type TemplateMeta = {
   backdrop: DesignSettings["backdrop"]
 }
 
-export const TEMPLATES: TemplateMeta[] = [
+/**
+ * The business template is the only template shown in the product today.
+ * It is deliberately recognisable, warm, and built for service businesses.
+ */
+export const STUDIO_TEMPLATE: TemplateMeta = {
+  id: "studio",
+  name: "Studio",
+  tagline: "A complete business home, ready to share.",
+  description:
+    "A warm, professional website for small businesses and personal services. Hero, services, products, gallery, payments, QR codes, and a working contact form — all managed from one editor.",
+  bestFor: ["Advocates", "Consultants", "Founders", "Local services"],
+  accent: "#0f766e",
+  palette: ["#f8fafc", "#0f172a", "#0f766e"],
+  fontPair: "modern",
+  appearance: "light",
+  corners: "round",
+  backdrop: "clean",
+}
+
+/** Shown in the product UI. */
+export const TEMPLATES: TemplateMeta[] = [STUDIO_TEMPLATE]
+
+/**
+ * Retained for reference and potentially re-enabling later. These designs are
+ * no longer selectable; existing content renders through the Studio design.
+ */
+export const LEGACY_TEMPLATES: TemplateMeta[] = [
   {
     id: "atlas",
     name: "Atlas",
@@ -74,10 +100,16 @@ export const TEMPLATES: TemplateMeta[] = [
   },
 ]
 
-export const DEFAULT_TEMPLATE_ID: TemplateId = "atlas"
+export const DEFAULT_TEMPLATE_ID: TemplateId = "studio"
+
+/** Legacy template ids render through the Studio design. */
+export function resolveTemplateId(id: TemplateId): TemplateId {
+  return id === "studio" ? id : "studio"
+}
 
 export function getTemplate(id: TemplateId): TemplateMeta {
-  return TEMPLATES.find((template) => template.id === id) ?? TEMPLATES[0]
+  if (id === "studio") return STUDIO_TEMPLATE
+  return TEMPLATES[0]
 }
 
 export function templateDesign(id: TemplateId): DesignSettings {

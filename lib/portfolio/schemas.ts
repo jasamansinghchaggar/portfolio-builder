@@ -17,7 +17,8 @@ function isHttpUrl(value: string) {
     return (
       url.protocol === "http:" ||
       url.protocol === "https:" ||
-      url.protocol === "mailto:"
+      url.protocol === "mailto:" ||
+      url.protocol === "tel:"
     )
   } catch {
     return false
@@ -74,7 +75,25 @@ const aboutSectionSchema = z.object({
   type: z.literal("about"),
   title: z.string().trim().max(80),
   body: longText,
-  highlights: stringList(12, 160),
+  highlights: stringList(12, 160).default([]),
+  /** Business-template additions. */
+  tag: z.string().trim().max(80).default(""),
+  messageTitle: z.string().trim().max(120).default(""),
+  message: mediumText.default(""),
+})
+
+const missionItemSchema = z.object({
+  id: z.uuid(),
+  title: z.string().trim().max(120),
+  text: z.string().trim().max(600),
+})
+
+const missionSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("mission"),
+  title: z.string().trim().max(80),
+  intro: z.string().trim().max(400),
+  items: z.array(missionItemSchema).max(12),
 })
 
 const projectItemSchema = z.object({
@@ -174,6 +193,99 @@ const servicesSectionSchema = z.object({
   title: z.string().trim().max(80),
   intro: z.string().trim().max(400),
   items: z.array(serviceItemSchema).max(50),
+  /** Business-template additions: the call-to-action panel below the cards. */
+  ctaText: mediumText.default(""),
+  ctaLabel: z.string().trim().max(40).default("Get in touch"),
+  ctaUrl: optionalUrl.default(""),
+})
+
+const eventItemSchema = z.object({
+  id: z.uuid(),
+  title: z.string().trim().max(140),
+  theme: z.string().trim().max(160),
+  text: z.string().trim().max(1000),
+  meta: stringList(8, 60),
+  list: stringList(12, 200),
+  quote: z.string().trim().max(400),
+})
+
+const eventsSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("events"),
+  title: z.string().trim().max(80),
+  intro: z.string().trim().max(400),
+  items: z.array(eventItemSchema).max(30),
+})
+
+const productItemSchema = z.object({
+  id: z.uuid(),
+  title: z.string().trim().max(140),
+  description: z.string().trim().max(1000),
+  price: z.string().trim().max(60),
+  imageMediaId: mediaId,
+  url: optionalUrl,
+})
+
+const productsSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("products"),
+  title: z.string().trim().max(80),
+  intro: z.string().trim().max(400),
+  items: z.array(productItemSchema).max(50),
+})
+
+const galleryItemSchema = z.object({
+  id: z.uuid(),
+  title: z.string().trim().max(140),
+  caption: z.string().trim().max(300),
+  imageMediaId: mediaId,
+})
+
+const gallerySectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("gallery"),
+  title: z.string().trim().max(80),
+  intro: z.string().trim().max(400),
+  items: z.array(galleryItemSchema).max(60),
+})
+
+const videoItemSchema = z.object({
+  id: z.uuid(),
+  title: z.string().trim().max(140),
+  youtubeId: z.string().trim().max(200),
+})
+
+const videosSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("videos"),
+  title: z.string().trim().max(80),
+  intro: z.string().trim().max(400),
+  items: z.array(videoItemSchema).max(24),
+})
+
+const paymentSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("payment"),
+  title: z.string().trim().max(80),
+  subtitle: z.string().trim().max(240),
+  heading: z.string().trim().max(120),
+  upiId: z.string().trim().max(120),
+  payeeName: z.string().trim().max(120),
+  qrMediaId: mediaId,
+})
+
+const socialItemSchema = z.object({
+  id: z.uuid(),
+  platform: z.string().trim().max(40),
+  url: optionalUrl,
+})
+
+const socialsSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("socials"),
+  title: z.string().trim().max(80),
+  intro: z.string().trim().max(400),
+  items: z.array(socialItemSchema).max(20),
 })
 
 const testimonialItemSchema = z.object({
@@ -222,6 +334,22 @@ const contactSectionSchema = z.object({
   phone: z.string().trim().max(40),
   location: z.string().trim().max(120),
   links: z.array(contactLinkSchema).max(20),
+  /** Business-template additions. */
+  subtitle: z.string().trim().max(240).default(""),
+  whatsapp: z.string().trim().max(40).default(""),
+  address: z.string().trim().max(240).default(""),
+  formTitle: z.string().trim().max(80).default("Send us a message"),
+  formNote: z.string().trim().max(240).default(""),
+})
+
+const qrSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("qr"),
+  title: z.string().trim().max(80),
+  intro: z.string().trim().max(400),
+  websiteUrl: optionalUrl,
+  whatsappUrl: optionalUrl,
+  instagramUrl: optionalUrl,
 })
 
 const resumeSectionSchema = z.object({
@@ -236,15 +364,23 @@ const resumeSectionSchema = z.object({
 export const sectionSchema = z.discriminatedUnion("type", [
   heroSectionSchema,
   aboutSectionSchema,
+  missionSectionSchema,
+  servicesSectionSchema,
+  eventsSectionSchema,
+  productsSectionSchema,
+  gallerySectionSchema,
+  videosSectionSchema,
+  paymentSectionSchema,
+  socialsSectionSchema,
+  contactSectionSchema,
+  qrSectionSchema,
   projectsSectionSchema,
   experienceSectionSchema,
   skillsSectionSchema,
   educationSectionSchema,
   certificationsSectionSchema,
-  servicesSectionSchema,
   testimonialsSectionSchema,
   achievementsSectionSchema,
-  contactSectionSchema,
   resumeSectionSchema,
 ])
 
@@ -267,12 +403,28 @@ export const basicsSchema = z.object({
   email: optionalEmail,
   phone: z.string().trim().max(40),
   avatarMediaId: mediaId,
+  /** Business-template additions. */
+  businessName: z.string().trim().max(120).default(""),
+  ownerName: z.string().trim().max(120).default(""),
+  role: z.string().trim().max(160).default(""),
+  tagline: z.string().trim().max(240).default(""),
+  whatsapp: z.string().trim().max(40).default(""),
+  website: optionalUrl.default(""),
+  address: z.string().trim().max(240).default(""),
+  heroMediaId: mediaId.default(null),
+  logoMediaId: mediaId.default(null),
 })
 
+/**
+ * Content is versioned, but version 1 drafts are upgraded transparently:
+ * missing fields receive defaults and the template id is rewritten to Studio.
+ */
 export const portfolioContentSchema = z
   .object({
-    version: z.literal(1),
-    templateId: z.enum(TEMPLATE_IDS),
+    version: z
+      .union([z.literal(1), z.literal(2)])
+      .transform(() => 2 as const),
+    templateId: z.enum(TEMPLATE_IDS).transform(() => "studio" as const),
     basics: basicsSchema,
     design: designSchema,
     sections: z.array(sectionSchema).max(SECTION_TYPES.length),
@@ -319,6 +471,12 @@ export type ServiceItem = z.infer<typeof serviceItemSchema>
 export type TestimonialItem = z.infer<typeof testimonialItemSchema>
 export type AchievementItem = z.infer<typeof achievementItemSchema>
 export type ContactLink = z.infer<typeof contactLinkSchema>
+export type MissionItem = z.infer<typeof missionItemSchema>
+export type EventItem = z.infer<typeof eventItemSchema>
+export type ProductItem = z.infer<typeof productItemSchema>
+export type GalleryItem = z.infer<typeof galleryItemSchema>
+export type VideoItem = z.infer<typeof videoItemSchema>
+export type SocialItem = z.infer<typeof socialItemSchema>
 
 export function formatZodIssues(error: z.ZodError) {
   return error.issues.map((issue) => {

@@ -3,6 +3,9 @@ import Link from "next/link"
 import {
   IconArrowUpRight,
   IconFileText,
+  IconHistory,
+  IconMessage,
+  IconPencil,
   IconSearch,
   IconUsers,
   IconWorld,
@@ -174,7 +177,8 @@ export default async function AdminPage({ searchParams }: PageProps) {
             Platform overview
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Accounts, portfolios, and publication state. Read only.
+            Accounts, portfolios, and publication state. Open any portfolio to
+            edit its draft and publish on the owner&apos;s behalf.
           </p>
         </div>
         <form action="/admin" method="get" className="flex items-center gap-2">
@@ -239,6 +243,28 @@ export default async function AdminPage({ searchParams }: PageProps) {
             Filtering by “{q}”
           </span>
         ) : null}
+        <div className="ml-auto flex items-center gap-1.5">
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs"
+            nativeButton={false}
+            render={<Link href="/messages" />}
+          >
+            <IconMessage />
+            Messages
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 text-xs"
+            nativeButton={false}
+            render={<Link href="/admin/audit" />}
+          >
+            <IconHistory />
+            Audit log
+          </Button>
+        </div>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[1.15fr_1fr]">
@@ -258,7 +284,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
                     <TableHead>Owner</TableHead>
                     <TableHead>Status</TableHead>
                     <TableHead>Updated</TableHead>
-                    <TableHead className="text-right">Link</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -294,27 +320,41 @@ export default async function AdminPage({ searchParams }: PageProps) {
                           {formatDateTime(portfolio.updated_at)}
                         </TableCell>
                         <TableCell className="text-right">
-                          {portfolio.status === "published" ? (
+                          <div className="flex items-center justify-end gap-1">
                             <Button
                               variant="ghost"
                               size="icon-xs"
-                              aria-label="Open portfolio"
+                              aria-label={`Edit ${portfolio.username}`}
+                              title="Edit portfolio"
                               nativeButton={false}
                               render={
-                                <a
-                                  href={publicPortfolioUrl(portfolio.username)}
-                                  target="_blank"
-                                  rel="noreferrer"
+                                <Link
+                                  href={`/admin/portfolios/${portfolio.id}`}
                                 />
                               }
                             >
-                              <IconArrowUpRight />
+                              <IconPencil />
                             </Button>
-                          ) : (
-                            <span className="text-[0.65rem] text-muted-foreground">
-                              —
-                            </span>
-                          )}
+                            {portfolio.status === "published" ? (
+                              <Button
+                                variant="ghost"
+                                size="icon-xs"
+                                aria-label="Open portfolio"
+                                nativeButton={false}
+                                render={
+                                  <a
+                                    href={publicPortfolioUrl(
+                                      portfolio.username
+                                    )}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                  />
+                                }
+                              >
+                                <IconArrowUpRight />
+                              </Button>
+                            ) : null}
+                          </div>
                         </TableCell>
                       </TableRow>
                     )

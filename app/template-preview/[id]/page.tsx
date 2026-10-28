@@ -5,9 +5,8 @@ import { IconArrowLeft, IconArrowUpRight } from "@tabler/icons-react"
 
 import { PortfolioRenderer } from "@/components/portfolio/portfolio-renderer"
 import { Button } from "@/components/ui/button"
-import { TEMPLATE_IDS, type TemplateId } from "@/lib/portfolio/constants"
 import { createSampleContent } from "@/lib/portfolio/sample"
-import { getTemplate } from "@/lib/portfolio/templates"
+import { TEMPLATES } from "@/lib/portfolio/templates"
 
 export const dynamic = "force-static"
 export const dynamicParams = false
@@ -15,17 +14,17 @@ export const dynamicParams = false
 type PageProps = { params: Promise<{ id: string }> }
 
 export function generateStaticParams() {
-  return TEMPLATE_IDS.map((id) => ({ id }))
+  return TEMPLATES.map((template) => ({ id: template.id }))
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { id } = await params
-  if (!TEMPLATE_IDS.includes(id as TemplateId)) {
+  const template = TEMPLATES.find((item) => item.id === id)
+  if (!template) {
     return { title: "Template not found" }
   }
-  const template = getTemplate(id as TemplateId)
   return {
     title: `${template.name} template`,
     description: template.description,
@@ -35,9 +34,9 @@ export async function generateMetadata({
 
 export default async function TemplatePreviewPage({ params }: PageProps) {
   const { id } = await params
-  if (!TEMPLATE_IDS.includes(id as TemplateId)) notFound()
+  const template = TEMPLATES.find((item) => item.id === id)
+  if (!template) notFound()
 
-  const template = getTemplate(id as TemplateId)
   const content = createSampleContent(template.id)
 
   return (

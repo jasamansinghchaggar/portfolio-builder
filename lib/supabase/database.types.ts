@@ -133,6 +133,64 @@ export type Database = {
         Update: { username?: string }
         Relationships: []
       }
+      portfolio_messages: {
+        Row: {
+          id: string
+          portfolio_id: string
+          name: string
+          email: string
+          phone: string
+          message: string
+          read_at: string | null
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          portfolio_id: string
+          name: string
+          email?: string
+          phone?: string
+          message: string
+          read_at?: string | null
+          created_at?: string
+        }
+        Update: {
+          read_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "portfolio_messages_portfolio_id_fkey"
+            columns: ["portfolio_id"]
+            isOneToOne: false
+            referencedRelation: "portfolios"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      admin_audit_log: {
+        Row: {
+          id: string
+          actor_id: string | null
+          actor_email: string
+          action: string
+          target_type: string
+          target_id: string | null
+          detail: Json
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          actor_id?: string | null
+          actor_email?: string
+          action: string
+          target_type?: string
+          target_id?: string | null
+          detail?: Json
+          created_at?: string
+        }
+        Update: never
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: {
@@ -197,6 +255,42 @@ export type Database = {
       is_media_public: {
         Args: { p_storage_path: string }
         Returns: boolean
+      }
+      send_portfolio_message: {
+        Args: {
+          p_username: string
+          p_name: string
+          p_email: string
+          p_phone: string
+          p_message: string
+        }
+        Returns: undefined
+      }
+      admin_save_portfolio_draft: {
+        Args: {
+          p_portfolio_id: string
+          p_content: Json
+          p_revision: number
+        }
+        Returns: { revision: number; saved_at: string }[]
+      }
+      admin_publish_portfolio: {
+        Args: {
+          p_portfolio_id: string
+          p_content: Json
+          p_published_content: Json
+          p_media_ids: string[]
+          p_revision: number
+        }
+        Returns: { revision: number; published_at: string }[]
+      }
+      admin_unpublish_portfolio: {
+        Args: { p_portfolio_id: string; p_revision: number }
+        Returns: { revision: number }[]
+      }
+      admin_mark_message_read: {
+        Args: { p_message_id: string; p_read: boolean }
+        Returns: undefined
       }
     }
     Enums: {

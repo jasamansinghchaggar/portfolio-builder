@@ -41,7 +41,7 @@ export default async function OpenGraphImage({
 
   const { content } = portfolio
   const template = getTemplate(content.templateId)
-  const dark = content.design.appearance === "dark" || content.templateId === "signal"
+  const dark = content.design.appearance === "dark"
   const background = dark ? "#0b1113" : template.palette[0]
   const foreground = dark ? "#f3f6f5" : template.palette[1]
   const accent = content.design.accent

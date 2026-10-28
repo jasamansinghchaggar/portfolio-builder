@@ -5,18 +5,16 @@ import { AuthLayout } from "@/components/auth/auth-layout"
 import { RegisterForm } from "@/components/auth/register-form"
 import { getAuthUserId } from "@/lib/auth"
 import { resolveSafeNextPath } from "@/lib/config"
-import { TEMPLATE_IDS, type TemplateId } from "@/lib/portfolio/constants"
 import { getTemplate } from "@/lib/portfolio/templates"
 
 export const metadata: Metadata = {
   title: "Create an account",
   description:
-    "Create a free account, choose a template, and publish your portfolio.",
+    "Create a free account and publish a business website with the Studio design.",
 }
 
 type PageProps = {
   searchParams: Promise<{
-    template?: string | string[]
     next?: string | string[]
   }>
 }
@@ -31,22 +29,14 @@ export default async function RegisterPage({ searchParams }: PageProps) {
   const { userId } = await getAuthUserId()
   if (userId) redirect(next ?? "/dashboard")
 
-  const requested = single(params.template)
-  const template =
-    requested && TEMPLATE_IDS.includes(requested as TemplateId)
-      ? getTemplate(requested as TemplateId)
-      : null
+  const template = getTemplate("studio")
 
   return (
     <AuthLayout
       title="Start with a blank page."
-      description={
-        template
-          ? `Create your account and we'll set you up with the ${template.name} template.`
-          : "Create your account and we'll help you choose a starting point."
-      }
+      description="Create your account and we'll set you up with the Studio design."
     >
-      <RegisterForm template={template?.id} next={next ?? undefined} />
+      <RegisterForm template={template.id} next={next ?? undefined} />
     </AuthLayout>
   )
 }

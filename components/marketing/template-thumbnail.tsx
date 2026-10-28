@@ -25,6 +25,61 @@ export function TemplateThumbnail({
       )}
       style={{ background, color: foreground }}
     >
+      {template.id === "studio" ? (
+        <div className="flex h-full flex-col">
+          <div className="flex items-center justify-between border-b border-black/10 px-3 py-2 text-[6px]">
+            <span className="flex items-center gap-1 font-semibold">
+              <span
+                className="grid size-3.5 place-items-center rounded-full text-[5px] font-bold text-white"
+                style={{ background: accent }}
+              >
+                QS
+              </span>
+              Quinn Studio
+            </span>
+            <span className="opacity-60">Services · Work · Contact</span>
+          </div>
+          <div
+            className="flex flex-1 flex-col justify-center px-3.5 text-white"
+            style={{
+              background: `linear-gradient(135deg, ${foreground} 0%, ${accent} 160%)`,
+            }}
+          >
+            <p
+              className="text-[6px] font-semibold tracking-[0.16em] uppercase"
+              style={{ color: accent }}
+            >
+              Interior design studio
+            </p>
+            <p
+              className={cn(
+                "mt-1 text-[17px] leading-[0.95] font-semibold tracking-tight",
+                displayClass
+              )}
+            >
+              Quinn
+              <br />
+              Studio
+            </p>
+            <p className="mt-1 text-[5px] opacity-75">
+              Avery Quinn · Calm, considered spaces
+            </p>
+            <span
+              className="mt-2 w-fit rounded-full px-2 py-0.5 text-[5px] font-semibold"
+              style={{ background: accent, color: "#fff" }}
+            >
+              Chat on WhatsApp
+            </span>
+          </div>
+          <div className="grid grid-cols-4 gap-1 px-2 py-1.5 text-center text-[4.5px] font-medium opacity-70">
+            <span>Call us</span>
+            <span>WhatsApp</span>
+            <span>Email</span>
+            <span>Share</span>
+          </div>
+        </div>
+      ) : null}
+
       {template.id === "atlas" ? (
         <div className="flex h-full flex-col p-4">
           <div className="flex items-center justify-between border-b border-black/10 pb-2 text-[6px] uppercase tracking-[0.18em] opacity-60">

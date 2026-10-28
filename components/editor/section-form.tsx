@@ -18,11 +18,17 @@ import {
   createCertificationItem,
   createContactLink,
   createEducationItem,
+  createEventItem,
   createExperienceItem,
+  createGalleryItem,
+  createMissionItem,
+  createProductItem,
   createProjectItem,
   createServiceItem,
   createSkillGroup,
+  createSocialItem,
   createTestimonialItem,
+  createVideoItem,
 } from "@/lib/portfolio/defaults"
 import type { EditorMedia } from "@/lib/portfolio/media"
 import type { Section } from "@/lib/portfolio/types"
@@ -71,6 +77,16 @@ function AddButton({ label, onClick }: { label: string; onClick: () => void }) {
       <IconPlus />
       {label}
     </Button>
+  )
+}
+
+function updateItem<T extends { id: string }>(
+  items: T[],
+  id: string,
+  patch: Partial<T>
+): T[] {
+  return items.map((entry) =>
+    entry.id === id ? { ...entry, ...patch } : entry
   )
 }
 
@@ -208,6 +224,13 @@ export function SectionForm({
             onChange={(title) => onChange({ ...section, title })}
             maxLength={80}
           />
+          <TextInput
+            label="Small label"
+            value={section.tag}
+            onChange={(tag) => onChange({ ...section, tag })}
+            placeholder="A little about us"
+            maxLength={80}
+          />
           <TextAreaInput
             label="About you"
             value={section.body}
@@ -227,6 +250,98 @@ export function SectionForm({
             hint="Short facts that add texture. One per line."
             rows={4}
           />
+          <FormSection
+            title="Personal note"
+            description="Optional. Shown in a highlighted box after your story."
+          >
+            <TextInput
+              label="Note title"
+              value={section.messageTitle}
+              onChange={(messageTitle) =>
+                onChange({ ...section, messageTitle })
+              }
+              placeholder="A personal note"
+              maxLength={120}
+            />
+            <TextAreaInput
+              label="Note"
+              value={section.message}
+              onChange={(message) => onChange({ ...section, message })}
+              placeholder="If you are not sure where to start, that is completely fine."
+              rows={3}
+              maxLength={600}
+            />
+          </FormSection>
+        </div>
+      )
+
+    case "mission":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Intro"
+            value={section.intro}
+            onChange={(intro) => onChange({ ...section, intro })}
+            placeholder="The promises you keep on every project."
+            rows={3}
+            maxLength={400}
+          />
+          <FormSection title={`Promises (${section.items.length})`}>
+            {section.items.map((item, index) => (
+              <ItemCard
+                key={item.id}
+                title={item.title || `Promise ${index + 1}`}
+                onRemove={() =>
+                  onChange({
+                    ...section,
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
+                  })
+                }
+              >
+                <TextInput
+                  label="Title"
+                  value={item.title}
+                  onChange={(title) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { title }),
+                    })
+                  }
+                  placeholder="Listen first"
+                  maxLength={120}
+                />
+                <TextAreaInput
+                  label="Description"
+                  value={item.text}
+                  onChange={(text) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { text }),
+                    })
+                  }
+                  rows={3}
+                  maxLength={600}
+                />
+              </ItemCard>
+            ))}
+            <AddButton
+              label="Add promise"
+              onClick={() =>
+                onChange({
+                  ...section,
+                  items: [...section.items, createMissionItem()],
+                })
+              }
+            />
+          </FormSection>
         </div>
       )
 
@@ -941,6 +1056,591 @@ export function SectionForm({
               }
             />
           </FormSection>
+
+          <FormSection
+            title="Call to action"
+            description="Shown in a highlighted panel below your services."
+          >
+            <TextAreaInput
+              label="Panel text"
+              value={section.ctaText}
+              onChange={(ctaText) => onChange({ ...section, ctaText })}
+              placeholder="Tell us what you need. We will reply with a clear plan and next steps."
+              rows={3}
+              maxLength={600}
+            />
+            <FieldRow>
+              <TextInput
+                label="Button label"
+                value={section.ctaLabel}
+                onChange={(ctaLabel) => onChange({ ...section, ctaLabel })}
+                placeholder="Get in touch"
+                maxLength={40}
+              />
+              <TextInput
+                label="Button URL"
+                value={section.ctaUrl}
+                onChange={(ctaUrl) => onChange({ ...section, ctaUrl })}
+                placeholder="#section-contact"
+              />
+            </FieldRow>
+          </FormSection>
+        </div>
+      )
+
+    case "events":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Intro"
+            value={section.intro}
+            onChange={(intro) => onChange({ ...section, intro })}
+            rows={3}
+            maxLength={400}
+          />
+          <FormSection title={`Events (${section.items.length})`}>
+            {section.items.map((item, index) => (
+              <ItemCard
+                key={item.id}
+                title={item.title || `Event ${index + 1}`}
+                onRemove={() =>
+                  onChange({
+                    ...section,
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
+                  })
+                }
+              >
+                <FieldRow>
+                  <TextInput
+                    label="Title"
+                    value={item.title}
+                    onChange={(title) =>
+                      onChange({
+                        ...section,
+                        items: updateItem(section.items, item.id, { title }),
+                      })
+                    }
+                    placeholder="Studio open week"
+                    maxLength={140}
+                  />
+                  <TextInput
+                    label="Theme or subtitle"
+                    value={item.theme}
+                    onChange={(theme) =>
+                      onChange({
+                        ...section,
+                        items: updateItem(section.items, item.id, { theme }),
+                      })
+                    }
+                    placeholder="Meet the team"
+                    maxLength={160}
+                  />
+                </FieldRow>
+                <TextAreaInput
+                  label="Description"
+                  value={item.text}
+                  onChange={(text) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { text }),
+                    })
+                  }
+                  rows={3}
+                  maxLength={1000}
+                />
+                <LinesInput
+                  label="Details"
+                  value={item.meta}
+                  onChange={(meta) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { meta }),
+                    })
+                  }
+                  placeholder={"12 November\nBrooklyn studio\nFree"}
+                  hint="Date, place, price. One per line."
+                  rows={3}
+                />
+                <LinesInput
+                  label="What to expect"
+                  value={item.list}
+                  onChange={(list) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { list }),
+                    })
+                  }
+                  hint="One item per line."
+                  rows={3}
+                />
+                <TextAreaInput
+                  label="Quote"
+                  value={item.quote}
+                  onChange={(quote) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { quote }),
+                    })
+                  }
+                  rows={2}
+                  maxLength={400}
+                />
+              </ItemCard>
+            ))}
+            <AddButton
+              label="Add event"
+              onClick={() =>
+                onChange({
+                  ...section,
+                  items: [...section.items, createEventItem()],
+                })
+              }
+            />
+          </FormSection>
+        </div>
+      )
+
+    case "products":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Intro"
+            value={section.intro}
+            onChange={(intro) => onChange({ ...section, intro })}
+            rows={3}
+            maxLength={400}
+          />
+          <FormSection title={`Products (${section.items.length})`}>
+            {section.items.map((item, index) => (
+              <ItemCard
+                key={item.id}
+                title={item.title || `Product ${index + 1}`}
+                onRemove={() =>
+                  onChange({
+                    ...section,
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
+                  })
+                }
+              >
+                <FieldRow>
+                  <TextInput
+                    label="Name"
+                    value={item.title}
+                    onChange={(title) =>
+                      onChange({
+                        ...section,
+                        items: updateItem(section.items, item.id, { title }),
+                      })
+                    }
+                    placeholder="Fieldnotes workbook"
+                    maxLength={140}
+                  />
+                  <TextInput
+                    label="Price"
+                    value={item.price}
+                    onChange={(price) =>
+                      onChange({
+                        ...section,
+                        items: updateItem(section.items, item.id, { price }),
+                      })
+                    }
+                    placeholder="$28"
+                    maxLength={60}
+                  />
+                </FieldRow>
+                <TextAreaInput
+                  label="Description"
+                  value={item.description}
+                  onChange={(description) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, {
+                        description,
+                      }),
+                    })
+                  }
+                  rows={3}
+                  maxLength={1000}
+                />
+                <TextInput
+                  label="Product URL"
+                  value={item.url}
+                  onChange={(url) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { url }),
+                    })
+                  }
+                  placeholder="https://…"
+                />
+                <MediaField
+                  label="Product image"
+                  value={item.imageMediaId}
+                  onChange={(imageMediaId) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, {
+                        imageMediaId,
+                      }),
+                    })
+                  }
+                  media={media}
+                  onMediaAdded={onMediaAdded}
+                  kind="project"
+                />
+              </ItemCard>
+            ))}
+            <AddButton
+              label="Add product"
+              onClick={() =>
+                onChange({
+                  ...section,
+                  items: [...section.items, createProductItem()],
+                })
+              }
+            />
+          </FormSection>
+        </div>
+      )
+
+    case "gallery":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Intro"
+            value={section.intro}
+            onChange={(intro) => onChange({ ...section, intro })}
+            rows={3}
+            maxLength={400}
+          />
+          <FormSection title={`Photos (${section.items.length})`}>
+            {section.items.map((item, index) => (
+              <ItemCard
+                key={item.id}
+                title={item.title || `Photo ${index + 1}`}
+                onRemove={() =>
+                  onChange({
+                    ...section,
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
+                  })
+                }
+              >
+                <TextInput
+                  label="Title"
+                  value={item.title}
+                  onChange={(title) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { title }),
+                    })
+                  }
+                  maxLength={140}
+                />
+                <TextInput
+                  label="Caption"
+                  value={item.caption}
+                  onChange={(caption) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { caption }),
+                    })
+                  }
+                  maxLength={300}
+                />
+                <MediaField
+                  label="Photo"
+                  value={item.imageMediaId}
+                  onChange={(imageMediaId) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, {
+                        imageMediaId,
+                      }),
+                    })
+                  }
+                  media={media}
+                  onMediaAdded={onMediaAdded}
+                  kind="project"
+                />
+              </ItemCard>
+            ))}
+            <AddButton
+              label="Add photo"
+              onClick={() =>
+                onChange({
+                  ...section,
+                  items: [...section.items, createGalleryItem()],
+                })
+              }
+            />
+          </FormSection>
+        </div>
+      )
+
+    case "videos":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Intro"
+            value={section.intro}
+            onChange={(intro) => onChange({ ...section, intro })}
+            rows={3}
+            maxLength={400}
+          />
+          <FormSection title={`Videos (${section.items.length})`}>
+            {section.items.map((item, index) => (
+              <ItemCard
+                key={item.id}
+                title={item.title || `Video ${index + 1}`}
+                onRemove={() =>
+                  onChange({
+                    ...section,
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
+                  })
+                }
+              >
+                <TextInput
+                  label="Title"
+                  value={item.title}
+                  onChange={(title) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, { title }),
+                    })
+                  }
+                  maxLength={140}
+                />
+                <TextInput
+                  label="YouTube link or ID"
+                  value={item.youtubeId}
+                  onChange={(youtubeId) =>
+                    onChange({
+                      ...section,
+                      items: updateItem(section.items, item.id, {
+                        youtubeId,
+                      }),
+                    })
+                  }
+                  placeholder="https://youtube.com/watch?v=…"
+                  hint="A full YouTube link or the 11-character video ID."
+                />
+              </ItemCard>
+            ))}
+            <AddButton
+              label="Add video"
+              onClick={() =>
+                onChange({
+                  ...section,
+                  items: [...section.items, createVideoItem()],
+                })
+              }
+            />
+          </FormSection>
+        </div>
+      )
+
+    case "payment":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Subtitle"
+            value={section.subtitle}
+            onChange={(subtitle) => onChange({ ...section, subtitle })}
+            placeholder="Pay a deposit or a small invoice in a few seconds."
+            rows={2}
+            maxLength={240}
+          />
+          <TextInput
+            label="Heading"
+            value={section.heading}
+            onChange={(heading) => onChange({ ...section, heading })}
+            placeholder="Scan to pay with any UPI app"
+            maxLength={120}
+          />
+          <FieldRow>
+            <TextInput
+              label="UPI ID"
+              value={section.upiId}
+              onChange={(upiId) => onChange({ ...section, upiId })}
+              placeholder="yourname@bank"
+              maxLength={120}
+              hint="A QR code is generated from this ID."
+            />
+            <TextInput
+              label="Payee name"
+              value={section.payeeName}
+              onChange={(payeeName) => onChange({ ...section, payeeName })}
+              placeholder="Your business name"
+              maxLength={120}
+            />
+          </FieldRow>
+          <FormSection
+            title="Uploaded QR code"
+            description="Optional. If you upload an image, it replaces the generated QR code."
+          >
+            <MediaField
+              label="Payment QR image"
+              value={section.qrMediaId}
+              onChange={(qrMediaId) => onChange({ ...section, qrMediaId })}
+              media={media}
+              onMediaAdded={onMediaAdded}
+              kind="general"
+              hint="A screenshot or export from your payment app. Displayed as-is."
+            />
+          </FormSection>
+        </div>
+      )
+
+    case "socials":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Intro"
+            value={section.intro}
+            onChange={(intro) => onChange({ ...section, intro })}
+            rows={3}
+            maxLength={400}
+          />
+          <FormSection title={`Profiles (${section.items.length})`}>
+            {section.items.map((item, index) => (
+              <ItemCard
+                key={item.id}
+                title={item.platform || `Profile ${index + 1}`}
+                onRemove={() =>
+                  onChange({
+                    ...section,
+                    items: section.items.filter(
+                      (entry) => entry.id !== item.id
+                    ),
+                  })
+                }
+              >
+                <FieldRow>
+                  <TextInput
+                    label="Platform"
+                    value={item.platform}
+                    onChange={(platform) =>
+                      onChange({
+                        ...section,
+                        items: updateItem(section.items, item.id, { platform }),
+                      })
+                    }
+                    placeholder="Instagram"
+                    maxLength={40}
+                  />
+                  <TextInput
+                    label="Profile URL"
+                    value={item.url}
+                    onChange={(url) =>
+                      onChange({
+                        ...section,
+                        items: updateItem(section.items, item.id, { url }),
+                      })
+                    }
+                    placeholder="https://instagram.com/…"
+                  />
+                </FieldRow>
+              </ItemCard>
+            ))}
+            <AddButton
+              label="Add social profile"
+              onClick={() =>
+                onChange({
+                  ...section,
+                  items: [...section.items, createSocialItem()],
+                })
+              }
+            />
+          </FormSection>
+        </div>
+      )
+
+    case "qr":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Intro"
+            value={section.intro}
+            onChange={(intro) => onChange({ ...section, intro })}
+            placeholder="Save our website, WhatsApp, and social links with a single scan."
+            rows={3}
+            maxLength={400}
+          />
+          <FormSection
+            title="Links"
+            description="Leave a field blank to use your portfolio URL, WhatsApp number, or Instagram profile automatically."
+          >
+            <TextInput
+              label="Website URL"
+              value={section.websiteUrl}
+              onChange={(websiteUrl) => onChange({ ...section, websiteUrl })}
+              placeholder="https://…"
+            />
+            <TextInput
+              label="WhatsApp URL"
+              value={section.whatsappUrl}
+              onChange={(whatsappUrl) => onChange({ ...section, whatsappUrl })}
+              placeholder="https://wa.me/…"
+            />
+            <TextInput
+              label="Instagram URL"
+              value={section.instagramUrl}
+              onChange={(instagramUrl) =>
+                onChange({ ...section, instagramUrl })
+              }
+              placeholder="https://instagram.com/…"
+            />
+          </FormSection>
         </div>
       )
 
@@ -1191,6 +1891,52 @@ export function SectionForm({
             onChange={(location) => onChange({ ...section, location })}
             maxLength={120}
           />
+
+          <FormSection
+            title="Business details"
+            description="Shown on the contact card and used by the enquiry form."
+          >
+            <TextAreaInput
+              label="Subtitle"
+              value={section.subtitle}
+              onChange={(subtitle) => onChange({ ...section, subtitle })}
+              placeholder="We usually reply within one working day."
+              rows={2}
+              maxLength={240}
+            />
+            <FieldRow>
+              <TextInput
+                label="WhatsApp number"
+                value={section.whatsapp}
+                onChange={(whatsapp) => onChange({ ...section, whatsapp })}
+                placeholder="+91 …"
+                maxLength={40}
+              />
+              <TextInput
+                label="Address"
+                value={section.address}
+                onChange={(address) => onChange({ ...section, address })}
+                placeholder="Street, city, postcode"
+                maxLength={240}
+              />
+            </FieldRow>
+            <FieldRow>
+              <TextInput
+                label="Form title"
+                value={section.formTitle}
+                onChange={(formTitle) => onChange({ ...section, formTitle })}
+                placeholder="Send us a message"
+                maxLength={80}
+              />
+              <TextInput
+                label="Form note"
+                value={section.formNote}
+                onChange={(formNote) => onChange({ ...section, formNote })}
+                placeholder="Tell us a little about what you need."
+                maxLength={240}
+              />
+            </FieldRow>
+          </FormSection>
 
           <FormSection title={`Links (${section.links.length})`}>
             {section.links.map((link, index) => (

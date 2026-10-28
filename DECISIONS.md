@@ -17,9 +17,9 @@ Why:
 - EJS would add a second rendering runtime and make preview/public drift more
   likely.
 
-The template IDs (`atlas`, `signal`, `mono`, `bloom`) and the content model are
-still separate from presentation, so the PRD requirement to preserve content
-across template changes is met.
+The template IDs (`atlas`, `signal`, `mono`, `bloom`, `studio`) and the content
+model are still separate from presentation, so the PRD requirement to preserve
+content across template changes is met.
 
 ## One portfolio per account
 
@@ -155,11 +155,85 @@ can never cover it. `AppMain` decides between the padded and full-bleed
 variants from the pathname, which avoids duplicating the layout in a route
 group.
 
+## The Studio template is the only visible design
+
+The product now targets small businesses and service providers, so the four
+portfolio templates were replaced in the UI by one business-first design,
+**Studio**. The legacy IDs (`atlas`, `signal`, `mono`, `bloom`) remain valid in
+stored JSON so existing drafts are not lost, but:
+
+- `TEMPLATES` exports only Studio, so the editor and marketing pages cannot
+  choose a legacy layout.
+- `getTemplate()` falls back to Studio for any legacy ID.
+- The content schema upgrades every draft to `templateId: "studio"` on read.
+- Legacy section types stay valid and render inside the Studio layout, so a
+  user who had projects/experience/skills keeps that content.
+
+Keeping the old IDs as input-only aliases avoided a destructive migration while
+guaranteeing that no visitor or editor sees the retired designs.
+
+## Typography is tuned for readability
+
+The audience includes middle-aged and older business owners, so the app no
+longer uses the previous geometric/editorial pair by default. The UI now uses
+Source Sans 3 for body copy at `1.0625rem`/`1.65` and Source Serif 4 for
+headings; both are highly legible at normal viewing distance.
+
+Portfolio font pairs were remapped to similarly sturdy families: Modern
+(Poppins + Source Sans 3), Editorial (Source Serif 4 + Source Sans 3), Classic
+(Merriweather + Lato), and Technical (Libre Franklin + IBM Plex Sans). The
+editor describes each pair by its actual fonts instead of the old names.
+
+## Contact enquiries are stored in the database
+
+The public contact form writes to `portfolio_messages` through the
+`send_portfolio_message` SECURITY DEFINER function. This was chosen over a
+`mailto:` link or an external form service because:
+
+- business owners get an in-app inbox (`/messages`) with read/unread state,
+- the platform keeps a record even if an email bounces,
+- the anon key never receives table inserts; the function checks the portfolio
+  is published, validates contact details, and applies a light rate limit.
+
+Owners read only their own messages through RLS. Admins see every message and
+can open the target portfolio.
+
+## The promotion banner is platform-owned and non-dismissible
+
+Every public portfolio renders a fixed `PromoBar` above the site. It rotates
+short platform messages and links to the marketing site. It is excluded from
+the editor and draft preview so owners are not distracted while working.
+
+The banner exposes `--pf-promo-height`, and the Studio navigation sticks below
+it (`top: var(--pf-promo-height)`). The public wrapper reserves the same height,
+so the banner never covers the navigation or the top of the page.
+
+## Admins can edit any portfolio, with an audit trail
+
+The admin workspace is no longer read-only. A role-checked route at
+`/admin/portfolios/[id]` reuses the owner editor with an `admin` flag. In that
+mode:
+
+- saves and publishes call `admin_*` RPCs that check `public.is_admin()`,
+- media uploads write into the owner's storage folder and rows,
+- preview uses `/admin/portfolios/[id]/preview`,
+- unpublishing is available from the editor toolbar,
+- every save/publish/unpublish writes to `admin_audit_log` inside the same
+  database function as the change.
+
+No service-role key and no impersonation are used. The owner's session and
+password are never touched; the admin acts with their own authenticated session
+and the database records their profile and email. The audit log is visible at
+`/admin/audit`.
+
+MFA and step-up authentication for admins are intentionally deferred.
+
 ## Known limitations
 
 - Email delivery uses Supabase’s default SMTP until a custom provider is set.
 - There is no account deletion flow; Supabase cascade rules are the cleanup
   path if an operator removes a user.
-- Admin access is read-only by design.
+- Admin MFA and step-up authentication are not implemented yet.
+- Abuse reports use a temporary `mailto:` address in the public disclaimer.
 - Custom domains, multiple portfolios, and drag-and-drop layout are explicitly
   out of scope for the MVP.
