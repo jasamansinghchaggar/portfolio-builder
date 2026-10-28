@@ -208,6 +208,15 @@ The banner exposes `--pf-promo-height`, and the Studio navigation sticks below
 it (`top: var(--pf-promo-height)`). The public wrapper reserves the same height,
 so the banner never covers the navigation or the top of the page.
 
+Sticky positioning needs a scroll container that actually scrolls, so the site
+wrapper uses `overflow-x: clip` (with `hidden` as an older-browser fallback)
+instead of `overflow-x: hidden`. `hidden` would make the wrapper the scroll box
+and stop the navigation from sticking.
+
+The hero centres its content: portrait, eyebrow, headline, owner line, and
+action buttons share a centred column, and the image veil is a balanced radial
+overlay rather than the old left-to-right gradient.
+
 ## Admins can edit any portfolio, with an audit trail
 
 The admin workspace is no longer read-only. A role-checked route at
