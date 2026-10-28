@@ -243,7 +243,12 @@ least one contact method, and apply a light rate limit.
 A portfolio may display either a generated UPI payment QR code or an uploaded
 QR image. The platform displays the code only and does not process payments.
 
-**FR-PUBLIC-10 --- Custom domains (Future)**\
+**FR-PUBLIC-10 --- Owner profile image (P0)**\
+When the owner uploads a profile image in page details, the public hero shall
+show it as a circular portrait above the business name. A missing or non-image
+file shall be skipped without leaving a gap.
+
+**FR-PUBLIC-11 --- Custom domains (Future)**\
 Users may eventually connect domains they own. This is not required for
 the MVP.
 

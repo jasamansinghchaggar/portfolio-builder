@@ -150,7 +150,7 @@ export function BasicsPanel({
           media={media}
           onMediaAdded={onMediaAdded}
           kind="avatar"
-          hint="A square portrait works best."
+          hint="A square portrait works best. Shown as a circle in the hero."
         />
       </FormSection>
     </div>

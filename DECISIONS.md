@@ -245,6 +245,12 @@ unlinked and an admin has no other obvious way back to the public site.
 
 ## Portfolio interaction details
 
+A profile image uploaded in page details (`basics.avatarMediaId`) renders as a
+circular portrait above the hero heading, so the field has a visible purpose on
+the public site. It is skipped when the file is missing or not an image, and it
+stays inside the published media set because publishing already collects the
+avatar id.
+
 The quick-action row on a Studio site keeps one visual rhythm: every tile is an
 icon circle above a label, and Share and Save contact use the same circle,
 spacing, and padding as Call, WhatsApp, Email, and Website. Share uses a

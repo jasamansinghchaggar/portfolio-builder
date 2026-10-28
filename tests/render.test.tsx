@@ -48,6 +48,50 @@ describe("portfolio renderer", () => {
     }
   })
 
+  it("renders the hero profile image from page details", () => {
+    const content = createSampleContent()
+    content.basics.avatarMediaId = "media-avatar"
+
+    const html = renderToStaticMarkup(
+      <PortfolioRenderer
+        content={content}
+        media={{
+          "media-avatar": {
+            width: 400,
+            height: 400,
+            mimeType: "image/jpeg",
+            fileName: "portrait.jpg",
+          },
+        }}
+      />
+    )
+
+    expect(html).toContain("pf-hero-avatar")
+    expect(html).toContain("/media/media-avatar")
+    expect(html).toContain("profile photo")
+  })
+
+  it("skips the hero profile image when the file is not an image", () => {
+    const content = createSampleContent()
+    content.basics.avatarMediaId = "media-file"
+
+    const html = renderToStaticMarkup(
+      <PortfolioRenderer
+        content={content}
+        media={{
+          "media-file": {
+            width: null,
+            height: null,
+            mimeType: "application/pdf",
+            fileName: "profile.pdf",
+          },
+        }}
+      />
+    )
+
+    expect(html).not.toContain("pf-hero-avatar")
+  })
+
   it("omits hidden sections from public output", () => {
     const content = createSampleContent()
     const about = content.sections.find((section) => section.type === "about")

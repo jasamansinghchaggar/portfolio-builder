@@ -101,6 +101,11 @@ export function StudioRenderer({
     content.basics.heroMediaId ||
     (hero?.type === "hero" ? hero.imageMediaId : null)
   const heroMeta = heroImageId ? media[heroImageId] : undefined
+  const avatarId = content.basics.avatarMediaId
+  const avatarMeta = avatarId ? media[avatarId] : undefined
+  const showAvatar = Boolean(
+    avatarId && avatarMeta && isImageMime(avatarMeta.mimeType)
+  )
   const socials = socialsFromContent(content)
   const navItems = [
     { id: "hero", label: "Home" },
@@ -211,6 +216,18 @@ export function StudioRenderer({
         ) : null}
         <div className="pf-hero-veil" aria-hidden="true" />
         <div className="pf-shell pf-hero-inner">
+          {showAvatar && avatarId ? (
+            <span className="pf-hero-avatar">
+              <Image
+                src={mediaHref(avatarId)}
+                alt={`${ownerName || businessName} profile photo`}
+                width={160}
+                height={160}
+                sizes="(max-width: 640px) 96px, 144px"
+                className="pf-hero-avatar-image"
+              />
+            </span>
+          ) : null}
           <p className="pf-hero-eyebrow">
             {content.basics.headline ||
               content.basics.role ||
