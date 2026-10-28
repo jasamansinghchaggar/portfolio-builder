@@ -216,7 +216,7 @@ mode:
 
 - saves and publishes call `admin_*` RPCs that check `public.is_admin()`,
 - media uploads write into the owner's storage folder and rows,
-- preview uses `/admin/portfolios/[id]/preview`,
+- preview uses the standalone `/admin-preview/[id]` route (outside the app shell),
 - unpublishing is available from the editor toolbar,
 - every save/publish/unpublish writes to `admin_audit_log` inside the same
   database function as the change.
@@ -227,6 +227,32 @@ and the database records their profile and email. The audit log is visible at
 `/admin/audit`.
 
 MFA and step-up authentication for admins are intentionally deferred.
+
+## Admins get an admin-only workspace
+
+An admin has no personal portfolio to manage, so the app never shows owner
+navigation to one. The header lists only Admin, Messages, and Audit log, and the
+brand links to `/admin`. `/dashboard`, `/editor`, and `/onboarding` redirect
+admins to `/admin` instead of rendering owner flows. `/settings` still works for
+changing a password or name but is intentionally unlinked, so it is reachable
+only by typing the URL.
+
+Hiding links is only presentation; every admin route re-checks
+`profiles.role` on the server.
+
+Admins also get a sign-out button in the app header, since `/settings` is
+unlinked and an admin has no other obvious way back to the public site.
+
+## Portfolio interaction details
+
+The quick-action row on a Studio site keeps one visual rhythm: every tile is an
+icon circle above a label, and Share and Save contact use the same circle,
+spacing, and padding as Call, WhatsApp, Email, and Website. Share uses a
+dedicated `action` variant so the two contexts (hero header pill and quick
+action) can differ without forking the component.
+
+The mobile menu button uses a real menu icon that swaps to a close icon, sized
+and centred in a 44px box with no inherited gaps or line-height offsets.
 
 ## Known limitations
 

@@ -12,8 +12,10 @@ import {
   IconGlobe,
   IconMail,
   IconMapPin,
+  IconMenu2,
   IconPhone,
   IconStar,
+  IconX,
 } from "@tabler/icons-react"
 
 import { APP_NAME, SITE_URL } from "@/lib/config"
@@ -177,9 +179,8 @@ export function StudioRenderer({
 
           <details className="pf-menu">
             <summary aria-label="Open navigation">
-              <span />
-              <span />
-              <span />
+              <IconMenu2 className="pf-menu-icon-open" aria-hidden="true" />
+              <IconX className="pf-menu-icon-close" aria-hidden="true" />
             </summary>
             <div className="pf-menu-panel">
               <p className="pf-menu-label">Browse</p>
@@ -304,9 +305,7 @@ export function StudioRenderer({
                 <span>Website</span>
               </a>
             ) : null}
-            <span className="pf-action-wrap">
-              <ShareButton title={businessName} />
-            </span>
+            <ShareButton title={businessName} variant="action" />
             <SaveContactButton
               businessName={businessName}
               ownerName={ownerName}

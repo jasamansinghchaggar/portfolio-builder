@@ -361,7 +361,6 @@
 
 .pf-menu {
   display: none;
-  margin-left: auto;
   position: relative;
 }
 
@@ -370,22 +369,38 @@
   width: 44px;
   height: 44px;
   place-items: center;
-  gap: 5px;
+  padding: 0;
   border: 1px solid var(--pf-line);
   border-radius: 10px;
+  background: var(--pf-card);
+  line-height: 0;
   cursor: pointer;
   list-style: none;
 }
 
-.pf-menu summary::-webkit-details-marker {
+.pf-menu summary:hover {
+  background: var(--pf-alt);
+}
+
+.pf-menu summary svg {
+  width: 22px;
+  height: 22px;
+}
+
+.pf-menu summary .pf-menu-icon-close {
   display: none;
 }
 
-.pf-menu summary span {
+.pf-menu[open] summary .pf-menu-icon-open {
+  display: none;
+}
+
+.pf-menu[open] summary .pf-menu-icon-close {
   display: block;
-  width: 18px;
-  height: 2px;
-  background: var(--pf-text);
+}
+
+.pf-menu summary::-webkit-details-marker {
+  display: none;
 }
 
 .pf-menu-panel {
@@ -534,8 +549,7 @@
   box-shadow: var(--pf-shadow);
 }
 
-.pf-action,
-.pf-action-wrap .pf-share-button {
+.pf-action {
   display: flex;
   min-height: 78px;
   flex-direction: column;
@@ -554,8 +568,7 @@
   cursor: pointer;
 }
 
-.pf-action:hover,
-.pf-action-wrap .pf-share-button:hover {
+.pf-action:hover {
   background: var(--pf-alt);
 }
 
@@ -584,10 +597,6 @@
   color: color-mix(in srgb, var(--pf-accent) 55%, #ffffff);
 }
 
-.pf-action-wrap {
-  display: contents;
-}
-
 .pf-share {
   display: flex;
   flex-direction: column;
@@ -614,6 +623,43 @@
 .pf-share-button svg {
   width: 1rem;
   height: 1rem;
+}
+
+/* The quick-action Share button matches the other action tiles. */
+.pf-share-action {
+  width: 100%;
+  gap: 0;
+}
+
+.pf-share-button-action {
+  width: 100%;
+  min-height: 78px;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  padding: 0.6rem 0.4rem;
+  font-size: 0.88rem;
+}
+
+.pf-share-button-action:hover {
+  background: var(--pf-alt);
+}
+
+.pf-share-button-action .pf-action-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.pf-share-action .pf-share-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
 }
 
 .pf-share-status {
@@ -1609,6 +1655,7 @@
 
   .pf-menu {
     display: block;
+    margin-left: 0;
   }
 
   .pf-nav-actions {
@@ -1664,6 +1711,10 @@
 @media (max-width: 520px) {
   .pf-nav-actions {
     display: none;
+  }
+
+  .pf-menu {
+    margin-left: auto;
   }
 
   .pf-quick-grid {

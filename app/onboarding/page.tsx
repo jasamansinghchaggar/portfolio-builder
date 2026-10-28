@@ -17,9 +17,10 @@ export const metadata: Metadata = {
 
 export default async function OnboardingPage() {
   const { userId } = await requireUser("/onboarding")
+  const profile = await getProfile(userId)
+  if (profile?.role === "admin") redirect("/admin")
   const portfolio = await getMyPortfolio(userId)
   if (portfolio) redirect("/dashboard")
-  const profile = await getProfile(userId)
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-background">

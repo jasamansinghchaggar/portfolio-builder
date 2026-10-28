@@ -3,7 +3,9 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
+  IconHistory,
   IconLayoutDashboard,
+  IconLogout,
   IconMessage,
   IconPencil,
   IconSettings,
@@ -11,6 +13,7 @@ import {
 } from "@tabler/icons-react"
 
 import { Brand } from "@/components/marketing/brand"
+import { logoutAction } from "@/lib/actions/auth"
 import type { PortfolioStatus } from "@/lib/supabase/database.types"
 import { cn } from "@/lib/utils"
 
@@ -45,31 +48,44 @@ export function AppHeader({
 }) {
   const pathname = usePathname()
 
-  const links = [
-    { href: "/dashboard", label: "Overview", icon: IconLayoutDashboard },
-    ...(hasPortfolio
-      ? [
-          { href: "/editor", label: "Editor", icon: IconPencil },
-          { href: "/messages", label: "Messages", icon: IconMessage },
-          { href: "/settings", label: "Settings", icon: IconSettings },
-        ]
-      : isAdmin
-        ? [{ href: "/messages", label: "Messages", icon: IconMessage }]
-        : []),
-    ...(isAdmin
-      ? [{ href: "/admin", label: "Admin", icon: IconShieldLock }]
-      : []),
-  ]
+  const links = isAdmin
+    ? [
+        { href: "/admin", label: "Admin", icon: IconShieldLock },
+        { href: "/messages", label: "Messages", icon: IconMessage },
+        { href: "/admin/audit", label: "Audit log", icon: IconHistory },
+      ]
+    : [
+        { href: "/dashboard", label: "Overview", icon: IconLayoutDashboard },
+        ...(hasPortfolio
+          ? [
+              { href: "/editor", label: "Editor", icon: IconPencil },
+              { href: "/messages", label: "Messages", icon: IconMessage },
+              { href: "/settings", label: "Settings", icon: IconSettings },
+            ]
+          : []),
+      ]
+
+  const homeHref = isAdmin
+    ? "/admin"
+    : hasPortfolio
+      ? "/dashboard"
+      : "/onboarding"
+
+  function isActive(href: string) {
+    if (href === "/admin") {
+      return pathname === "/admin" || pathname.startsWith("/admin/portfolios")
+    }
+    return pathname === href || pathname.startsWith(`${href}/`)
+  }
 
   return (
     <header className="fixed inset-x-0 top-0 z-40 flex h-(--app-header-height) flex-col border-b bg-background/85 backdrop-blur-md">
       <div className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 items-center gap-3 px-4 sm:px-6">
-        <Brand href={hasPortfolio ? "/dashboard" : "/onboarding"} />
+        <Brand href={homeHref} />
 
         <nav className="ml-3 hidden items-center gap-0.5 md:flex">
           {links.map((link) => {
-            const active =
-              pathname === link.href || pathname.startsWith(`${link.href}/`)
+            const active = isActive(link.href)
             return (
               <Link
                 key={link.href}
@@ -89,7 +105,7 @@ export function AppHeader({
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          {status ? (
+          {!isAdmin && status ? (
             <span
               className={cn(
                 "hidden items-center gap-1.5 rounded-full border px-2 py-0.5 text-[0.65rem] font-medium sm:inline-flex",
@@ -99,6 +115,19 @@ export function AppHeader({
               <span className="size-1.5 rounded-full bg-current" />
               {STATUS_LABEL[status]}
             </span>
+          ) : null}
+
+          {isAdmin ? (
+            <form action={logoutAction} className="flex items-center">
+              <button
+                type="submit"
+                className="inline-flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/60 hover:text-foreground"
+                aria-label="Sign out"
+              >
+                <IconLogout className="size-3.5" />
+                <span className="hidden sm:inline">Sign out</span>
+              </button>
+            </form>
           ) : null}
 
           <div className="hidden items-center gap-2 border-l pl-2.5 sm:flex">
@@ -119,8 +148,7 @@ export function AppHeader({
 
       <nav className="flex h-10 shrink-0 items-center gap-0.5 overflow-x-auto border-t px-4 md:hidden">
         {links.map((link) => {
-          const active =
-            pathname === link.href || pathname.startsWith(`${link.href}/`)
+          const active = isActive(link.href)
           return (
             <Link
               key={link.href}

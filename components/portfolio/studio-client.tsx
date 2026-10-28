@@ -46,9 +46,11 @@ export function ReadMore({ children }: { children: React.ReactNode }) {
 export function ShareButton({
   title,
   label = "Share",
+  variant = "pill",
 }: {
   title: string
   label?: string
+  variant?: "pill" | "action"
 }) {
   const [message, setMessage] = useState("")
   const [copied, setCopied] = useState(false)
@@ -74,10 +76,26 @@ export function ShareButton({
   }
 
   return (
-    <span className="pf-share">
-      <button type="button" className="pf-share-button" onClick={() => void share()}>
-        {copied ? <IconCopy /> : <IconShare />}
-        {copied ? "Copied" : label}
+    <span className={variant === "action" ? "pf-share pf-share-action" : "pf-share"}>
+      <button
+        type="button"
+        className={
+          variant === "action"
+            ? "pf-share-button pf-share-button-action"
+            : "pf-share-button"
+        }
+        onClick={() => void share()}
+      >
+        {variant === "action" ? (
+          <span className="pf-action-icon">
+            {copied ? <IconCopy /> : <IconShare />}
+          </span>
+        ) : copied ? (
+          <IconCopy />
+        ) : (
+          <IconShare />
+        )}
+        <span>{copied ? "Copied" : label}</span>
       </button>
       <span className="pf-share-status" role="status">
         {message}
@@ -124,7 +142,9 @@ export function SaveContactButton({
 
   return (
     <button type="button" className="pf-action" onClick={save}>
-      <IconDownload />
+      <span className="pf-action-icon">
+        <IconDownload />
+      </span>
       <span>{label}</span>
     </button>
   )

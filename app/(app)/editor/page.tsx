@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import { redirect } from "next/navigation"
 
 import { Editor } from "@/components/editor/editor"
 import { getProfile, requirePortfolio } from "@/lib/auth"
@@ -51,6 +52,7 @@ export default async function EditorPage({
   }))
 
   const profile = await getProfile(userId)
+  if (profile?.role === "admin") redirect("/admin")
   const content = coercePortfolioContent(portfolio.draft_content, {
     fullName: profile?.full_name ?? "",
     email: profile?.email ?? "",

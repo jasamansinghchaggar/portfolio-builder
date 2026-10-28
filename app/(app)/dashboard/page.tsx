@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import Link from "next/link"
+import { redirect } from "next/navigation"
 import {
   IconArrowUpRight,
   IconCircleCheck,
@@ -65,6 +66,7 @@ export default async function DashboardPage({
 
   const { supabase, userId, portfolio } = await requirePortfolio("/dashboard")
   const profile = await getProfile(userId)
+  if (profile?.role === "admin") redirect("/admin")
 
   const content = coercePortfolioContent(portfolio.draft_content, {
     fullName: profile?.full_name ?? "",

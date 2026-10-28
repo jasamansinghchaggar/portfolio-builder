@@ -298,6 +298,12 @@ log shall be readable by administrators and not editable from the app.
 An administrator shall be able to read enquiries across every portfolio, mark
 them read or unread, and delete them.
 
+**FR-ADMIN-09 --- Admin-only navigation (P0)**\
+An administrator account shall see only administrative destinations in the app
+shell (Admin, Messages, Audit log). Owner-only flows — Overview, Editor, and
+onboarding/self-profile building — shall not be offered and shall redirect an
+administrator to the admin workspace if visited directly.
+
 ### 7.9 Media
 
 **FR-MEDIA-01 --- Upload supported media (P0)**\
