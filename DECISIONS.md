@@ -297,6 +297,16 @@ line were removed. The payment payee name defaults to the business name when
 left blank, and publish validation reads hero/contact readiness from `basics`
 instead of the hero section copy.
 
+## Editor fields validate with zod
+
+Editor inputs validate on blur with small zod schemas in
+`lib/portfolio/validation.ts`, covering required names, optional emails,
+10-digit phone/WhatsApp numbers, and links. Invalid fields get a red border,
+`aria-invalid`, and an inline `role="alert"` message; the content schema remains
+the server-side gate on save and publish. Hints are replaced by the error while
+the value is invalid, and validation is non-blocking for autosave so a draft is
+never lost.
+
 ## Known limitations
 
 - Email delivery uses Supabase’s default SMTP until a custom provider is set.

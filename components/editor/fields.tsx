@@ -1,21 +1,27 @@
 "use client"
 
-import type { ReactNode } from "react"
+import { useId, useState, type ReactNode } from "react"
 
 import { Field, FieldDescription, FieldLabel } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
+import {
+  sanitizeEmailInput,
+  sanitizePhoneInput,
+} from "@/lib/portfolio/validation"
 
 export function EditorField({
   label,
   hint,
+  error,
   htmlFor,
   children,
   className,
 }: {
   label?: string
   hint?: ReactNode
+  error?: ReactNode
   htmlFor?: string
   children: ReactNode
   className?: string
@@ -24,7 +30,13 @@ export function EditorField({
     <Field className={cn("gap-1.5", className)}>
       {label ? <FieldLabel htmlFor={htmlFor}>{label}</FieldLabel> : null}
       {children}
-      {hint ? <FieldDescription>{hint}</FieldDescription> : null}
+      {error ? (
+        <p role="alert" className="text-xs font-medium text-destructive">
+          {error}
+        </p>
+      ) : hint ? (
+        <FieldDescription>{hint}</FieldDescription>
+      ) : null}
     </Field>
   )
 }
@@ -35,6 +47,7 @@ export function TextInput({
   onChange,
   placeholder,
   hint,
+  validate,
   type = "text",
   maxLength,
   id,
@@ -46,21 +59,49 @@ export function TextInput({
   onChange: (value: string) => void
   placeholder?: string
   hint?: ReactNode
+  /** Returns a validation message, or `undefined` when the value is valid. */
+  validate?: (value: string) => string | undefined
   type?: string
   maxLength?: number
   id?: string
   className?: string
   inputClassName?: string
 }) {
+  const [touched, setTouched] = useState(false)
+  const generatedId = useId()
+  const fieldId = id ?? generatedId
+  const errorId = `${fieldId}-error`
+  const error = touched && validate ? validate(value) : undefined
+
   return (
-    <EditorField label={label} hint={hint} htmlFor={id} className={className}>
+    <EditorField
+      label={label}
+      hint={hint}
+      error={error ? <span id={errorId}>{error}</span> : undefined}
+      htmlFor={fieldId}
+      className={className}
+    >
       <Input
-        id={id}
+        id={fieldId}
         type={type}
+        inputMode={
+          type === "tel" ? "numeric" : type === "email" ? "email" : undefined
+        }
         value={value}
-        onChange={(event) => onChange(event.target.value)}
+        onChange={(event) => {
+          const nextValue =
+            type === "tel"
+              ? sanitizePhoneInput(event.target.value)
+              : type === "email"
+                ? sanitizeEmailInput(event.target.value)
+                : event.target.value
+          onChange(nextValue)
+        }}
+        onBlur={() => setTouched(true)}
         placeholder={placeholder}
         maxLength={maxLength}
+        aria-invalid={error ? true : undefined}
+        aria-describedby={error ? errorId : undefined}
         className={cn("h-9 text-sm", inputClassName)}
       />
     </EditorField>

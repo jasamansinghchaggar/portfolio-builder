@@ -9,6 +9,12 @@ import {
 import { MediaField } from "@/components/editor/media-field"
 import type { Basics } from "@/lib/portfolio/types"
 import type { EditorMedia } from "@/lib/portfolio/media"
+import {
+  validateBusinessName,
+  validateEmail,
+  validateOwnerName,
+  validatePhone,
+} from "@/lib/portfolio/validation"
 
 export function BasicsPanel({
   basics,
@@ -33,6 +39,7 @@ export function BasicsPanel({
           onChange={(businessName) => onChange({ ...basics, businessName })}
           placeholder="Quinn Studio"
           maxLength={120}
+          validate={validateBusinessName}
         />
         <FieldRow>
           <TextInput
@@ -41,6 +48,7 @@ export function BasicsPanel({
             onChange={(ownerName) => onChange({ ...basics, ownerName })}
             placeholder="Avery Quinn"
             maxLength={120}
+            validate={validateOwnerName}
           />
           <TextInput
             label="Role"
@@ -79,6 +87,7 @@ export function BasicsPanel({
             value={basics.email}
             onChange={(email) => onChange({ ...basics, email })}
             placeholder="you@example.com"
+            validate={validateEmail}
           />
           <TextInput
             label="Phone"
@@ -88,6 +97,7 @@ export function BasicsPanel({
             placeholder="98765 43210"
             maxLength={40}
             hint="10 digits, without the country code."
+            validate={validatePhone}
           />
         </FieldRow>
         <FieldRow>
@@ -99,6 +109,7 @@ export function BasicsPanel({
             placeholder="98765 43210"
             maxLength={40}
             hint="10 digits, without the country code. Used for chat buttons and wa.me links."
+            validate={validatePhone}
           />
           <TextInput
             label="Location"

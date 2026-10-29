@@ -31,6 +31,7 @@ import {
 } from "@/lib/portfolio/defaults"
 import type { EditorMedia } from "@/lib/portfolio/media"
 import type { Basics, Section } from "@/lib/portfolio/types"
+import { validateUpiId, validateUrl, validateYoutube } from "@/lib/portfolio/validation"
 import { cn } from "@/lib/utils"
 
 function ItemCard({
@@ -415,6 +416,7 @@ export function SectionForm({
                       })
                     }
                     placeholder="https://…"
+                    validate={validateUrl}
                   />
                   <TextInput
                     label="Repository URL"
@@ -428,6 +430,7 @@ export function SectionForm({
                       })
                     }
                     placeholder="https://github.com/…"
+                    validate={validateUrl}
                   />
                 </FieldRow>
                 <MediaField
@@ -926,6 +929,7 @@ export function SectionForm({
                       })
                     }
                     placeholder="https://…"
+                    validate={validateUrl}
                   />
                 </FieldRow>
               </ItemCard>
@@ -1039,6 +1043,7 @@ export function SectionForm({
                 value={section.ctaUrl}
                 onChange={(ctaUrl) => onChange({ ...section, ctaUrl })}
                 placeholder="#section-contact"
+                validate={validateUrl}
               />
             </FieldRow>
           </FormSection>
@@ -1245,6 +1250,7 @@ export function SectionForm({
                     })
                   }
                   placeholder="https://…"
+                  validate={validateUrl}
                 />
                 <MediaField
                   label="Product image"
@@ -1412,6 +1418,7 @@ export function SectionForm({
                   }
                   placeholder="https://youtube.com/watch?v=…"
                   hint="A full YouTube link or the 11-character video ID."
+                  validate={validateYoutube}
                 />
               </ItemCard>
             ))}
@@ -1460,6 +1467,7 @@ export function SectionForm({
               placeholder="yourname@bank"
               maxLength={120}
               hint="A QR code is generated from this ID."
+              validate={validateUpiId}
             />
             <TextInput
               label="Payee name"
@@ -1542,6 +1550,7 @@ export function SectionForm({
                       })
                     }
                     placeholder="https://instagram.com/…"
+                    validate={validateUrl}
                   />
                 </FieldRow>
               </ItemCard>

@@ -9,7 +9,7 @@ import {
   TEMPLATE_IDS,
 } from "./constants"
 
-function isHttpUrl(value: string) {
+export function isHttpUrl(value: string) {
   if (value === "") return true
   if (/^#[\w-]+$/.test(value)) return true
   try {
@@ -38,6 +38,17 @@ const optionalEmail = z
   .refine(
     (value) => value === "" || z.email().safeParse(value).success,
     "Enter a valid email address."
+  )
+
+const phone = z
+  .string()
+  .trim()
+  .max(40, "Keep the number under 40 characters.")
+  .refine(
+    (value) =>
+      value === "" ||
+      (!value.includes("+") && value.replace(/\D/g, "").length === 10),
+    "Enter a 10-digit number without the country code."
   )
 
 const mediaId = z.uuid().nullable()
@@ -325,7 +336,7 @@ const contactSectionSchema = z.object({
   title: z.string().trim().max(80),
   message: z.string().trim().max(1200),
   email: optionalEmail,
-  phone: z.string().trim().max(40),
+  phone,
   location: z.string().trim().max(120),
   links: z.array(contactLinkSchema).max(20),
   /** Business-template additions. */
@@ -395,14 +406,14 @@ export const basicsSchema = z.object({
   headline: z.string().trim().max(160),
   location: shortText,
   email: optionalEmail,
-  phone: z.string().trim().max(40),
+  phone,
   avatarMediaId: mediaId,
   /** Business-template additions. */
   businessName: z.string().trim().max(120).default(""),
   ownerName: z.string().trim().max(120).default(""),
   role: z.string().trim().max(160).default(""),
   tagline: z.string().trim().max(240).default(""),
-  whatsapp: z.string().trim().max(40).default(""),
+  whatsapp: phone.default(""),
   address: z.string().trim().max(240).default(""),
   heroMediaId: mediaId.default(null),
   logoMediaId: mediaId.default(null),

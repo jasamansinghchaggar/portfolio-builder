@@ -78,6 +78,7 @@ import {
 } from "@/lib/portfolio/constants"
 import { sectionLabel } from "@/lib/portfolio/sections"
 import { parsePortfolioContent } from "@/lib/portfolio/defaults"
+import { contentFieldIssues } from "@/lib/portfolio/validation"
 import type {
   DesignSettings,
   PortfolioContent,
@@ -190,6 +191,12 @@ export function Editor({
       setSaveState("saving")
       setSaveError(null)
       const snapshot = contentRef.current
+      const fieldIssue = contentFieldIssues(snapshot)[0]
+      if (fieldIssue) {
+        setSaveState("error")
+        setSaveError(`${fieldIssue.message} Fix it before saving.`)
+        return false
+      }
       const snapshotJson = JSON.stringify(snapshot)
       const result = await actions.save({
         portfolioId,

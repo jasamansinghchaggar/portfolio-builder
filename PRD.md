@@ -139,7 +139,9 @@ The user shall be able to change the order in which sections appear.
 The user shall be able to hide a section from the public presentation without necessarily deleting its content.
 
 **FR-EDIT-06 --- Validate section content (P0)**\
-The system shall validate section fields and reject malformed or unsupported content.
+The system shall validate section fields and reject malformed or unsupported
+content. Editor inputs shall use the same zod rules to show inline messages on
+blur for names, emails, phone numbers, and links.
 
 **FR-EDIT-07 --- Section library (P0)**\
 The section library supports Hero, About, Mission, Services, Events, Products,

@@ -26,6 +26,15 @@ describe("portfolio content schema", () => {
     expect(parsed.success).toBe(false)
   })
 
+  it("rejects non-numeric and non-10-digit phone values", () => {
+    const content = createSampleContent()
+    content.basics.phone = "not a phone number"
+    expect(portfolioContentSchema.safeParse(content).success).toBe(false)
+
+    content.basics.phone = "12345"
+    expect(portfolioContentSchema.safeParse(content).success).toBe(false)
+  })
+
   it("allows in-page anchors and mailto links", () => {
     const content = createSampleContent()
     const socials = content.sections.find((section) => section.type === "socials")
