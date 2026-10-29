@@ -120,12 +120,6 @@ export function StudioRenderer({
   )
   const footerName = businessName
   const firstName = ownerName.split(/\s+/)[0] || ownerName
-  const heroSubLine = [
-    businessName && businessName !== ownerName ? businessName : "",
-    content.basics.role.trim(),
-  ]
-    .filter(Boolean)
-    .join(" · ")
 
   return (
     <div
@@ -237,8 +231,8 @@ export function StudioRenderer({
           <p className="pf-hero-eyebrow">{content.basics.headline || ""}</p>
           <p className="pf-hero-sub">
             <strong>{ownerName}</strong>
-            {heroSubLine ? (
-              <span className="pf-hero-meta">{heroSubLine}</span>
+            {content.basics.role ? (
+              <span className="pf-hero-meta">{content.basics.role}</span>
             ) : null}
             {content.basics.tagline ? (
               <small>{content.basics.tagline}</small>
