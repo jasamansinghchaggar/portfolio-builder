@@ -229,11 +229,8 @@ export function StudioRenderer({
             </span>
           ) : null}
           <p className="pf-hero-eyebrow">
-            {content.basics.headline ||
-              content.basics.role ||
-              "Welcome to our website"}
+            {content.basics.headline || "Welcome to our website"}
           </p>
-          <h1>{businessName}</h1>
           <p className="pf-hero-sub">
             <strong>{ownerName}</strong>
             {content.basics.role ? (
@@ -264,7 +261,10 @@ export function StudioRenderer({
               </a>
             )}
             {phone ? (
-              <a className="pf-button pf-button-ghost" href={phoneHref(phone) ?? "#"}>
+              <a
+                className="pf-button pf-button-ghost"
+                href={phoneHref(phone) ?? "#"}
+              >
                 <IconPhone />
                 Call us
               </a>
@@ -447,8 +447,7 @@ export function StudioRenderer({
 
       <div className="pf-disclaimer">
         Platform disclaimer: the site owner is responsible for all content and
-        transactions.{" "}
-        <a href="mailto:abuse@folio.app">Report abuse</a>
+        transactions. <a href="mailto:abuse@folio.app">Report abuse</a>
       </div>
 
       {!preview ? (
@@ -592,7 +591,9 @@ function AboutSection({ section }: { section: SectionOfType<"about"> }) {
           ) : null}
           {section.message || section.messageTitle ? (
             <div className="pf-note">
-              {section.messageTitle ? <strong>{section.messageTitle}</strong> : null}
+              {section.messageTitle ? (
+                <strong>{section.messageTitle}</strong>
+              ) : null}
               {section.message ? <p>{section.message}</p> : null}
             </div>
           ) : null}
@@ -627,11 +628,7 @@ function MissionSection({
   )
 }
 
-function ServicesSection({
-  section,
-}: {
-  section: SectionOfType<"services">
-}) {
+function ServicesSection({ section }: { section: SectionOfType<"services"> }) {
   const contactHref = section.ctaUrl.trim() || "#section-contact"
   return (
     <>
@@ -642,7 +639,9 @@ function ServicesSection({
       <div className="pf-cards">
         {section.items.map((item, index) => (
           <article key={item.id} className="pf-card">
-            <span className="pf-step">{String(index + 1).padStart(2, "0")}</span>
+            <span className="pf-step">
+              {String(index + 1).padStart(2, "0")}
+            </span>
             <h3>{item.title}</h3>
             <p>{item.description}</p>
           </article>
@@ -678,7 +677,9 @@ function EventsSection({
               {item.meta[0] ?? "Coming up"}
             </div>
             <h3>{item.title}</h3>
-            {item.theme ? <strong className="pf-event-theme">{item.theme}</strong> : null}
+            {item.theme ? (
+              <strong className="pf-event-theme">{item.theme}</strong>
+            ) : null}
             <p>{item.text}</p>
             {item.meta.length ? (
               <div className="pf-pills">
@@ -850,14 +851,18 @@ function PaymentSection({
             fileName="payment-qr.png"
           />
         ) : (
-          <p className="pf-empty">Add a UPI ID or upload your payment QR code.</p>
+          <p className="pf-empty">
+            Add a UPI ID or upload your payment QR code.
+          </p>
         )}
         {section.upiId ? (
           <p className="pf-pay-upi">
             UPI ID: <strong>{section.upiId}</strong>
           </p>
         ) : null}
-        {section.payeeName ? <p className="pf-pay-name">{section.payeeName}</p> : null}
+        {section.payeeName ? (
+          <p className="pf-pay-name">{section.payeeName}</p>
+        ) : null}
       </div>
     </>
   )
@@ -1038,7 +1043,10 @@ function QrSection({
 
   return (
     <>
-      <SectionHead title={section.title.trim() || "Scan and connect"} intro={section.intro} />
+      <SectionHead
+        title={section.title.trim() || "Scan and connect"}
+        intro={section.intro}
+      />
       <QrTabs entries={entries} />
     </>
   )
@@ -1060,7 +1068,9 @@ function LegacySection({
           <SectionHead title={title} intro={section.intro} />
           <div className="pf-cards">
             {section.items.map((item) => {
-              const meta = item.imageMediaId ? media[item.imageMediaId] : undefined
+              const meta = item.imageMediaId
+                ? media[item.imageMediaId]
+                : undefined
               return (
                 <article key={item.id} className="pf-card pf-project">
                   {item.imageMediaId && meta && isImageMime(meta.mimeType) ? (
@@ -1258,7 +1268,10 @@ function LegacySection({
               </ul>
             ) : null}
             {section.fileMediaId ? (
-              <a className="pf-button" href={mediaDownloadHref(section.fileMediaId)}>
+              <a
+                className="pf-button"
+                href={mediaDownloadHref(section.fileMediaId)}
+              >
                 <IconDownload />
                 Download CV
               </a>

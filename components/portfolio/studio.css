@@ -32,7 +32,7 @@
   line-height: 1.3;
 }
 
-.pf-promo-inner > svg {
+.pf-promo-inner>svg {
   width: 1.1rem;
   height: 1.1rem;
   flex: 0 0 auto;
@@ -63,6 +63,7 @@
     opacity: 0;
     transform: translateY(3px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -465,21 +466,17 @@
   position: absolute;
   inset: 0;
   z-index: -1;
-  background: linear-gradient(
-    180deg,
-    rgb(5 10 20 / 0.78) 0%,
-    rgb(5 10 20 / 0.66) 50%,
-    rgb(5 10 20 / 0.82) 100%
-  );
+  background: linear-gradient(180deg,
+      rgb(5 10 20 / 0.78) 0%,
+      rgb(5 10 20 / 0.66) 50%,
+      rgb(5 10 20 / 0.82) 100%);
 }
 
 .pf-hero[data-image="true"] .pf-hero-veil {
   background:
-    radial-gradient(
-      ellipse at 50% 45%,
+    radial-gradient(ellipse at 50% 45%,
       rgb(5 10 20 / 0.55) 0%,
-      rgb(5 10 20 / 0.8) 78%
-    ),
+      rgb(5 10 20 / 0.8) 78%),
     linear-gradient(180deg, rgb(5 10 20 / 0.55), rgb(5 10 20 / 0.72));
 }
 
@@ -527,7 +524,7 @@
 .pf-hero .pf-hero-sub {
   max-width: 46rem;
   margin: 1.1rem auto 0;
-  font-size: clamp(1.12rem, 2vw, 1.32rem);
+  font-size: clamp(1.5rem, 2.4vw, 5rem);
   line-height: 1.5;
   color: #dbe4f0;
 }
@@ -766,7 +763,7 @@
   font-size: 0.78rem;
 }
 
-.pf-head > p {
+.pf-head>p {
   margin-top: 0.75rem;
   color: var(--pf-muted);
   font-size: 1.05rem;
@@ -801,7 +798,7 @@
   font-weight: 700;
 }
 
-.pf-card > p {
+.pf-card>p {
   margin-top: 0.55rem;
   color: var(--pf-muted);
 }
@@ -851,7 +848,7 @@
   margin: 0 auto;
 }
 
-.pf-about-body > p {
+.pf-about-body>p {
   margin-bottom: 1rem;
   color: var(--pf-muted);
   font-size: 1.08rem;
@@ -914,7 +911,7 @@
   mask-image: linear-gradient(to bottom, #000 62%, transparent 100%);
 }
 
-.pf-readmore > .pf-button {
+.pf-readmore>.pf-button {
   margin-top: 1.2rem;
 }
 
@@ -1414,7 +1411,7 @@
   font-weight: 600;
 }
 
-.pf-row > div > p:not(.pf-row-org) {
+.pf-row>div>p:not(.pf-row-org) {
   margin-top: 0.5rem;
   color: var(--pf-muted);
 }
@@ -1760,6 +1757,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
   .pf-site *,
   .pf-site *::before,
   .pf-site *::after {

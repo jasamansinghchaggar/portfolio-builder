@@ -8,18 +8,14 @@ import {
   IconChevronRight,
   IconCopy,
   IconDownload,
-  IconMessageCircle,
   IconShare,
   IconBrandWhatsapp,
   IconX,
+  IconPhone,
 } from "@tabler/icons-react"
 
 import { sendPortfolioMessageAction } from "@/lib/actions/messages"
-import {
-  isImageMime,
-  mediaHref,
-  type MediaMap,
-} from "@/lib/portfolio/media"
+import { isImageMime, mediaHref, type MediaMap } from "@/lib/portfolio/media"
 
 export function ReadMore({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
@@ -76,7 +72,9 @@ export function ShareButton({
   }
 
   return (
-    <span className={variant === "action" ? "pf-share pf-share-action" : "pf-share"}>
+    <span
+      className={variant === "action" ? "pf-share pf-share-action" : "pf-share"}
+    >
       <button
         type="button"
         className={
@@ -217,7 +215,10 @@ export function GalleryGrid({
           aria-label={current.title || "Image preview"}
           onClick={() => setActive(null)}
         >
-          <div className="pf-lightbox-inner" onClick={(event) => event.stopPropagation()}>
+          <div
+            className="pf-lightbox-inner"
+            onClick={(event) => event.stopPropagation()}
+          >
             <button
               type="button"
               className="pf-lightbox-close"
@@ -278,7 +279,10 @@ export function ContactForm({
   preview?: boolean
 }) {
   const [pending, startTransition] = useTransition()
-  const [status, setStatus] = useState<{ kind: "idle" | "ok" | "error"; message: string }>({
+  const [status, setStatus] = useState<{
+    kind: "idle" | "ok" | "error"
+    message: string
+  }>({
     kind: "idle",
     message: "",
   })
@@ -356,7 +360,9 @@ export function QrCard({
   caption: string
   fileName: string
 }) {
-  const [result, setResult] = useState<{ text: string; url: string } | null>(null)
+  const [result, setResult] = useState<{ text: string; url: string } | null>(
+    null
+  )
   const [failedText, setFailedText] = useState<string | null>(null)
 
   useEffect(() => {
@@ -382,7 +388,11 @@ export function QrCard({
   const failed = failedText === text
 
   if (!text.trim()) {
-    return <div className="pf-qr-box pf-qr-empty">Add a link to generate a QR code.</div>
+    return (
+      <div className="pf-qr-box pf-qr-empty">
+        Add a link to generate a QR code.
+      </div>
+    )
   }
 
   if (failed) {
@@ -406,7 +416,11 @@ export function QrCard({
       </div>
       <p className="pf-qr-caption">{caption}</p>
       {dataUrl ? (
-        <a className="pf-button pf-button-ghost" href={dataUrl} download={fileName}>
+        <a
+          className="pf-button pf-button-ghost"
+          href={dataUrl}
+          download={fileName}
+        >
           <IconDownload />
           Save QR code
         </a>
@@ -424,7 +438,11 @@ export function QrTabs({
   const current = entries.find((entry) => entry.id === active) ?? entries[0]
 
   if (!current) {
-    return <p className="pf-empty">Add a website, WhatsApp, or Instagram link to create a QR code.</p>
+    return (
+      <p className="pf-empty">
+        Add a website, WhatsApp, or Instagram link to create a QR code.
+      </p>
+    )
   }
 
   return (
@@ -478,12 +496,11 @@ export function FloatingContact({
             </button>
           </div>
           <p>Hi! How can we help you today? Feel free to ask any questions.</p>
-          {whatsappUrl ? (
-            <a className="pf-button" href={whatsappUrl} target="_blank" rel="noopener noreferrer">
-              Start chat
-            </a>
-          ) : phone ? (
-            <a className="pf-button" href={`tel:${phone.replace(/[^\d+]/g, "")}`}>
+          {phone ? (
+            <a
+              className="pf-button"
+              href={`tel:${phone.replace(/[^\d+]/g, "")}`}
+            >
               Call us
             </a>
           ) : null}
@@ -509,7 +526,7 @@ export function FloatingContact({
           aria-expanded={open}
           onClick={() => setOpen((value) => !value)}
         >
-          {open ? <IconX /> : <IconMessageCircle />}
+          {open ? <IconX /> : <IconPhone />}
         </button>
       </div>
     </div>
