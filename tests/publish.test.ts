@@ -80,21 +80,28 @@ describe("publish validation", () => {
 
   it("flags empty contact details", () => {
     const content = createSampleContent()
+    content.basics.email = ""
+    content.basics.phone = ""
+    content.basics.whatsapp = ""
+    content.basics.address = ""
+    const socials = content.sections.find(
+      (section) => section.type === "socials"
+    )
+    if (socials?.type !== "socials") {
+      throw new Error("Sample content needs a socials section.")
+    }
+    socials.items = []
     const contact = content.sections.find(
       (section) => section.type === "contact"
     )
     if (contact?.type !== "contact") {
       throw new Error("Sample content needs a contact section.")
     }
-    contact.email = ""
-    contact.phone = ""
-    contact.whatsapp = ""
-    contact.address = ""
     contact.links = []
 
     const issues = validateForPublish(content)
     expect(
-      issues.some((issue) => issue.message.includes("at least one contact link"))
+      issues.some((issue) => issue.message.includes("so visitors can reach you"))
     ).toBe(true)
   })
 

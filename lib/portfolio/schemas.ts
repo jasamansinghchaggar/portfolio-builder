@@ -57,16 +57,10 @@ const sectionBase = {
 const heroSectionSchema = z.object({
   ...sectionBase,
   type: z.literal("hero"),
-  eyebrow: z.string().trim().max(80),
-  headline: z.string().trim().max(180),
-  subheadline: z.string().trim().max(240),
-  bio: mediumText,
-  location: shortText,
-  availability: z.string().trim().max(80),
-  primaryCtaLabel: z.string().trim().max(40),
-  primaryCtaUrl: optionalUrl,
-  secondaryCtaLabel: z.string().trim().max(40),
-  secondaryCtaUrl: optionalUrl,
+  /**
+   * The hero reads its copy from `basics` (page details). Only a legacy image
+   * override remains so old drafts keep their background image.
+   */
   imageMediaId: mediaId,
 })
 
@@ -347,7 +341,7 @@ const qrSectionSchema = z.object({
   type: z.literal("qr"),
   title: z.string().trim().max(80),
   intro: z.string().trim().max(400),
-  websiteUrl: optionalUrl,
+  /** Optional legacy overrides; otherwise links come from contact details. */
   whatsappUrl: optionalUrl,
   instagramUrl: optionalUrl,
 })
@@ -409,7 +403,6 @@ export const basicsSchema = z.object({
   role: z.string().trim().max(160).default(""),
   tagline: z.string().trim().max(240).default(""),
   whatsapp: z.string().trim().max(40).default(""),
-  website: optionalUrl.default(""),
   address: z.string().trim().max(240).default(""),
   heroMediaId: mediaId.default(null),
   logoMediaId: mediaId.default(null),

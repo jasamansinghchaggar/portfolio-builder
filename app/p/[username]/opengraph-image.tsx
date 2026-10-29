@@ -46,11 +46,7 @@ export default async function OpenGraphImage({
   const foreground = dark ? "#f3f6f5" : template.palette[1]
   const accent = content.design.accent
   const name = content.basics.fullName || `@${portfolio.username}`
-  const hero = content.sections.find((section) => section.type === "hero")
-  const headline =
-    (hero && hero.type === "hero" ? hero.headline : content.basics.headline) ||
-    content.basics.headline ||
-    "Portfolio"
+  const headline = content.basics.headline || content.basics.role || "Portfolio"
 
   return new ImageResponse(
     (

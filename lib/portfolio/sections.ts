@@ -57,9 +57,8 @@ export function sectionLabel(section: Section) {
 export function sectionHasSubstance(section: Section): boolean {
   switch (section.type) {
     case "hero":
-      return Boolean(
-        section.headline || section.subheadline || section.bio || section.eyebrow
-      )
+      // The hero always renders the business identity from page details.
+      return true
     case "about":
       return Boolean(section.body || section.message || section.highlights.length)
     case "mission":
@@ -79,18 +78,11 @@ export function sectionHasSubstance(section: Section): boolean {
     case "socials":
       return section.items.some((item) => item.url)
     case "contact":
-      return Boolean(
-        section.email ||
-          section.phone ||
-          section.whatsapp ||
-          section.message ||
-          section.links.length ||
-          section.address
-      )
+      // Always renders the contact card and enquiry form.
+      return true
     case "qr":
-      return Boolean(
-        section.websiteUrl || section.whatsappUrl || section.instagramUrl
-      )
+      // Always renders the portfolio link QR; other codes are optional.
+      return true
     case "projects":
       return section.items.some((item) => item.title)
     case "experience":
@@ -147,30 +139,43 @@ export function ownerName(content: PortfolioContent) {
 export function contactPhone(content: PortfolioContent) {
   const contact = contactSection(content)
   return (
-    contact?.phone.trim() ||
+    content.basics.phone.trim() ||
     content.basics.whatsapp.trim() ||
-    content.basics.phone.trim()
+    contact?.phone.trim() ||
+    ""
   )
 }
 
 export function contactEmail(content: PortfolioContent) {
   const contact = contactSection(content)
-  return contact?.email.trim() || content.basics.email.trim()
+  return content.basics.email.trim() || contact?.email.trim() || ""
 }
 
 export function contactAddress(content: PortfolioContent) {
   const contact = contactSection(content)
-  return contact?.address.trim() || content.basics.address.trim()
+  return content.basics.address.trim() || contact?.address.trim() || ""
+}
+
+/**
+ * Phone fields ask for a bare 10-digit local number. Links still need a
+ * country code, so add the default one when none was supplied.
+ */
+const DEFAULT_DIAL_CODE = "91"
+
+function withDialCode(digits: string) {
+  if (digits.length !== 10) return digits
+  return `${DEFAULT_DIAL_CODE}${digits}`
 }
 
 export function whatsappNumber(content: PortfolioContent) {
   const contact = contactSection(content)
   const raw =
-    contact?.whatsapp.trim() ||
     content.basics.whatsapp.trim() ||
+    content.basics.phone.trim() ||
+    contact?.whatsapp.trim() ||
     contact?.phone.trim() ||
-    content.basics.phone.trim()
-  return raw.replace(/[^\d]/g, "")
+    ""
+  return withDialCode(raw.replace(/[^\d]/g, ""))
 }
 
 export function whatsappHref(content: PortfolioContent, message?: string) {
@@ -212,7 +217,10 @@ export function formatDateRange(
 
 export function phoneHref(phone: string) {
   const cleaned = phone.replace(/[^\d+]/g, "")
-  return cleaned ? `tel:${cleaned}` : null
+  if (!cleaned) return null
+  const digits = cleaned.replace(/\D/g, "")
+  const normalized = cleaned.startsWith("+") ? digits : withDialCode(digits)
+  return `tel:+${normalized}`
 }
 
 /** Accepts a bare YouTube id or any common YouTube URL. */

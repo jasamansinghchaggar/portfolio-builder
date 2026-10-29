@@ -533,6 +533,16 @@
   color: #ffffff;
 }
 
+.pf-hero-sub .pf-hero-meta {
+  display: block;
+  margin-top: 0.45rem;
+  font-size: clamp(1.05rem, 1.7vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.01em;
+  color: #dbe4f0;
+}
+
 .pf-hero-sub small {
   display: block;
   margin-top: 0.5rem;
@@ -564,7 +574,7 @@
 
 .pf-quick-grid {
   display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 0.5rem;
   border: 1px solid var(--pf-line);
   border-radius: 20px;

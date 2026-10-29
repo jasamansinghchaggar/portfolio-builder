@@ -25,7 +25,7 @@ export function BasicsPanel({
     <div className="space-y-5">
       <FormSection
         title="Business identity"
-        description="Used in the header, hero, browser tab, and social previews."
+        description="Everything here feeds the hero and header. Edit it once — the hero section reads from these values."
       >
         <TextInput
           label="Business name"
@@ -59,17 +59,18 @@ export function BasicsPanel({
           maxLength={240}
         />
         <TextInput
-          label="Headline"
+          label="Hero eyebrow"
           value={basics.headline}
           onChange={(headline) => onChange({ ...basics, headline })}
           placeholder="Interior design studio"
           maxLength={160}
+          hint="The small line above your business name in the hero."
         />
       </FormSection>
 
       <FormSection
         title="Contact details"
-        description="Shown on the hero, quick actions, and contact section."
+        description="Used by the hero buttons, quick actions, contact card, and enquiry form."
       >
         <FieldRow>
           <TextInput
@@ -81,44 +82,40 @@ export function BasicsPanel({
           />
           <TextInput
             label="Phone"
+            type="tel"
             value={basics.phone}
             onChange={(phone) => onChange({ ...basics, phone })}
-            placeholder="+44 …"
+            placeholder="98765 43210"
             maxLength={40}
+            hint="10 digits, without the country code."
           />
         </FieldRow>
         <FieldRow>
           <TextInput
             label="WhatsApp"
+            type="tel"
             value={basics.whatsapp}
             onChange={(whatsapp) => onChange({ ...basics, whatsapp })}
-            placeholder="+44 …"
+            placeholder="98765 43210"
             maxLength={40}
-            hint="Used for chat buttons and wa.me links."
+            hint="10 digits, without the country code. Used for chat buttons and wa.me links."
           />
-          <TextInput
-            label="Website"
-            value={basics.website}
-            onChange={(website) => onChange({ ...basics, website })}
-            placeholder="https://…"
-          />
-        </FieldRow>
-        <FieldRow>
           <TextInput
             label="Location"
             value={basics.location}
             onChange={(location) => onChange({ ...basics, location })}
             placeholder="London, UK"
             maxLength={120}
-          />
-          <TextInput
-            label="Address"
-            value={basics.address}
-            onChange={(address) => onChange({ ...basics, address })}
-            placeholder="Street, city, postcode"
-            maxLength={240}
+            hint="City or region. Shown in the contact card when there is no address."
           />
         </FieldRow>
+        <TextInput
+          label="Address"
+          value={basics.address}
+          onChange={(address) => onChange({ ...basics, address })}
+          placeholder="Street, city, postcode"
+          maxLength={240}
+        />
       </FormSection>
 
       <FormSection

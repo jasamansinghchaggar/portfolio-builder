@@ -43,6 +43,7 @@ import {
   socialIconKey,
   splitParagraphs,
   whatsappHref,
+  whatsappNumber,
   youtubeId,
 } from "@/lib/portfolio/sections"
 import type {
@@ -96,7 +97,6 @@ export function StudioRenderer({
   const email = contactEmail(content)
   const address = contactAddress(content)
   const whatsapp = whatsappHref(content)
-  const website = content.basics.website.trim()
   const heroImageId =
     content.basics.heroMediaId ||
     (hero?.type === "hero" ? hero.imageMediaId : null)
@@ -120,6 +120,12 @@ export function StudioRenderer({
   )
   const footerName = businessName
   const firstName = ownerName.split(/\s+/)[0] || ownerName
+  const heroSubLine = [
+    businessName && businessName !== ownerName ? businessName : "",
+    content.basics.role.trim(),
+  ]
+    .filter(Boolean)
+    .join(" · ")
 
   return (
     <div
@@ -228,16 +234,11 @@ export function StudioRenderer({
               />
             </span>
           ) : null}
-          <p className="pf-hero-eyebrow">
-            {content.basics.headline || "Welcome to our website"}
-          </p>
+          <p className="pf-hero-eyebrow">{content.basics.headline || ""}</p>
           <p className="pf-hero-sub">
             <strong>{ownerName}</strong>
-            {content.basics.role ? (
-              <>
-                <span aria-hidden="true"> · </span>
-                {content.basics.role}
-              </>
+            {heroSubLine ? (
+              <span className="pf-hero-meta">{heroSubLine}</span>
             ) : null}
             {content.basics.tagline ? (
               <small>{content.basics.tagline}</small>
@@ -309,26 +310,12 @@ export function StudioRenderer({
                 <span>Email us</span>
               </a>
             ) : null}
-            {website ? (
-              <a
-                className="pf-action"
-                href={website}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <span className="pf-action-icon">
-                  <IconGlobe />
-                </span>
-                <span>Website</span>
-              </a>
-            ) : null}
             <ShareButton title={businessName} variant="action" />
             <SaveContactButton
               businessName={businessName}
               ownerName={ownerName}
               phone={phone}
               email={email}
-              website={website}
             />
           </div>
 
@@ -520,12 +507,17 @@ function StudioSection({
         ) : section.type === "videos" ? (
           <VideosSection section={section} title={title} />
         ) : section.type === "payment" ? (
-          <PaymentSection section={section} media={media} />
+          <PaymentSection
+            section={section}
+            media={media}
+            businessName={contentBusinessName(content)}
+          />
         ) : section.type === "socials" ? (
           <SocialsSection section={section} title={title} />
         ) : section.type === "contact" ? (
           <ContactSection
             section={section}
+            content={content}
             username={username}
             socials={socials}
             preview={preview}
@@ -819,13 +811,16 @@ function VideosSection({
 function PaymentSection({
   section,
   media,
+  businessName,
 }: {
   section: SectionOfType<"payment">
   media: MediaMap
+  businessName: string
 }) {
   const qrMeta = section.qrMediaId ? media[section.qrMediaId] : undefined
+  const payee = section.payeeName.trim() || businessName
   const upiLink = section.upiId.trim()
-    ? `upi://pay?pa=${encodeURIComponent(section.upiId.trim())}&pn=${encodeURIComponent(section.payeeName || section.heading)}&cu=INR`
+    ? `upi://pay?pa=${encodeURIComponent(section.upiId.trim())}&pn=${encodeURIComponent(payee || section.heading)}&cu=INR`
     : ""
 
   return (
@@ -860,9 +855,7 @@ function PaymentSection({
             UPI ID: <strong>{section.upiId}</strong>
           </p>
         ) : null}
-        {section.payeeName ? (
-          <p className="pf-pay-name">{section.payeeName}</p>
-        ) : null}
+        {payee ? <p className="pf-pay-name">{payee}</p> : null}
       </div>
     </>
   )
@@ -903,25 +896,27 @@ function SocialsSection({
 
 function ContactSection({
   section,
+  content,
   username,
   socials,
   preview,
 }: {
   section: SectionOfType<"contact">
+  content: PortfolioContent
   username: string
   socials: SocialLinkItem[]
   preview: boolean
 }) {
-  const phone = section.phone || ""
-  const whatsapp = section.whatsapp || section.phone
-  const waLink = whatsapp
-    ? `https://wa.me/${whatsapp.replace(/[^\d]/g, "")}`
-    : null
+  const phone = contactPhone(content)
+  const email = contactEmail(content)
+  const address = contactAddress(content) || content.basics.location.trim()
+  const whatsapp = whatsappNumber(content)
+  const waLink = whatsapp ? `https://wa.me/${whatsapp}` : null
   return (
     <>
       <SectionHead
         title={section.title.trim() || "Get in touch"}
-        intro={section.subtitle || section.message}
+        intro={section.message || section.subtitle}
       />
       <div className="pf-contact">
         <div className="pf-card pf-contact-info">
@@ -950,25 +945,25 @@ function ContactSection({
               </div>
             </div>
           ) : null}
-          {section.email ? (
+          {email ? (
             <div className="pf-contact-item">
               <span className="pf-card-icon">
                 <IconMail />
               </span>
               <div>
                 <h4>Email</h4>
-                <a href={`mailto:${section.email}`}>{section.email}</a>
+                <a href={`mailto:${email}`}>{email}</a>
               </div>
             </div>
           ) : null}
-          {section.address ? (
+          {address ? (
             <div className="pf-contact-item">
               <span className="pf-card-icon">
                 <IconMapPin />
               </span>
               <div>
                 <h4>Address</h4>
-                <span>{section.address}</span>
+                <span>{address}</span>
               </div>
             </div>
           ) : null}
@@ -1021,11 +1016,9 @@ function QrSection({
   const entries = [
     {
       id: "website",
-      label: "Website link",
-      text:
-        section.websiteUrl.trim() ||
-        (username ? `${SITE_URL}/p/${username}` : SITE_URL),
-      caption: "Scan to visit our website instantly.",
+      label: "Portfolio link",
+      text: username ? `${SITE_URL}/p/${username}` : SITE_URL,
+      caption: "Scan to open our portfolio instantly.",
     },
     {
       id: "whatsapp",

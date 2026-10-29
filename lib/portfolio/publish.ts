@@ -1,4 +1,4 @@
-import type { PortfolioContent, Section } from "./schemas"
+import type { PortfolioContent } from "./schemas"
 import { sectionHasSubstance, sectionLabel, visibleSections } from "./sections"
 
 export type PublishIssue = {
@@ -42,19 +42,6 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
       message: "Add some content to at least one visible section.",
       path: "sections",
     })
-  }
-
-  const hero = visible.find((section) => section.type === "hero")
-  if (hero && hero.type === "hero") {
-    if (!hero.headline.trim() && !hero.bio.trim()) {
-      issues.push({
-        message: "Add a headline or short introduction to your hero.",
-        path: "sections.hero.headline",
-        sectionId: hero.id,
-        sectionLabel: "Hero",
-      })
-    }
-    issues.push(...ctaIssues(hero))
   }
 
   for (const section of visible) {
@@ -166,26 +153,23 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
         break
       }
       case "contact": {
-        const completeLinks = section.links.filter(
-          (link) => link.label.trim() && link.url.trim()
+        // Contact details are entered once in page details; legacy contact
+        // links still count for old drafts that have no socials section.
+        const hasSocials = visible.some(
+          (item) =>
+            item.type === "socials" &&
+            item.items.some((profile) => profile.url.trim())
         )
-        section.links.forEach((link, index) => {
-          if (!link.label.trim() || !link.url.trim()) {
-            issue(
-              `Contact link ${index + 1} needs a label and a full URL.`,
-              `links.${index}.url`
-            )
-          }
-        })
         if (
-          !section.email.trim() &&
-          !section.phone.trim() &&
-          !section.whatsapp.trim() &&
-          !section.address.trim() &&
-          !completeLinks.length
+          !content.basics.email.trim() &&
+          !content.basics.phone.trim() &&
+          !content.basics.whatsapp.trim() &&
+          !content.basics.address.trim() &&
+          !hasSocials &&
+          !section.links.some((link) => link.url.trim())
         ) {
           issue(
-            "Add an email, phone number, WhatsApp number, or at least one contact link.",
+            "Add an email, phone number, WhatsApp number, or social profile so visitors can reach you.",
             "email"
           )
         }
@@ -313,41 +297,6 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
   return issues
 }
 
-function ctaIssues(section: Extract<Section, { type: "hero" }>) {
-  const issues: PublishIssue[] = []
-  const pairs = [
-    {
-      label: section.primaryCtaLabel,
-      url: section.primaryCtaUrl,
-      name: "primary",
-    },
-    {
-      label: section.secondaryCtaLabel,
-      url: section.secondaryCtaUrl,
-      name: "secondary",
-    },
-  ]
-  for (const pair of pairs) {
-    if (pair.label.trim() && !pair.url.trim()) {
-      issues.push({
-        message: `The ${pair.name} button needs a destination URL.`,
-        path: "sections.hero.primaryCtaUrl",
-        sectionId: section.id,
-        sectionLabel: "Hero",
-      })
-    }
-    if (!pair.label.trim() && pair.url.trim()) {
-      issues.push({
-        message: `The ${pair.name} button needs a label.`,
-        path: "sections.hero.primaryCtaLabel",
-        sectionId: section.id,
-        sectionLabel: "Hero",
-      })
-    }
-  }
-  return issues
-}
-
 /** Builds the immutable published snapshot. Hidden sections stay draft-only. */
 export function buildPublishedContent(content: PortfolioContent): PortfolioContent {
   return {
@@ -435,20 +384,22 @@ export function publishChecklist(
       (section.type === "projects" &&
         section.items.some((item) => item.title.trim()))
   )
-  const hasContact = visible.some(
-    (section) =>
-      section.type === "contact" &&
-      Boolean(
-        section.email.trim() ||
-          section.phone.trim() ||
-          section.whatsapp.trim() ||
-          section.links.some((link) => link.url)
-      )
-  )
-  const hasHero = visible.some(
-    (section) =>
-      section.type === "hero" &&
-      Boolean(section.headline.trim() || section.bio.trim())
+  const hasContact =
+    Boolean(
+      content.basics.email.trim() ||
+        content.basics.phone.trim() ||
+        content.basics.whatsapp.trim() ||
+        content.basics.address.trim()
+    ) ||
+    visible.some(
+      (section) =>
+        section.type === "socials" &&
+        section.items.some((item) => item.url.trim())
+    )
+  const hasHero = Boolean(
+    content.basics.headline.trim() ||
+      content.basics.role.trim() ||
+      content.basics.tagline.trim()
   )
 
   return [
@@ -477,7 +428,7 @@ export function publishChecklist(
     },
     {
       label: "Give people a way to reach you",
-      hint: "Add an email, phone number, or contact link.",
+      hint: "Add an email or phone number in Page details.",
       done: hasContact,
     },
   ]

@@ -262,12 +262,40 @@ avatar id.
 
 The quick-action row on a Studio site keeps one visual rhythm: every tile is an
 icon circle above a label, and Share and Save contact use the same circle,
-spacing, and padding as Call, WhatsApp, Email, and Website. Share uses a
-dedicated `action` variant so the two contexts (hero header pill and quick
-action) can differ without forking the component.
+spacing, and padding as Call, WhatsApp, and Email. There is no Website tile:
+the portfolio is the website. Share uses a dedicated `action` variant so the
+two contexts (hero header pill and quick action) can differ without forking the
+component.
 
 The mobile menu button uses a real menu icon that swaps to a close icon, sized
 and centred in a 44px box with no inherited gaps or line-height offsets.
+
+Phone fields ask for a bare 10-digit number without a country code. Link
+builders add the default dial code (`91`) when the stored number has exactly 10
+digits, while numbers that already carry a country code are left untouched, so
+existing drafts keep working. `tel:` links always render with a leading `+`.
+
+## Page details is the single source for identity and contact info
+
+The hero and contact section render identity and contact information from
+`basics` (Page details) rather than from their own fields. Business name, owner,
+role, tagline, hero eyebrow (`basics.headline`), location, address, phone,
+email, WhatsApp, logo, and background/profile images are entered once and
+reused everywhere: hero, navigation, quick actions, contact card, enquiry form,
+QR fallbacks, browser metadata, and social previews.
+
+Hero and contact editors therefore show a read-only summary with an **Edit page
+details** button instead of duplicating inputs. The hero schema keeps only a
+legacy `imageMediaId` fallback; contact keeps its old fields so existing drafts
+still read, but the contact helpers prefer `basics` first. QR codes always
+include the portfolio URL and add WhatsApp/Instagram codes from contact details
+and Social links, so QR link fields are no longer editable.
+
+There is no website field. The portfolio is the destination users are building,
+so `basics.website`, `qr.websiteUrl`, the Website quick action, and the vCard URL
+line were removed. The payment payee name defaults to the business name when
+left blank, and publish validation reads hero/contact readiness from `basics`
+instead of the hero section copy.
 
 ## Known limitations
 

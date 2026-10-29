@@ -16,9 +16,11 @@ describe("portfolio content schema", () => {
 
   it("rejects javascript: URLs", () => {
     const content = createSampleContent()
-    const hero = content.sections.find((section) => section.type === "hero")
-    if (hero?.type !== "hero") throw new Error("Sample content needs a hero.")
-    hero.primaryCtaUrl = "javascript:alert(1)"
+    const socials = content.sections.find((section) => section.type === "socials")
+    if (socials?.type !== "socials" || !socials.items[0]) {
+      throw new Error("Sample content needs a social profile.")
+    }
+    socials.items[0].url = "javascript:alert(1)"
 
     const parsed = portfolioContentSchema.safeParse(content)
     expect(parsed.success).toBe(false)
@@ -26,10 +28,12 @@ describe("portfolio content schema", () => {
 
   it("allows in-page anchors and mailto links", () => {
     const content = createSampleContent()
-    const hero = content.sections.find((section) => section.type === "hero")
-    if (hero?.type !== "hero") throw new Error("Sample content needs a hero.")
-    hero.primaryCtaUrl = "#section-projects"
-    hero.secondaryCtaUrl = "mailto:hello@example.com"
+    const socials = content.sections.find((section) => section.type === "socials")
+    if (socials?.type !== "socials" || !socials.items[1]) {
+      throw new Error("Sample content needs two social profiles.")
+    }
+    socials.items[0].url = "#section-projects"
+    socials.items[1].url = "mailto:hello@example.com"
 
     expect(portfolioContentSchema.safeParse(content).success).toBe(true)
   })

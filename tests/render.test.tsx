@@ -103,14 +103,39 @@ describe("portfolio renderer", () => {
     expect(html).toContain(`class="pf-hero"`)
   })
 
+  it("reads contact details from page details instead of legacy section fields", () => {
+    const content = createSampleContent()
+    content.basics.email = "studio@example.com"
+    content.basics.phone = "+44 20 7946 0000"
+    const contact = content.sections.find(
+      (section) => section.type === "contact"
+    )
+    if (contact?.type !== "contact") {
+      throw new Error("Sample content needs a contact section.")
+    }
+    contact.email = "legacy@example.com"
+    contact.phone = "+1 000 000 0000"
+
+    const html = renderToStaticMarkup(<PortfolioRenderer content={content} />)
+    expect(html).toContain("studio@example.com")
+    expect(html).not.toContain("legacy@example.com")
+    expect(html).not.toContain("+1 000 000 0000")
+  })
+
+  it("puts the business name and role on a line below the owner name", () => {
+    const html = renderToStaticMarkup(
+      <PortfolioRenderer content={createSampleContent()} />
+    )
+    expect(html).toContain(`class="pf-hero-meta"`)
+    expect(html).toContain("Quinn Studio · Independent product designer")
+  })
+
   it("escapes user-provided markup instead of rendering it", () => {
     const content = createSampleContent()
     content.basics.fullName = "<script>alert(1)</script>"
     content.basics.businessName = "<script>alert(1)</script>"
     content.basics.role = "<img src=x onerror=alert(1)>"
-    const hero = content.sections.find((section) => section.type === "hero")
-    if (hero?.type !== "hero") throw new Error("Sample content needs a hero.")
-    hero.headline = "<img src=x onerror=alert(1)>"
+    content.basics.headline = "<img src=x onerror=alert(1)>"
 
     const html = renderToStaticMarkup(<PortfolioRenderer content={content} />)
     expect(html).not.toContain("<script>alert(1)</script>")

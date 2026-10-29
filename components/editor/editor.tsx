@@ -351,6 +351,7 @@ export function Editor({
   const [publishOpen, setPublishOpen] = useState(false)
   const [publishing, setPublishing] = useState(false)
   const [unpublishOpen, setUnpublishOpen] = useState(false)
+  const [removeOpen, setRemoveOpen] = useState(false)
   const [unpublishing, setUnpublishing] = useState(false)
   const [issues, setIssues] = useState<PublishIssue[] | null>(null)
   const [successUrl, setSuccessUrl] = useState<string | null>(null)
@@ -911,7 +912,11 @@ export function Editor({
                     )}
                   </label>
 
-                  <AlertDialog>
+                  <AlertDialog
+                    key={selectedSection.id}
+                    open={removeOpen}
+                    onOpenChange={setRemoveOpen}
+                  >
                     <AlertDialogTrigger
                       render={
                         <Button
@@ -940,7 +945,12 @@ export function Editor({
                       <AlertDialogFooter>
                         <AlertDialogCancel>Keep it</AlertDialogCancel>
                         <AlertDialogAction
-                          onClick={() => removeSection(selectedSection.id)}
+                          onClick={() => {
+                            // Close first so the dialog can't flip to the next
+                            // section's title while it animates out.
+                            setRemoveOpen(false)
+                            removeSection(selectedSection.id)
+                          }}
                         >
                           Remove
                         </AlertDialogAction>
@@ -972,11 +982,13 @@ export function Editor({
               ) : selectedSection ? (
                 <SectionForm
                   section={selectedSection}
+                  basics={content.basics}
                   onChange={updateSection}
                   media={media}
                   onMediaAdded={(item) =>
                     setMedia((current) => [item, ...current])
                   }
+                  onOpenPageDetails={() => setView("page")}
                 />
               ) : (
                 <div className="py-16 text-center">
@@ -1248,11 +1260,11 @@ export function Editor({
             </DialogDescription>
           </DialogHeader>
           {successUrl ? (
-            <div className="flex items-center gap-2 rounded-lg border bg-muted/40 px-3 py-2">
-              <span className="min-w-0 flex-1 truncate font-mono text-xs">
+            <div className="flex min-w-0 items-start gap-2 overflow-hidden rounded-lg border bg-muted/40 px-3 py-2">
+              <span className="min-w-0 flex-1 break-all font-mono text-xs leading-relaxed">
                 {successUrl}
               </span>
-              <CopyUrlButton url={successUrl} />
+              <CopyUrlButton url={successUrl} className="shrink-0" />
             </div>
           ) : null}
           <div className="flex justify-end gap-2">

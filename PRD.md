@@ -148,6 +148,18 @@ sections. Legacy section types (Projects, Experience, Skills, Education,
 Certifications, Testimonials, Achievements, Resume/CV) remain valid so existing
 content is preserved and renders inside the Studio design.
 
+**FR-EDIT-08 --- Single source for identity and contact details (P0)**\
+The user shall enter business identity and contact information once in Page
+details. The hero and contact sections shall read those values and show a
+read-only summary with a shortcut to Page details instead of duplicate inputs.
+QR codes shall always include the portfolio URL and derive WhatsApp and
+Instagram codes from saved contact details and social links.
+
+**FR-EDIT-09 --- No website field (P0)**\
+The editor shall not ask for a prior website URL, because the portfolio being
+built is the user's website. No Website quick action, vCard URL, or QR website
+override shall be offered.
+
 ### 7.4 Template and design customisation
 
 **FR-DESIGN-01 --- Single business template (P0)**\

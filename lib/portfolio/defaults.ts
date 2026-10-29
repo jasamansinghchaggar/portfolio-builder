@@ -188,16 +188,6 @@ export function createSection(type: SectionType): Section {
       return {
         ...base,
         type: "hero",
-        eyebrow: "",
-        headline: "",
-        subheadline: "",
-        bio: "",
-        location: "",
-        availability: "",
-        primaryCtaLabel: "",
-        primaryCtaUrl: "",
-        secondaryCtaLabel: "",
-        secondaryCtaUrl: "",
         imageMediaId: null,
       }
     case "about":
@@ -303,7 +293,6 @@ export function createSection(type: SectionType): Section {
         type: "qr",
         title: "Scan and connect",
         intro: "",
-        websiteUrl: "",
         whatsappUrl: "",
         instagramUrl: "",
       }
@@ -383,7 +372,6 @@ export function emptyBasics(fullName = ""): Basics {
     role: "",
     tagline: "",
     whatsapp: "",
-    website: "",
     address: "",
     heroMediaId: null,
     logoMediaId: null,
@@ -416,16 +404,6 @@ export function createDefaultContent({
   const contact = createSection("contact")
   const qr = createSection("qr")
 
-  if (hero.type === "hero") {
-    hero.eyebrow = headline.trim()
-    hero.headline = businessName
-    hero.subheadline = ""
-    hero.bio = ""
-    hero.location = location.trim()
-    hero.primaryCtaLabel = "Chat on WhatsApp"
-    hero.secondaryCtaLabel = "Book an appointment"
-    hero.secondaryCtaUrl = "#section-contact"
-  }
   if (about.type === "about") {
     about.title = "About"
     about.tag = "Our story"
@@ -446,13 +424,11 @@ export function createDefaultContent({
   if (contact.type === "contact") {
     contact.title = "Get in touch"
     contact.subtitle = "We usually reply within one working day."
-    contact.email = email.trim()
-    contact.location = location.trim()
     contact.message = ""
   }
   if (qr.type === "qr") {
     qr.title = "Scan and connect"
-    qr.intro = "Save our website, WhatsApp, and social links with a single scan."
+    qr.intro = "Save our link, WhatsApp, and social profiles with a single scan."
   }
 
   return {
@@ -470,7 +446,6 @@ export function createDefaultContent({
       role: headline.trim() || (firstName ? `${firstName}'s business` : ""),
       tagline: "",
       whatsapp: "",
-      website: "",
       address: "",
       heroMediaId: null,
       logoMediaId: null,

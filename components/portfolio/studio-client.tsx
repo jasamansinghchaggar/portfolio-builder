@@ -107,14 +107,12 @@ export function SaveContactButton({
   ownerName,
   phone,
   email,
-  website,
   label = "Save contact",
 }: {
   businessName: string
   ownerName: string
   phone: string
   email: string
-  website: string
   label?: string
 }) {
   function save() {
@@ -126,7 +124,6 @@ export function SaveContactButton({
       ownerName ? `TITLE:${ownerName}` : "",
       phone ? `TEL;TYPE=CELL:${phone}` : "",
       email ? `EMAIL:${email}` : "",
-      website ? `URL:${website}` : "",
       "END:VCARD",
     ].filter(Boolean)
     const blob = new Blob([lines.join("\n")], { type: "text/vcard" })
@@ -440,7 +437,7 @@ export function QrTabs({
   if (!current) {
     return (
       <p className="pf-empty">
-        Add a website, WhatsApp, or Instagram link to create a QR code.
+        Add a WhatsApp number or Instagram profile to create a QR code.
       </p>
     )
   }

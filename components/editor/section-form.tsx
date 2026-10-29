@@ -16,7 +16,6 @@ import { Checkbox } from "@/components/ui/checkbox"
 import {
   createAchievementItem,
   createCertificationItem,
-  createContactLink,
   createEducationItem,
   createEventItem,
   createExperienceItem,
@@ -31,7 +30,7 @@ import {
   createVideoItem,
 } from "@/lib/portfolio/defaults"
 import type { EditorMedia } from "@/lib/portfolio/media"
-import type { Section } from "@/lib/portfolio/types"
+import type { Basics, Section } from "@/lib/portfolio/types"
 import { cn } from "@/lib/utils"
 
 function ItemCard({
@@ -90,127 +89,85 @@ function updateItem<T extends { id: string }>(
   )
 }
 
+function SummaryRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start justify-between gap-3">
+      <dt className="text-muted-foreground">{label}</dt>
+      <dd className="max-w-[60%] text-right font-medium">{value || "—"}</dd>
+    </div>
+  )
+}
+
 export function SectionForm({
   section,
+  basics,
   onChange,
   media,
   onMediaAdded,
+  onOpenPageDetails,
 }: {
   section: Section
+  basics: Basics
   onChange: (section: Section) => void
   media: EditorMedia[]
   onMediaAdded: (media: EditorMedia) => void
+  onOpenPageDetails?: () => void
 }) {
   switch (section.type) {
     case "hero":
       return (
         <div className="space-y-5">
-          <FormSection title="Introduction">
-            <FieldRow>
-              <TextInput
+          <FormSection
+            title="Hero content"
+            description="The hero is built from Page details, so everything below is edited once and used everywhere."
+          >
+            <dl className="grid gap-2 rounded-lg border bg-muted/20 p-3 text-sm">
+              <SummaryRow
                 label="Eyebrow"
-                value={section.eyebrow}
-                onChange={(eyebrow) => onChange({ ...section, eyebrow })}
-                placeholder="Independent designer"
-                maxLength={80}
+                value={basics.headline || basics.role}
               />
-              <TextInput
-                label="Availability"
-                value={section.availability}
-                onChange={(availability) =>
-                  onChange({ ...section, availability })
-                }
-                placeholder="Available for work"
-                maxLength={80}
+              <SummaryRow
+                label="Business name"
+                value={basics.businessName || basics.fullName}
               />
-            </FieldRow>
-            <TextInput
-              label="Headline"
-              value={section.headline}
-              onChange={(headline) => onChange({ ...section, headline })}
-              placeholder="Calm, useful products."
-              maxLength={180}
-            />
-            <TextInput
-              label="Subheadline"
-              value={section.subheadline}
-              onChange={(subheadline) => onChange({ ...section, subheadline })}
-              placeholder="I design and build software for people who care about the details."
-              maxLength={240}
-            />
-            <TextAreaInput
-              label="Short bio"
-              value={section.bio}
-              onChange={(bio) => onChange({ ...section, bio })}
-              placeholder="A few lines about what you do and how you got here."
-              rows={4}
-              maxLength={600}
-            />
-            <TextInput
-              label="Location"
-              value={section.location}
-              onChange={(location) => onChange({ ...section, location })}
-              placeholder="London, UK"
-              maxLength={120}
-            />
-          </FormSection>
-
-          <FormSection title="Portrait">
-            <MediaField
-              label="Hero image"
-              value={section.imageMediaId}
-              onChange={(imageMediaId) =>
-                onChange({ ...section, imageMediaId })
-              }
-              media={media}
-              onMediaAdded={onMediaAdded}
-              kind="avatar"
-              hint="A portrait or a piece of work that represents you."
-            />
+              <SummaryRow
+                label="Owner line"
+                value={[basics.ownerName, basics.role]
+                  .filter(Boolean)
+                  .join(" · ")}
+              />
+              <SummaryRow label="Tagline" value={basics.tagline} />
+              <SummaryRow
+                label="Portrait"
+                value={basics.avatarMediaId ? "Profile image set" : ""}
+              />
+              <SummaryRow
+                label="Background"
+                value={basics.heroMediaId ? "Hero image set" : "Gradient"}
+              />
+            </dl>
+            {onOpenPageDetails ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 w-full text-xs"
+                onClick={onOpenPageDetails}
+              >
+                Edit page details
+              </Button>
+            ) : null}
           </FormSection>
 
           <FormSection
             title="Buttons"
-            description="Both buttons are optional. A label needs a destination."
+            description="Chat on WhatsApp, Call us, and Book an appointment appear automatically from your contact details."
           >
-            <FieldRow>
-              <TextInput
-                label="Primary label"
-                value={section.primaryCtaLabel}
-                onChange={(primaryCtaLabel) =>
-                  onChange({ ...section, primaryCtaLabel })
-                }
-                placeholder="View work"
-                maxLength={40}
-              />
-              <TextInput
-                label="Primary URL"
-                value={section.primaryCtaUrl}
-                onChange={(primaryCtaUrl) =>
-                  onChange({ ...section, primaryCtaUrl })
-                }
-                placeholder="https://… or #section-projects"
-              />
-            </FieldRow>
-            <FieldRow>
-              <TextInput
-                label="Secondary label"
-                value={section.secondaryCtaLabel}
-                onChange={(secondaryCtaLabel) =>
-                  onChange({ ...section, secondaryCtaLabel })
-                }
-                placeholder="Get in touch"
-                maxLength={40}
-              />
-              <TextInput
-                label="Secondary URL"
-                value={section.secondaryCtaUrl}
-                onChange={(secondaryCtaUrl) =>
-                  onChange({ ...section, secondaryCtaUrl })
-                }
-                placeholder="mailto:you@example.com"
-              />
-            </FieldRow>
+            <p className="text-sm text-muted-foreground">
+              Add a WhatsApp number or phone in Page details to show the chat
+              and call buttons. The appointment button always opens the contact
+              form.
+            </p>
           </FormSection>
         </div>
       )
@@ -1508,8 +1465,11 @@ export function SectionForm({
               label="Payee name"
               value={section.payeeName}
               onChange={(payeeName) => onChange({ ...section, payeeName })}
-              placeholder="Your business name"
+              placeholder={
+                basics.businessName || basics.fullName || "Your business name"
+              }
               maxLength={120}
+              hint="Leave blank to use your business name."
             />
           </FieldRow>
           <FormSection
@@ -1612,35 +1572,15 @@ export function SectionForm({
             label="Intro"
             value={section.intro}
             onChange={(intro) => onChange({ ...section, intro })}
-            placeholder="Save our website, WhatsApp, and social links with a single scan."
+            placeholder="Save our link, WhatsApp, and social profiles with a single scan."
             rows={3}
             maxLength={400}
           />
-          <FormSection
-            title="Links"
-            description="Leave a field blank to use your portfolio URL, WhatsApp number, or Instagram profile automatically."
-          >
-            <TextInput
-              label="Website URL"
-              value={section.websiteUrl}
-              onChange={(websiteUrl) => onChange({ ...section, websiteUrl })}
-              placeholder="https://…"
-            />
-            <TextInput
-              label="WhatsApp URL"
-              value={section.whatsappUrl}
-              onChange={(whatsappUrl) => onChange({ ...section, whatsappUrl })}
-              placeholder="https://wa.me/…"
-            />
-            <TextInput
-              label="Instagram URL"
-              value={section.instagramUrl}
-              onChange={(instagramUrl) =>
-                onChange({ ...section, instagramUrl })
-              }
-              placeholder="https://instagram.com/…"
-            />
-          </FormSection>
+          <p className="rounded-lg border bg-muted/20 p-3 text-sm text-muted-foreground">
+            QR codes are generated automatically: your portfolio link always
+            appears, and WhatsApp and Instagram codes are added when those
+            details are set in Page details and Social links.
+          </p>
         </div>
       )
 
@@ -1869,57 +1809,35 @@ export function SectionForm({
             rows={3}
             maxLength={1200}
           />
-          <FieldRow>
-            <TextInput
-              label="Email"
-              type="email"
-              value={section.email}
-              onChange={(email) => onChange({ ...section, email })}
-              placeholder="you@example.com"
-            />
-            <TextInput
-              label="Phone"
-              value={section.phone}
-              onChange={(phone) => onChange({ ...section, phone })}
-              placeholder="+44 …"
-              maxLength={40}
-            />
-          </FieldRow>
-          <TextInput
-            label="Location"
-            value={section.location}
-            onChange={(location) => onChange({ ...section, location })}
-            maxLength={120}
-          />
 
           <FormSection
-            title="Business details"
-            description="Shown on the contact card and used by the enquiry form."
+            title="Contact details"
+            description="The contact card and enquiry form use these values from Page details, so they are only entered once."
           >
-            <TextAreaInput
-              label="Subtitle"
-              value={section.subtitle}
-              onChange={(subtitle) => onChange({ ...section, subtitle })}
-              placeholder="We usually reply within one working day."
-              rows={2}
-              maxLength={240}
-            />
-            <FieldRow>
-              <TextInput
-                label="WhatsApp number"
-                value={section.whatsapp}
-                onChange={(whatsapp) => onChange({ ...section, whatsapp })}
-                placeholder="+91 …"
-                maxLength={40}
-              />
-              <TextInput
-                label="Address"
-                value={section.address}
-                onChange={(address) => onChange({ ...section, address })}
-                placeholder="Street, city, postcode"
-                maxLength={240}
-              />
-            </FieldRow>
+            <dl className="grid gap-2 rounded-lg border bg-muted/20 p-3 text-sm">
+              <SummaryRow label="Email" value={basics.email} />
+              <SummaryRow label="Phone" value={basics.phone} />
+              <SummaryRow label="WhatsApp" value={basics.whatsapp} />
+              <SummaryRow label="Location" value={basics.location} />
+              <SummaryRow label="Address" value={basics.address} />
+            </dl>
+            {onOpenPageDetails ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 w-full text-xs"
+                onClick={onOpenPageDetails}
+              >
+                Edit page details
+              </Button>
+            ) : null}
+          </FormSection>
+
+          <FormSection
+            title="Enquiry form"
+            description="The form stores messages in your inbox. Social profiles come from the Social links section."
+          >
             <FieldRow>
               <TextInput
                 label="Form title"
@@ -1936,71 +1854,6 @@ export function SectionForm({
                 maxLength={240}
               />
             </FieldRow>
-          </FormSection>
-
-          <FormSection title={`Links (${section.links.length})`}>
-            {section.links.map((link, index) => (
-              <div
-                key={link.id}
-                className="grid gap-2 rounded-lg border bg-background p-3 sm:grid-cols-[1fr_1.4fr_auto]"
-              >
-                <TextInput
-                  label={index === 0 ? "Label" : undefined}
-                  value={link.label}
-                  onChange={(label) =>
-                    onChange({
-                      ...section,
-                      links: section.links.map((entry) =>
-                        entry.id === link.id ? { ...entry, label } : entry
-                      ),
-                    })
-                  }
-                  placeholder="LinkedIn"
-                  maxLength={60}
-                />
-                <TextInput
-                  label={index === 0 ? "URL" : undefined}
-                  value={link.url}
-                  onChange={(url) =>
-                    onChange({
-                      ...section,
-                      links: section.links.map((entry) =>
-                        entry.id === link.id ? { ...entry, url } : entry
-                      ),
-                    })
-                  }
-                  placeholder="https://linkedin.com/in/…"
-                />
-                <div className={cn("flex items-end", index === 0 && "pb-0.5")}>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label="Remove link"
-                    className="text-muted-foreground hover:text-destructive"
-                    onClick={() =>
-                      onChange({
-                        ...section,
-                        links: section.links.filter(
-                          (entry) => entry.id !== link.id
-                        ),
-                      })
-                    }
-                  >
-                    <IconTrash />
-                  </Button>
-                </div>
-              </div>
-            ))}
-            <AddButton
-              label="Add contact link"
-              onClick={() =>
-                onChange({
-                  ...section,
-                  links: [...section.links, createContactLink()],
-                })
-              }
-            />
           </FormSection>
         </div>
       )

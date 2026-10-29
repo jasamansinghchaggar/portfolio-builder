@@ -30,9 +30,8 @@ export async function generateMetadata({
     content.basics.headline ||
     content.basics.role ||
     `${name} on ${APP_NAME}`
-  const hero = content.sections.find((section) => section.type === "hero")
   const description =
-    (hero?.type === "hero" ? hero.subheadline || hero.bio : "") || summary
+    content.basics.tagline || content.basics.headline || summary
   const canonical = publicPortfolioUrl(portfolio.username)
   const ogImage = `${SITE_URL}${portfolioPath(portfolio.username)}/opengraph-image`
 
