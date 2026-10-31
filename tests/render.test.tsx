@@ -122,12 +122,12 @@ describe("portfolio renderer", () => {
     expect(html).not.toContain("+1 000 000 0000")
   })
 
-  it("puts the business name and role on a line below the owner name", () => {
+  it("shows the owner name and role in the hero subline", () => {
     const html = renderToStaticMarkup(
       <PortfolioRenderer content={createSampleContent()} />
     )
     expect(html).toContain(`class="pf-hero-meta"`)
-    expect(html).toContain("Quinn Studio · Independent product designer")
+    expect(html).toContain("Independent product designer")
   })
 
   it("escapes user-provided markup instead of rendering it", () => {

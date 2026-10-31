@@ -70,8 +70,8 @@ export default async function PublicPortfolioPage({ params }: PageProps) {
   if (!portfolio) notFound()
 
   return (
-    <div className="pf-public">
-      <PromoBar />
+    <div className="pf-public" data-promo={portfolio.promoBarEnabled}>
+      {portfolio.promoBarEnabled ? <PromoBar /> : null}
       <PortfolioRenderer
         content={portfolio.content}
         media={portfolio.media}

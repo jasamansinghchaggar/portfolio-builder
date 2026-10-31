@@ -333,6 +333,72 @@ export async function adminUnpublishAction(input: {
   return { ok: true, revision: data[0].revision }
 }
 
+export async function adminSetPortfolioEnabledAction(input: {
+  portfolioId: string
+  enabled: boolean
+}): Promise<{ ok: true; disabled: boolean } | { ok: false; error: string }> {
+  if (
+    !uuid.safeParse(input.portfolioId).success ||
+    typeof input.enabled !== "boolean"
+  ) {
+    return { ok: false, error: "Invalid visibility setting." }
+  }
+
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const target = await loadTargetPortfolio(guard.context, input.portfolioId)
+  if (!target) return { ok: false, error: "Portfolio not found." }
+
+  const { data, error } = await guard.context.supabase.rpc(
+    "admin_set_portfolio_enabled",
+    {
+      p_portfolio_id: input.portfolioId,
+      p_enabled: input.enabled,
+    }
+  )
+
+  if (error || !data?.length) {
+    return { ok: false, error: errorMessage(error?.message) }
+  }
+
+  revalidatePortfolio(target.username, input.portfolioId)
+  return { ok: true, disabled: data[0].is_disabled }
+}
+
+export async function adminSetPortfolioPromoBarAction(input: {
+  portfolioId: string
+  enabled: boolean
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (
+    !uuid.safeParse(input.portfolioId).success ||
+    typeof input.enabled !== "boolean"
+  ) {
+    return { ok: false, error: "Invalid banner setting." }
+  }
+
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const target = await loadTargetPortfolio(guard.context, input.portfolioId)
+  if (!target) return { ok: false, error: "Portfolio not found." }
+
+  const { error } = await guard.context.supabase.rpc(
+    "admin_set_portfolio_promo_bar",
+    {
+      p_portfolio_id: input.portfolioId,
+      p_enabled: input.enabled,
+    }
+  )
+
+  if (error) {
+    return { ok: false, error: errorMessage(error.message) }
+  }
+
+  revalidatePortfolio(target.username, input.portfolioId)
+  return { ok: true }
+}
+
 export type AdminUploadResult =
   | { ok: true; media: EditorMedia }
   | { ok: false; error: string }

@@ -7,6 +7,12 @@
   padding-top: var(--pf-promo-height);
 }
 
+/* Without the promo bar the fixed nav starts at the very top. */
+.pf-public[data-promo="false"] {
+  --pf-promo-height: 0px;
+  padding-top: 0;
+}
+
 .pf-promo {
   position: fixed;
   inset: 0 0 auto;

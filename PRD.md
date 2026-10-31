@@ -297,7 +297,8 @@ relevant non-sensitive account information.
 
 **FR-ADMIN-04 --- Portfolio list (P0)**\
 An administrator shall be able to view portfolios, their owners, status,
-creation/update timestamps, and public URL where available.
+access and banner state, creation/update timestamps, and public URL where
+available.
 
 **FR-ADMIN-05 --- Basic filtering (P1)**\
 The dashboard should support basic filtering by portfolio status and
@@ -309,9 +310,10 @@ save drafts, upload or delete media, and publish or unpublish it. All writes
 shall be checked against the administrator role in the database.
 
 **FR-ADMIN-07 --- Audit log (P0)**\
-Administrative saves, publishes, and unpublishes shall be recorded in an audit
-log with the actor, action, target, timestamp, and a short detail payload. The
-log shall be readable by administrators and not editable from the app.
+Administrative saves, publishes, unpublishes, access changes, and promo banner
+changes shall be recorded in an audit log with the actor, action, target,
+timestamp, and a short detail payload. The log shall be readable by
+administrators and not editable from the app.
 
 **FR-ADMIN-08 --- Shared inbox (P0)**\
 An administrator shall be able to read enquiries across every portfolio, mark
@@ -322,6 +324,15 @@ An administrator account shall see only administrative destinations in the app
 shell (Admin, Messages, Audit log). Owner-only flows — Overview, Editor, and
 onboarding/self-profile building — shall not be offered and shall redirect an
 administrator to the admin workspace if visited directly.
+
+**FR-ADMIN-10 --- Enable or disable a portfolio (P0)**\
+An administrator shall be able to enable or disable any portfolio. A disabled
+portfolio and its published media shall be unavailable to public visitors,
+including its contact form, without changing its publication state.
+
+**FR-ADMIN-11 --- Per-portfolio promo banner (P0)**\
+An administrator shall be able to show or hide the promotion banner on each
+portfolio independently. When shown, the banner shall remain non-dismissible.
 
 ### 7.9 Media
 
@@ -395,12 +406,16 @@ The MVP is ready for internal evaluation when:
 11. A user cannot edit or access another user's private portfolio data.
 12. A visitor can send a contact enquiry and the owner can read it at
     `/messages`.
-13. Every public portfolio shows the non-dismissible promotion banner.
+13. Every public portfolio shows the non-dismissible promotion banner unless an
+    administrator has hidden it for that portfolio.
 14. An administrator can view basic user and portfolio information.
 15. An administrator can edit, publish, and unpublish any portfolio, and the
     change appears in the audit log.
-16. Admin-only operations are enforced server-side.
-17. Core flows are covered by tests.
+16. An administrator can enable or disable any portfolio and toggle its promo
+    banner, with both changes recorded in the audit log.
+17. A disabled portfolio and its contact form are unavailable publicly.
+18. Admin-only operations are enforced server-side.
+19. Core flows are covered by tests.
 
 ## 10. Dependencies and assumptions
 

@@ -237,6 +237,30 @@ and the database records their profile and email. The audit log is visible at
 
 MFA and step-up authentication for admins are intentionally deferred.
 
+## Admins control access and the promo banner per portfolio
+
+`portfolios.is_disabled` is a separate access gate from `status`. A disabled
+portfolio keeps its draft, publication state, and media, but every public read
+(`get_public_portfolio`, `get_public_media`, `get_public_portfolios`,
+`is_media_public`) and the contact form treat it as missing, so the page
+returns not found. Enabling it restores the previous published version.
+
+`portfolios.promo_bar_enabled` controls the fixed promo banner per portfolio.
+The public shell sets `data-promo="false"`, which zeroes the banner offset so
+the fixed navigation sits at the top without a gap. The banner stays
+non-dismissible whenever it is shown.
+
+Both switches call `admin_set_portfolio_enabled` and
+`admin_set_portfolio_promo_bar`, which re-check `public.is_admin()` and write an
+`admin_audit_log` row. They do not bump `revision` because they are not content
+edits, so an open editor is never forced into a conflict by a toggle.
+
+The admin dashboard is organised around those controls: one portfolios table
+with Access and Banner switches, filters for publication status, and a separate
+Users tab. Duplicate navigation buttons and the side-by-side tables are gone.
+The only remaining footnote explains how to promote another administrator on
+the Users tab.
+
 ## Admins get an admin-only workspace
 
 An admin has no personal portfolio to manage, so the app never shows owner

@@ -2,15 +2,17 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import {
   IconArrowUpRight,
-  IconFileText,
-  IconHistory,
-  IconMessage,
+  IconEye,
   IconPencil,
   IconSearch,
   IconUsers,
   IconWorld,
 } from "@tabler/icons-react"
 
+import {
+  PortfolioAccessSwitch,
+  PortfolioBannerSwitch,
+} from "@/components/admin/portfolio-controls"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
@@ -32,7 +34,11 @@ import {
 import { requireAdmin } from "@/lib/auth"
 import { publicPortfolioUrl } from "@/lib/config"
 import { formatDate, formatDateTime } from "@/lib/format"
-import type { PortfolioStatus } from "@/lib/supabase/database.types"
+import type {
+  Portfolio,
+  PortfolioStatus,
+  Profile,
+} from "@/lib/supabase/database.types"
 import { cn } from "@/lib/utils"
 
 export const metadata: Metadata = {
@@ -40,9 +46,39 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 }
 
+export const dynamic = "force-dynamic"
+
+type Tab = "portfolios" | "users"
+
 type PageProps = {
-  searchParams: Promise<{ q?: string | string[]; status?: string | string[] }>
+  searchParams: Promise<{
+    q?: string | string[]
+    status?: string | string[]
+    tab?: string | string[]
+  }>
 }
+
+type AdminPortfolio = Pick<
+  Portfolio,
+  | "id"
+  | "username"
+  | "user_id"
+  | "status"
+  | "is_disabled"
+  | "promo_bar_enabled"
+  | "created_at"
+  | "updated_at"
+>
+
+type AdminUser = Pick<
+  Profile,
+  "id" | "email" | "full_name" | "role" | "created_at"
+>
+
+type UserPortfolio = Pick<
+  Portfolio,
+  "id" | "user_id" | "username" | "status" | "is_disabled"
+>
 
 const STATUSES: { value: "all" | PortfolioStatus; label: string }[] = [
   { value: "all", label: "All" },
@@ -52,7 +88,8 @@ const STATUSES: { value: "all" | PortfolioStatus; label: string }[] = [
 ]
 
 const STATUS_BADGE: Record<PortfolioStatus, string> = {
-  draft: "border-amber-600/25 bg-amber-500/10 text-amber-800 dark:text-amber-300",
+  draft:
+    "border-amber-600/25 bg-amber-500/10 text-amber-800 dark:text-amber-300",
   published:
     "border-emerald-600/25 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300",
   unpublished: "border-border bg-muted text-muted-foreground",
@@ -70,9 +107,28 @@ function sanitizeSearch(value: string) {
     .slice(0, 80)
 }
 
+function buildHref({
+  tab,
+  status,
+  q,
+}: {
+  tab: Tab
+  status: "all" | PortfolioStatus
+  q: string
+}) {
+  const query = new URLSearchParams()
+  if (tab === "users") query.set("tab", "users")
+  if (q) query.set("q", q)
+  if (tab === "portfolios" && status !== "all") query.set("status", status)
+  const value = query.toString()
+  return value ? `/admin?${value}` : "/admin"
+}
+
 export default async function AdminPage({ searchParams }: PageProps) {
   const params = await searchParams
   const q = sanitizeSearch(single(params.q) ?? "")
+  const requestedTab = single(params.tab)
+  const tab: Tab = requestedTab === "users" ? "users" : "portfolios"
   const requestedStatus = single(params.status)
   const status = STATUSES.some((item) => item.value === requestedStatus)
     ? (requestedStatus as "all" | PortfolioStatus)
@@ -80,109 +136,128 @@ export default async function AdminPage({ searchParams }: PageProps) {
 
   const { supabase } = await requireAdmin()
 
-  const usersCount = supabase
-    .from("profiles")
-    .select("id", { count: "exact", head: true })
-  const portfoliosCount = supabase
-    .from("portfolios")
-    .select("id", { count: "exact", head: true })
-  const publishedCount = supabase
-    .from("portfolios")
-    .select("id", { count: "exact", head: true })
-    .eq("status", "published")
-  const draftCount = supabase
-    .from("portfolios")
-    .select("id", { count: "exact", head: true })
-    .in("status", ["draft", "unpublished"])
-
-  let portfoliosQuery = supabase
-    .from("portfolios")
-    .select("*")
-    .order("updated_at", { ascending: false })
-    .limit(50)
-  if (status !== "all") portfoliosQuery = portfoliosQuery.eq("status", status)
-  if (q) portfoliosQuery = portfoliosQuery.ilike("username", `%${q}%`)
-
-  let usersQuery = supabase
-    .from("profiles")
-    .select("id, email, full_name, role, created_at")
-    .order("created_at", { ascending: false })
-    .limit(50)
-  if (q) {
-    usersQuery = usersQuery.or(
-      `email.ilike.%${q}%,full_name.ilike.%${q}%`
-    )
-  }
-
   const [
-    { count: totalUsers },
     { count: totalPortfolios },
-    { count: totalPublished },
-    { count: totalDrafts },
-    { data: portfolios },
-    { data: users },
+    { count: totalUsers },
+    { count: liveCount },
+    { count: disabledCount },
   ] = await Promise.all([
-    usersCount,
-    portfoliosCount,
-    publishedCount,
-    draftCount,
-    portfoliosQuery,
-    usersQuery,
+    supabase.from("portfolios").select("id", { count: "exact", head: true }),
+    supabase.from("profiles").select("id", { count: "exact", head: true }),
+    supabase
+      .from("portfolios")
+      .select("id", { count: "exact", head: true })
+      .eq("status", "published")
+      .eq("is_disabled", false),
+    supabase
+      .from("portfolios")
+      .select("id", { count: "exact", head: true })
+      .eq("is_disabled", true),
   ])
 
-  const ownerIds = [...new Set((portfolios ?? []).map((item) => item.user_id))]
-  const { data: owners } = ownerIds.length
-    ? await supabase
+  let portfolios: AdminPortfolio[] = []
+  const ownerMap = new Map<string, { full_name: string; email: string }>()
+
+  if (tab === "portfolios") {
+    let matchingOwnerIds: string[] = []
+    if (q) {
+      const { data: matches } = await supabase
+        .from("profiles")
+        .select("id")
+        .or(`email.ilike.%${q}%,full_name.ilike.%${q}%`)
+        .limit(50)
+      matchingOwnerIds = (matches ?? []).map((match) => match.id)
+    }
+
+    let query = supabase
+      .from("portfolios")
+      .select(
+        "id, username, user_id, status, is_disabled, promo_bar_enabled, created_at, updated_at"
+      )
+      .order("updated_at", { ascending: false })
+      .limit(50)
+
+    if (status !== "all") query = query.eq("status", status)
+    if (q) {
+      const filters = [`username.ilike.%${q}%`]
+      if (matchingOwnerIds.length) {
+        filters.push(`user_id.in.(${matchingOwnerIds.join(",")})`)
+      }
+      query = query.or(filters.join(","))
+    }
+
+    const { data } = await query
+    portfolios = data ?? []
+
+    const ownerIds = [...new Set(portfolios.map((item) => item.user_id))]
+    if (ownerIds.length) {
+      const { data: owners } = await supabase
         .from("profiles")
         .select("id, full_name, email")
         .in("id", ownerIds)
-    : { data: [] }
-  const ownerMap = new Map((owners ?? []).map((owner) => [owner.id, owner]))
+      for (const owner of owners ?? []) {
+        ownerMap.set(owner.id, {
+          full_name: owner.full_name,
+          email: owner.email,
+        })
+      }
+    }
+  }
 
-  const metrics = [
-    {
-      label: "Registered users",
-      value: totalUsers ?? 0,
-      icon: IconUsers,
-      hint: "All accounts",
-    },
-    {
-      label: "Portfolios",
-      value: totalPortfolios ?? 0,
-      icon: IconFileText,
-      hint: "One per account",
-    },
-    {
-      label: "Published",
-      value: totalPublished ?? 0,
-      icon: IconWorld,
-      hint: "Live right now",
-    },
-    {
-      label: "Draft & offline",
-      value: totalDrafts ?? 0,
-      icon: IconFileText,
-      hint: "Not publicly visible",
-    },
-  ]
+  let users: AdminUser[] = []
+  const portfolioByUser = new Map<string, UserPortfolio>()
+
+  if (tab === "users") {
+    let usersQuery = supabase
+      .from("profiles")
+      .select("id, email, full_name, role, created_at")
+      .order("created_at", { ascending: false })
+      .limit(50)
+    if (q) {
+      usersQuery = usersQuery.or(`email.ilike.%${q}%,full_name.ilike.%${q}%`)
+    }
+
+    const { data } = await usersQuery
+    users = data ?? []
+
+    if (users.length) {
+      const { data: rows } = await supabase
+        .from("portfolios")
+        .select("id, user_id, username, status, is_disabled")
+        .in(
+          "user_id",
+          users.map((user) => user.id)
+        )
+      for (const row of rows ?? []) portfolioByUser.set(row.user_id, row)
+    }
+  }
+
+  const hasFilters = Boolean(q) || (tab === "portfolios" && status !== "all")
 
   return (
-    <div className="space-y-5">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <div className="space-y-4">
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <p className="text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">
+          <p className="text-xs font-medium tracking-[0.16em] text-muted-foreground uppercase">
             Admin
           </p>
           <h1 className="mt-1.5 font-heading text-3xl font-semibold tracking-[-0.035em]">
-            Platform overview
+            Portfolios and people
           </h1>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Accounts, portfolios, and publication state. Open any portfolio to
-            edit its draft and publish on the owner&apos;s behalf.
+          <p className="mt-1 max-w-xl text-sm leading-relaxed text-muted-foreground">
+            Turn an owner&apos;s page on or off, choose whether it shows the
+            promo banner, or step in to edit on their behalf.
           </p>
         </div>
-        <form action="/admin" method="get" className="flex items-center gap-2">
-          {status !== "all" ? (
+
+        <form
+          action="/admin"
+          method="get"
+          className="flex items-center gap-2 self-start lg:self-auto"
+        >
+          {tab === "users" ? (
+            <input type="hidden" name="tab" value="users" />
+          ) : status !== "all" ? (
             <input type="hidden" name="status" value={status} />
           ) : null}
           <div className="relative">
@@ -190,8 +265,12 @@ export default async function AdminPage({ searchParams }: PageProps) {
             <Input
               name="q"
               defaultValue={q}
-              placeholder="Search name, email, username…"
-              className="h-9 w-full pl-8 text-sm sm:w-64"
+              placeholder={
+                tab === "users"
+                  ? "Search name or email…"
+                  : "Search username, owner, or email…"
+              }
+              className="h-9 w-full pl-8 text-sm sm:w-72"
             />
           </div>
           <Button type="submit" variant="outline" className="h-9 text-sm">
@@ -200,245 +279,312 @@ export default async function AdminPage({ searchParams }: PageProps) {
         </form>
       </div>
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {metrics.map((metric) => (
-          <div key={metric.label} className="rounded-xl border bg-card p-4">
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-[0.65rem] font-medium uppercase tracking-[0.12em] text-muted-foreground">
-                {metric.label}
-              </p>
-              <metric.icon className="size-3.5 text-muted-foreground" />
-            </div>
-            <p className="mt-2 font-heading text-3xl font-semibold tabular-nums tracking-[-0.04em]">
-              {metric.value}
-            </p>
-            <p className="mt-0.5 text-[0.65rem] text-muted-foreground">
-              {metric.hint}
-            </p>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex flex-wrap items-center gap-1.5">
-        {STATUSES.map((item) => {
-          const query = new URLSearchParams()
-          if (q) query.set("q", q)
-          if (item.value !== "all") query.set("status", item.value)
-          const href = query.toString() ? `/admin?${query.toString()}` : "/admin"
-          return (
-            <Button
-              key={item.value}
-              variant={status === item.value ? "default" : "outline"}
-              size="sm"
-              className="h-7 text-xs"
-              nativeButton={false}
-              render={<Link href={href} />}
-            >
-              {item.label}
-            </Button>
-          )
-        })}
-        {q ? (
-          <span className="ml-1 text-xs text-muted-foreground">
-            Filtering by “{q}”
+      <nav className="flex items-center gap-5 border-b">
+        <Link
+          href={buildHref({ tab: "portfolios", status, q })}
+          aria-current={tab === "portfolios" ? "page" : undefined}
+          className={cn(
+            "-mb-px inline-flex items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium transition-colors",
+            tab === "portfolios"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <IconWorld className="size-4" />
+          Portfolios
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-semibold text-muted-foreground tabular-nums">
+            {totalPortfolios ?? 0}
           </span>
-        ) : null}
-        <div className="ml-auto flex items-center gap-1.5">
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 text-xs"
-            nativeButton={false}
-            render={<Link href="/messages" />}
-          >
-            <IconMessage />
-            Messages
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 text-xs"
-            nativeButton={false}
-            render={<Link href="/admin/audit" />}
-          >
-            <IconHistory />
-            Audit log
-          </Button>
-        </div>
-      </div>
+        </Link>
+        <Link
+          href={buildHref({ tab: "users", status, q })}
+          aria-current={tab === "users" ? "page" : undefined}
+          className={cn(
+            "-mb-px inline-flex items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium transition-colors",
+            tab === "users"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <IconUsers className="size-4" />
+          Users
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-semibold text-muted-foreground tabular-nums">
+            {totalUsers ?? 0}
+          </span>
+        </Link>
+      </nav>
 
-      <div className="grid gap-4 xl:grid-cols-[1.15fr_1fr]">
+      {tab === "portfolios" ? (
         <Card>
-          <CardHeader>
-            <CardTitle>Portfolios</CardTitle>
-            <CardDescription>
-              {portfolios?.length ?? 0} shown, newest activity first.
-            </CardDescription>
+          <CardHeader className="gap-3">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <CardTitle>Portfolios</CardTitle>
+                <CardDescription>
+                  {liveCount ?? 0} live · {disabledCount ?? 0} disabled ·{" "}
+                  {portfolios.length} shown, newest activity first.
+                </CardDescription>
+              </div>
+              <div className="flex flex-wrap items-center gap-1.5">
+                {STATUSES.map((item) => (
+                  <Button
+                    key={item.value}
+                    variant={status === item.value ? "default" : "outline"}
+                    size="sm"
+                    className="h-7 text-xs"
+                    nativeButton={false}
+                    render={
+                      <Link href={buildHref({ tab, status: item.value, q })} />
+                    }
+                  >
+                    {item.label}
+                  </Button>
+                ))}
+                {hasFilters ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 text-xs text-muted-foreground"
+                    nativeButton={false}
+                    render={<Link href="/admin" />}
+                  >
+                    Clear
+                  </Button>
+                ) : null}
+              </div>
+            </div>
           </CardHeader>
           <CardContent className="px-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Portfolio</TableHead>
-                    <TableHead>Owner</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Updated</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(portfolios ?? []).map((portfolio) => {
-                    const owner = ownerMap.get(portfolio.user_id)
-                    return (
-                      <TableRow key={portfolio.id}>
-                        <TableCell>
-                          <div className="font-medium">/{portfolio.username}</div>
-                          <div className="text-[0.65rem] text-muted-foreground">
-                            Created {formatDate(portfolio.created_at)}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="max-w-40 truncate">
-                            {owner?.full_name || "—"}
-                          </div>
-                          <div className="max-w-40 truncate text-[0.65rem] text-muted-foreground">
-                            {owner?.email}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <span
-                            className={cn(
-                              "inline-flex items-center rounded-full border px-1.5 py-0.5 text-[0.6rem] font-medium capitalize",
-                              STATUS_BADGE[portfolio.status]
-                            )}
+            <Table className="text-sm">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="pl-6">Portfolio</TableHead>
+                  <TableHead className="hidden md:table-cell">Owner</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Access</TableHead>
+                  <TableHead>Banner</TableHead>
+                  <TableHead className="hidden xl:table-cell">
+                    Updated
+                  </TableHead>
+                  <TableHead className="pr-6 text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {portfolios.map((portfolio) => {
+                  const owner = ownerMap.get(portfolio.user_id)
+                  const isLive =
+                    portfolio.status === "published" && !portfolio.is_disabled
+
+                  return (
+                    <TableRow key={portfolio.id}>
+                      <TableCell className="pl-6">
+                        <div className="font-medium">/{portfolio.username}</div>
+                        <div className="text-xs text-muted-foreground">
+                          Created {formatDate(portfolio.created_at)}
+                        </div>
+                      </TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        <div className="max-w-44 truncate">
+                          {owner?.full_name || "—"}
+                        </div>
+                        <div className="max-w-44 truncate text-xs text-muted-foreground">
+                          {owner?.email}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={cn(
+                            "inline-flex items-center rounded-full border px-2 py-0.5 text-[0.65rem] font-medium capitalize",
+                            STATUS_BADGE[portfolio.status]
+                          )}
+                        >
+                          {portfolio.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <PortfolioAccessSwitch
+                          portfolioId={portfolio.id}
+                          username={portfolio.username}
+                          enabled={!portfolio.is_disabled}
+                          published={portfolio.status === "published"}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <PortfolioBannerSwitch
+                          portfolioId={portfolio.id}
+                          username={portfolio.username}
+                          enabled={portfolio.promo_bar_enabled}
+                        />
+                      </TableCell>
+                      <TableCell className="hidden text-xs whitespace-nowrap text-muted-foreground xl:table-cell">
+                        {formatDateTime(portfolio.updated_at)}
+                      </TableCell>
+                      <TableCell className="pr-6 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            aria-label={`Edit /${portfolio.username}`}
+                            title="Edit portfolio"
+                            nativeButton={false}
+                            render={
+                              <Link
+                                href={`/admin/portfolios/${portfolio.id}`}
+                              />
+                            }
                           >
-                            {portfolio.status}
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-[0.65rem] text-muted-foreground">
-                          {formatDateTime(portfolio.updated_at)}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-1">
+                            <IconPencil />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon-xs"
+                            aria-label={`Preview /${portfolio.username}`}
+                            title="Preview draft"
+                            nativeButton={false}
+                            render={
+                              <Link
+                                href={`/admin-preview/${portfolio.id}`}
+                                target="_blank"
+                                rel="noreferrer"
+                              />
+                            }
+                          >
+                            <IconEye />
+                          </Button>
+                          {isLive ? (
                             <Button
                               variant="ghost"
                               size="icon-xs"
-                              aria-label={`Edit ${portfolio.username}`}
-                              title="Edit portfolio"
+                              aria-label={`Open /${portfolio.username} publicly`}
+                              title="Open public page"
                               nativeButton={false}
                               render={
-                                <Link
-                                  href={`/admin/portfolios/${portfolio.id}`}
+                                <a
+                                  href={publicPortfolioUrl(portfolio.username)}
+                                  target="_blank"
+                                  rel="noreferrer"
                                 />
                               }
                             >
-                              <IconPencil />
+                              <IconArrowUpRight />
                             </Button>
-                            {portfolio.status === "published" ? (
-                              <Button
-                                variant="ghost"
-                                size="icon-xs"
-                                aria-label="Open portfolio"
-                                nativeButton={false}
-                                render={
-                                  <a
-                                    href={publicPortfolioUrl(
-                                      portfolio.username
-                                    )}
-                                    target="_blank"
-                                    rel="noreferrer"
-                                  />
-                                }
-                              >
-                                <IconArrowUpRight />
-                              </Button>
-                            ) : null}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
-                  {!portfolios?.length ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={5}
-                        className="py-8 text-center text-xs text-muted-foreground"
-                      >
-                        No portfolios match this view.
+                          ) : null}
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ) : null}
-                </TableBody>
-              </Table>
-            </div>
+                  )
+                })}
+                {!portfolios.length ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={7}
+                      className="py-10 text-center text-sm text-muted-foreground"
+                    >
+                      No portfolios match this view.
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </TableBody>
+            </Table>
           </CardContent>
         </Card>
-
+      ) : (
         <Card>
           <CardHeader>
             <CardTitle>Users</CardTitle>
             <CardDescription>
-              {users?.length ?? 0} shown, newest accounts first. Sensitive
-              credentials are never exposed here.
+              {users.length} shown, newest accounts first. Sensitive credentials
+              are never exposed here.
             </CardDescription>
           </CardHeader>
           <CardContent className="px-0">
-            <div className="overflow-x-auto">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Role</TableHead>
-                    <TableHead>Joined</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {(users ?? []).map((user) => (
+            <Table className="text-sm">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="pl-6">Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Role</TableHead>
+                  <TableHead>Portfolio</TableHead>
+                  <TableHead className="pr-6">Joined</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {users.map((user) => {
+                  const portfolio = portfolioByUser.get(user.id)
+                  return (
                     <TableRow key={user.id}>
-                      <TableCell className="max-w-32 truncate font-medium">
+                      <TableCell className="max-w-40 truncate pl-6 font-medium">
                         {user.full_name || "—"}
                       </TableCell>
-                      <TableCell className="max-w-48 truncate text-[0.7rem] text-muted-foreground">
+                      <TableCell className="max-w-56 truncate text-xs text-muted-foreground">
                         {user.email}
                       </TableCell>
                       <TableCell>
                         <Badge
-                          variant={user.role === "admin" ? "default" : "outline"}
-                          className="text-[0.6rem] capitalize"
+                          variant={
+                            user.role === "admin" ? "default" : "outline"
+                          }
+                          className="text-[0.65rem] capitalize"
                         >
                           {user.role}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-[0.65rem] text-muted-foreground">
+                      <TableCell>
+                        {portfolio ? (
+                          <Link
+                            href={`/admin/portfolios/${portfolio.id}`}
+                            className="font-medium underline-offset-4 hover:underline"
+                          >
+                            /{portfolio.username}
+                          </Link>
+                        ) : (
+                          <span className="text-xs text-muted-foreground">
+                            No portfolio
+                          </span>
+                        )}
+                        {portfolio?.is_disabled ? (
+                          <span className="ml-1.5 text-[0.65rem] text-muted-foreground">
+                            disabled
+                          </span>
+                        ) : null}
+                      </TableCell>
+                      <TableCell className="pr-6 text-xs whitespace-nowrap text-muted-foreground">
                         {formatDate(user.created_at)}
                       </TableCell>
                     </TableRow>
-                  ))}
-                  {!users?.length ? (
-                    <TableRow>
-                      <TableCell
-                        colSpan={4}
-                        className="py-8 text-center text-xs text-muted-foreground"
-                      >
-                        No users match this search.
-                      </TableCell>
-                    </TableRow>
-                  ) : null}
-                </TableBody>
-              </Table>
-            </div>
+                  )
+                })}
+                {!users.length ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="py-10 text-center text-sm text-muted-foreground"
+                    >
+                      No users match this search.
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </TableBody>
+            </Table>
+            <p className="border-t px-6 py-3 text-xs leading-relaxed text-muted-foreground">
+              To promote another administrator, update{" "}
+              <code className="rounded bg-muted px-1 py-0.5 font-mono">
+                public.profiles.role
+              </code>{" "}
+              directly in the database.
+            </p>
           </CardContent>
         </Card>
-      </div>
+      )}
 
-      <p className="text-[0.65rem] leading-relaxed text-muted-foreground">
-        Admin access is enforced on the server. Promote another administrator
-        with a manual SQL update to{" "}
-        <code className="rounded bg-muted px-1 py-0.5 font-mono">
-          public.profiles.role
-        </code>
+      <p className="text-xs leading-relaxed text-muted-foreground">
+        Access and banner changes are recorded in the{" "}
+        <Link
+          href="/admin/audit"
+          className="font-medium underline underline-offset-4 hover:text-foreground"
+        >
+          audit log
+        </Link>
         .
       </p>
     </div>

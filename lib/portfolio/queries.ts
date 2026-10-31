@@ -12,6 +12,7 @@ export type PublicPortfolio = {
   media: MediaMap
   publishedAt: string | null
   updatedAt: string
+  promoBarEnabled: boolean
 }
 
 export const getPublicPortfolio = cache(
@@ -37,6 +38,7 @@ export const getPublicPortfolio = cache(
       media: parseMediaMap(row.media),
       publishedAt: row.published_at,
       updatedAt: row.updated_at,
+      promoBarEnabled: row.promo_bar_enabled,
     }
   }
 )

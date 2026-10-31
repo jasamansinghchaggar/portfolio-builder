@@ -51,6 +51,8 @@ export type Database = {
           revision: number
           published_at: string | null
           last_saved_at: string
+          is_disabled: boolean
+          promo_bar_enabled: boolean
           created_at: string
           updated_at: string
         }
@@ -65,6 +67,8 @@ export type Database = {
           revision?: number
           published_at?: string | null
           last_saved_at?: string
+          is_disabled?: boolean
+          promo_bar_enabled?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -232,6 +236,7 @@ export type Database = {
           media: Json
           published_at: string | null
           updated_at: string
+          promo_bar_enabled: boolean
         }[]
       }
       get_public_media: {
@@ -291,6 +296,14 @@ export type Database = {
       admin_mark_message_read: {
         Args: { p_message_id: string; p_read: boolean }
         Returns: undefined
+      }
+      admin_set_portfolio_enabled: {
+        Args: { p_portfolio_id: string; p_enabled: boolean }
+        Returns: { is_disabled: boolean }[]
+      }
+      admin_set_portfolio_promo_bar: {
+        Args: { p_portfolio_id: string; p_enabled: boolean }
+        Returns: { promo_bar_enabled: boolean }[]
       }
     }
     Enums: {

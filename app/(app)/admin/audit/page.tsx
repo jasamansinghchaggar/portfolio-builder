@@ -32,6 +32,10 @@ const ACTION_LABEL: Record<string, string> = {
   "portfolio.save_draft": "Saved draft",
   "portfolio.publish": "Published",
   "portfolio.unpublish": "Unpublished",
+  "portfolio.enable": "Enabled portfolio",
+  "portfolio.disable": "Disabled portfolio",
+  "portfolio.promo_bar_on": "Showed promo banner",
+  "portfolio.promo_bar_off": "Hid promo banner",
 }
 
 export default async function AdminAuditPage() {
@@ -54,7 +58,8 @@ export default async function AdminAuditPage() {
             Audit log
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Administrative saves, publications, and unpublishes. Newest first.
+            Administrative changes, newest first: saves, publications, access,
+            and promo banner visibility.
           </p>
         </div>
         <Button
