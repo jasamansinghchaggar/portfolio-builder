@@ -1504,20 +1504,6 @@
   font-size: 0.86rem;
 }
 
-.pf-disclaimer {
-  border-top: 1px solid var(--pf-line);
-  background: var(--pf-bg);
-  padding: 0.9rem var(--pf-gutter);
-  color: var(--pf-muted);
-  font-size: 0.82rem;
-  text-align: center;
-}
-
-.pf-disclaimer a {
-  color: var(--pf-accent);
-  text-decoration: underline;
-}
-
 /* Floating contact ------------------------------------------------------ */
 
 .pf-fab {

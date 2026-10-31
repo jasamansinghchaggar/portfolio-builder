@@ -426,11 +426,6 @@ export function StudioRenderer({
         </div>
       </footer>
 
-      <div className="pf-disclaimer">
-        Platform disclaimer: the site owner is responsible for all content and
-        transactions. <a href="mailto:abuse@folio.app">Report abuse</a>
-      </div>
-
       {!preview ? (
         <FloatingContact
           whatsappUrl={whatsapp}
