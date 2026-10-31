@@ -21,6 +21,7 @@ import {
   IconTrash,
   IconUser,
   IconWorldUpload,
+  IconX,
 } from "@tabler/icons-react"
 import { toast } from "sonner"
 
@@ -1111,6 +1112,17 @@ export function Editor({
                   <IconDeviceMobile className="size-4" />
                 </button>
               </div>
+
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Close preview"
+                title="Close preview"
+                className="text-muted-foreground hover:bg-muted hover:text-foreground"
+                onClick={() => setPreviewOpen(false)}
+              >
+                <IconX className="size-4" />
+              </Button>
             </div>
           </DialogHeader>
 

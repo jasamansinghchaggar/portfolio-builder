@@ -147,7 +147,12 @@ export default async function DashboardPage({
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-[1.45fr_1fr]">
+      <div
+        className={cn(
+          "grid gap-4",
+          progress < 100 ? "lg:grid-cols-[1.45fr_1fr]" : "lg:grid-cols-1"
+        )}
+      >
         <section className="flex flex-col justify-between overflow-hidden rounded-2xl border bg-card">
           <div className="flex flex-col p-5">
             <div className="flex flex-col gap-5 sm:flex-row">
@@ -236,6 +241,7 @@ export default async function DashboardPage({
           </dl>
         </section>
 
+        {progress < 100 ? (
         <section className="rounded-2xl border bg-card p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
@@ -293,6 +299,7 @@ export default async function DashboardPage({
             Finish in the editor
           </Button>
         </section>
+        ) : null}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-3">

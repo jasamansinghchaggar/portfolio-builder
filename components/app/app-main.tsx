@@ -4,7 +4,10 @@ import { usePathname } from "next/navigation"
 
 export function AppMain({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
-  const isEditor = pathname === "/editor" || pathname.startsWith("/editor/")
+  const isEditor =
+    pathname === "/editor" ||
+    pathname.startsWith("/editor/") ||
+    pathname.startsWith("/admin/portfolios/")
 
   return (
     <main

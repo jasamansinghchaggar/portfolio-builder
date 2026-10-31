@@ -6,7 +6,7 @@ import { z } from "zod"
 
 import { resolveSafeNextPath, SITE_URL } from "@/lib/config"
 import { TEMPLATE_IDS, type TemplateId } from "@/lib/portfolio/constants"
-import { createClient } from "@/lib/supabase/server"
+import { createClient, createServiceClient } from "@/lib/supabase/server"
 
 import type { AuthFormState } from "./state"
 
@@ -200,22 +200,36 @@ export async function updatePasswordAction(
 
   const userId = data.claims.sub
 
-  const { error: updateError } = await supabase.auth.updateUser({ password })
-  if (updateError) {
-    return { status: "error", message: friendlyAuthError(updateError.message) }
-  }
-
-  // Clear the forced-change flag (if set) and route admins home.
-  await supabase
-    .from("profiles")
-    .update({ must_change_password: false })
-    .eq("id", userId)
-
+  // Fetch role + clear the forced-change flag BEFORE updating the password,
+  // because updateUser can invalidate the session cookies.
   const { data: profile } = await supabase
     .from("profiles")
     .select("role")
     .eq("id", userId)
     .maybeSingle()
+
+  const { error: clearError } = await supabase
+    .from("profiles")
+    .update({ must_change_password: false })
+    .eq("id", userId)
+
+  if (clearError) {
+    // Fall back to the service-role client if the user-scoped update fails.
+    try {
+      const service = createServiceClient()
+      await service
+        .from("profiles")
+        .update({ must_change_password: false } as never)
+        .eq("id", userId)
+    } catch {
+      // ignore; best effort
+    }
+  }
+
+  const { error: updateError } = await supabase.auth.updateUser({ password })
+  if (updateError) {
+    return { status: "error", message: friendlyAuthError(updateError.message) }
+  }
 
   revalidatePath("/", "layout")
   redirect(
