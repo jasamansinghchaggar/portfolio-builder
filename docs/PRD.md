@@ -387,7 +387,7 @@ belonging to another user.
 - Keep content models separate from template rendering.
 - Keep shared components reusable.
 - Document important product and technical decisions in
-  `DECISIONS.md`.
+  `docs/DECISIONS.md`.
 
 ## 9. High-level acceptance criteria
 

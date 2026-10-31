@@ -38,7 +38,7 @@ Open <http://localhost:3000>.
 | `NEXT_PUBLIC_ROOT_DOMAIN` | subdomain mode | Root domain used for portfolio subdomains, e.g. `example.com`. |
 
 > Dashboard and infrastructure steps for local and production are collected in
-> [`MANUAL_SETUP.md`](./MANUAL_SETUP.md).
+> [`MANUAL_SETUP.md`](./docs/MANUAL_SETUP.md).
 
 ## Supabase setup
 
@@ -51,7 +51,7 @@ Open <http://localhost:3000>.
    - `supabase/migrations/20261031000000_portfolio_admin_controls.sql`
 
    To point an existing install at a new project, follow
-   [`MANUAL_SETUP.md`](./MANUAL_SETUP.md#switching-an-existing-install-to-a-new-project).
+   [`MANUAL_SETUP.md`](./docs/MANUAL_SETUP.md#switching-an-existing-install-to-a-new-project).
 3. In **Authentication → URL configuration**, set the Site URL to
    `NEXT_PUBLIC_SITE_URL` and add these redirect URLs:
    - `http://localhost:3000/auth/callback`
@@ -177,7 +177,7 @@ tests/               unit and render smoke tests
   They never read `draft_content`.
 - Unpublishing clears the public snapshot while keeping the draft.
 
-See `DECISIONS.md` for the reasoning and trade-offs.
+See `docs/DECISIONS.md` for the reasoning and trade-offs.
 
 ## Tests
 
@@ -190,7 +190,7 @@ See `DECISIONS.md` for the reasoning and trade-offs.
   markup.
 
 The tests do not spin up a database. RLS/RPC behaviour should also be verified
-against the Supabase project (see `DECISIONS.md`).
+against the Supabase project (see `docs/DECISIONS.md`).
 
 ## Deployment checklist
 
