@@ -38,7 +38,7 @@ Open <http://localhost:3000>.
 | `NEXT_PUBLIC_ROOT_DOMAIN` | subdomain mode | Root domain used for portfolio subdomains, e.g. `example.com`. |
 
 > Dashboard and infrastructure steps for local and production are collected in
-> [`MANUAL_SETUP.md`](./docs/MANUAL_SETUP.md).
+> [`SETUP.md`](./SETUP.md).
 
 ## Supabase setup
 
@@ -51,7 +51,7 @@ Open <http://localhost:3000>.
    - `supabase/migrations/20261031000000_portfolio_admin_controls.sql`
 
    To point an existing install at a new project, follow
-   [`MANUAL_SETUP.md`](./docs/MANUAL_SETUP.md#switching-an-existing-install-to-a-new-project).
+   [`SETUP.md`](./SETUP.md).
 3. In **Authentication → URL configuration**, set the Site URL to
    `NEXT_PUBLIC_SITE_URL` and add these redirect URLs:
    - `http://localhost:3000/auth/callback`
