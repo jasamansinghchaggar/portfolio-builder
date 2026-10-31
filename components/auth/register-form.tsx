@@ -12,6 +12,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import { PasswordInput } from "@/components/auth/password-input"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { registerAction } from "@/lib/actions/auth"
@@ -103,10 +104,9 @@ export function RegisterForm({
         <div className="grid gap-4 sm:grid-cols-2">
           <Field>
             <FieldLabel htmlFor="password">Password</FieldLabel>
-            <Input
+            <PasswordInput
               id="password"
               name="password"
-              type="password"
               autoComplete="new-password"
               placeholder="8+ characters"
               required
@@ -117,10 +117,9 @@ export function RegisterForm({
           </Field>
           <Field>
             <FieldLabel htmlFor="confirmPassword">Confirm</FieldLabel>
-            <Input
+            <PasswordInput
               id="confirmPassword"
               name="confirmPassword"
-              type="password"
               autoComplete="new-password"
               placeholder="Repeat password"
               required

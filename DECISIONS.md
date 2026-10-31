@@ -340,3 +340,20 @@ never lost.
 - Abuse reports use a temporary `mailto:` address in the public disclaimer.
 - Custom domains, multiple portfolios, and drag-and-drop layout are explicitly
   out of scope for the MVP.
+
+## Promo banners are admin-managed global messages
+
+The rotating promo bar messages are stored in `public.promo_banners` and edited
+through the admin UI (`/admin/banners`) instead of being hardcoded. Each row
+has a message, optional link URL/label, active flag, and sort order.
+
+Why:
+
+- Admins need to update campaigns without a deploy.
+- Active banners are exposed to the public only through `get_public_promo_banners()`,
+  keeping inactive/draft copy private.
+- Per-portfolio `promo_bar_enabled` still controls whether a given portfolio
+  shows the bar at all, so the global message list and per-page visibility stay
+  independent.
+- When no active banners exist, the public bar falls back to built-in defaults
+  so the page never renders an empty banner.

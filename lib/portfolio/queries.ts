@@ -43,6 +43,27 @@ export const getPublicPortfolio = cache(
   }
 )
 
+export type PublicPromoBanner = {
+  id: string
+  message: string
+  linkUrl: string | null
+  linkLabel: string
+  sortOrder: number
+}
+
+export async function getPublicPromoBanners(): Promise<PublicPromoBanner[]> {
+  const supabase = createPublicClient()
+  const { data, error } = await supabase.rpc("get_public_promo_banners")
+  if (error || !data) return []
+  return data.map((row) => ({
+    id: row.id,
+    message: row.message,
+    linkUrl: row.link_url,
+    linkLabel: row.link_label ?? "Create yours",
+    sortOrder: row.sort_order,
+  }))
+}
+
 export const getPublicMediaInfo = cache(async (id: string) => {
   const supabase = createPublicClient()
   const { data, error } = await supabase.rpc("get_public_media", { p_id: id })

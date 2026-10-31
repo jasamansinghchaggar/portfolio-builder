@@ -5,7 +5,7 @@ import { useActionState } from "react"
 import { FormFeedback } from "@/components/auth/form-feedback"
 import { Button } from "@/components/ui/button"
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field"
-import { Input } from "@/components/ui/input"
+import { PasswordInput } from "@/components/auth/password-input"
 import { Spinner } from "@/components/ui/spinner"
 import { updatePasswordAction } from "@/lib/actions/auth"
 import { INITIAL_AUTH_STATE } from "@/lib/actions/state"
@@ -28,10 +28,9 @@ export function ResetPasswordForm({ email }: { email: string }) {
       <FieldGroup className="gap-4">
         <Field>
           <FieldLabel htmlFor="password">New password</FieldLabel>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             autoComplete="new-password"
             placeholder="At least 8 characters"
             required
@@ -43,10 +42,9 @@ export function ResetPasswordForm({ email }: { email: string }) {
 
         <Field>
           <FieldLabel htmlFor="confirmPassword">Confirm new password</FieldLabel>
-          <Input
+          <PasswordInput
             id="confirmPassword"
             name="confirmPassword"
-            type="password"
             autoComplete="new-password"
             placeholder="Repeat new password"
             required

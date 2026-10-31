@@ -195,6 +195,37 @@ export type Database = {
         Update: never
         Relationships: []
       }
+      promo_banners: {
+        Row: {
+          id: string
+          message: string
+          link_url: string | null
+          link_label: string
+          is_active: boolean
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          message: string
+          link_url?: string | null
+          link_label?: string
+          is_active?: boolean
+          sort_order?: number
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          message?: string
+          link_url?: string | null
+          link_label?: string
+          is_active?: boolean
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: {
@@ -304,6 +335,54 @@ export type Database = {
       admin_set_portfolio_promo_bar: {
         Args: { p_portfolio_id: string; p_enabled: boolean }
         Returns: { promo_bar_enabled: boolean }[]
+      }
+      get_public_promo_banners: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          message: string
+          link_url: string | null
+          link_label: string
+          sort_order: number
+        }[]
+      }
+      admin_list_promo_banners: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          message: string
+          link_url: string | null
+          link_label: string
+          is_active: boolean
+          sort_order: number
+          created_at: string
+          updated_at: string
+        }[]
+      }
+      admin_create_promo_banner: {
+        Args: {
+          p_message: string
+          p_link_url: string | null
+          p_link_label: string | null
+          p_is_active: boolean | null
+          p_sort_order: number | null
+        }
+        Returns: string
+      }
+      admin_update_promo_banner: {
+        Args: {
+          p_id: string
+          p_message: string | null
+          p_link_url: string | null
+          p_link_label: string | null
+          p_is_active: boolean | null
+          p_sort_order: number | null
+        }
+        Returns: boolean
+      }
+      admin_delete_promo_banner: {
+        Args: { p_id: string }
+        Returns: boolean
       }
     }
     Enums: {

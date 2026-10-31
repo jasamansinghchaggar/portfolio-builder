@@ -51,7 +51,6 @@ export function AppHeader({
   const links = isAdmin
     ? [
         { href: "/admin", label: "Admin", icon: IconShieldLock },
-        { href: "/messages", label: "Messages", icon: IconMessage },
         { href: "/admin/audit", label: "Audit log", icon: IconHistory },
       ]
     : [

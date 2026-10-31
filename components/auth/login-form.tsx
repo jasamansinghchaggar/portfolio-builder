@@ -11,6 +11,7 @@ import {
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field"
+import { PasswordInput } from "@/components/auth/password-input"
 import { Input } from "@/components/ui/input"
 import { Spinner } from "@/components/ui/spinner"
 import { loginAction } from "@/lib/actions/auth"
@@ -69,10 +70,9 @@ export function LoginForm({
               Forgot password?
             </Link>
           </div>
-          <Input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             autoComplete="current-password"
             placeholder="Your password"
             required

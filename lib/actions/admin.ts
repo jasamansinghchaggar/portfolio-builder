@@ -35,6 +35,12 @@ function errorMessage(message: string | undefined) {
       return "Your session has expired. Sign in again."
     case "invalid_content":
       return "That content could not be saved."
+    case "invalid_message":
+      return "Banner message must be between 1 and 240 characters."
+    case "invalid_link_label":
+      return "Link label must be between 1 and 40 characters."
+    case "banner_not_found":
+      return "That banner no longer exists."
     default:
       return "Something went wrong. Please try again."
   }
@@ -555,5 +561,128 @@ export async function adminMarkMessageReadAction(input: {
   }
 
   revalidatePath("/messages")
+  return { ok: true }
+}
+export type AdminPromoBanner = {
+  id: string
+  message: string
+  linkUrl: string | null
+  linkLabel: string
+  isActive: boolean
+  sortOrder: number
+  createdAt: string
+  updatedAt: string
+}
+
+export async function adminListPromoBannersAction(): Promise<
+  { ok: true; banners: AdminPromoBanner[] } | { ok: false; error: string }
+> {
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const { data, error } = await guard.context.supabase.rpc(
+    "admin_list_promo_banners"
+  )
+  if (error) return { ok: false, error: errorMessage(error.message) }
+
+  return {
+    ok: true,
+    banners: (data ?? []).map((row) => ({
+      id: row.id,
+      message: row.message,
+      linkUrl: row.link_url,
+      linkLabel: row.link_label,
+      isActive: row.is_active,
+      sortOrder: row.sort_order,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at,
+    })),
+  }
+}
+
+export async function adminCreatePromoBannerAction(input: {
+  message: string
+  linkUrl?: string
+  linkLabel?: string
+  isActive?: boolean
+  sortOrder?: number
+}): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  if (typeof input.message !== "string") {
+    return { ok: false, error: "Invalid banner message." }
+  }
+
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const { data, error } = await guard.context.supabase.rpc(
+    "admin_create_promo_banner",
+    {
+      p_message: input.message,
+      p_link_url: input.linkUrl ?? null,
+      p_link_label: input.linkLabel ?? null,
+      p_is_active: input.isActive ?? true,
+      p_sort_order: input.sortOrder ?? 0,
+    }
+  )
+
+  if (error || !data) {
+    return { ok: false, error: errorMessage(error?.message) }
+  }
+
+  revalidatePath("/", "layout")
+  return { ok: true, id: data as unknown as string }
+}
+
+export async function adminUpdatePromoBannerAction(input: {
+  id: string
+  message?: string
+  linkUrl?: string | null
+  linkLabel?: string
+  isActive?: boolean
+  sortOrder?: number
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!uuid.safeParse(input.id).success) {
+    return { ok: false, error: "Invalid banner." }
+  }
+
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const { error } = await guard.context.supabase.rpc("admin_update_promo_banner", {
+    p_id: input.id,
+    p_message: input.message ?? null,
+    p_link_url: input.linkUrl ?? null,
+    p_link_label: input.linkLabel ?? null,
+    p_is_active: input.isActive ?? null,
+    p_sort_order: input.sortOrder ?? null,
+  })
+
+  if (error) {
+    return { ok: false, error: errorMessage(error.message) }
+  }
+
+  revalidatePath("/", "layout")
+  return { ok: true }
+}
+
+export async function adminDeletePromoBannerAction(input: {
+  id: string
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!uuid.safeParse(input.id).success) {
+    return { ok: false, error: "Invalid banner." }
+  }
+
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const { error } = await guard.context.supabase.rpc("admin_delete_promo_banner", {
+    p_id: input.id,
+  })
+
+  if (error) {
+    return { ok: false, error: errorMessage(error.message) }
+  }
+
+  revalidatePath("/", "layout")
   return { ok: true }
 }

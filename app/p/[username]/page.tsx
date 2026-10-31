@@ -4,7 +4,7 @@ import { notFound } from "next/navigation"
 import { PortfolioRenderer } from "@/components/portfolio/portfolio-renderer"
 import { PromoBar } from "@/components/portfolio/promo-bar"
 import { APP_NAME, SITE_URL, portfolioPath, publicPortfolioUrl } from "@/lib/config"
-import { getPublicPortfolio } from "@/lib/portfolio/queries"
+import { getPublicPortfolio, getPublicPromoBanners } from "@/lib/portfolio/queries"
 import { businessName } from "@/lib/portfolio/sections"
 
 export const dynamic = "force-dynamic"
@@ -69,9 +69,16 @@ export default async function PublicPortfolioPage({ params }: PageProps) {
   const portfolio = await getPublicPortfolio(username)
   if (!portfolio) notFound()
 
+  const banners = (await getPublicPromoBanners()).map((banner) => ({
+    id: banner.id,
+    message: banner.message,
+    linkUrl: banner.linkUrl,
+    linkLabel: banner.linkLabel,
+  }))
+
   return (
     <div className="pf-public" data-promo={portfolio.promoBarEnabled}>
-      {portfolio.promoBarEnabled ? <PromoBar /> : null}
+      {portfolio.promoBarEnabled ? <PromoBar banners={banners} /> : null}
       <PortfolioRenderer
         content={portfolio.content}
         media={portfolio.media}

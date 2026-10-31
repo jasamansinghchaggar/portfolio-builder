@@ -11,6 +11,8 @@ import {
 
 import { Button } from "@/components/ui/button"
 import { deleteMessageAction, markMessageReadAction } from "@/lib/actions/inbox"
+import { redirect } from "next/navigation"
+
 import { requireUser } from "@/lib/auth"
 import { formatDateTime } from "@/lib/format"
 import { cn } from "@/lib/utils"
@@ -31,6 +33,7 @@ export default async function MessagesPage() {
     .eq("id", userId)
     .maybeSingle()
   const isAdmin = profile?.role === "admin"
+  if (isAdmin) redirect("/admin")
 
   const { data: messages } = await supabase
     .from("portfolio_messages")
