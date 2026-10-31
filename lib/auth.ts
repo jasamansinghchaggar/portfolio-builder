@@ -20,6 +20,10 @@ export async function requireUser(nextPath?: string) {
     const next = nextPath ? `?next=${encodeURIComponent(nextPath)}` : ""
     redirect(`/login${next}`)
   }
+  const profile = await getProfile(userId)
+  if (profile?.must_change_password && nextPath !== "/reset-password") {
+    redirect("/reset-password")
+  }
   return { supabase, userId }
 }
 
@@ -36,6 +40,7 @@ export async function getProfile(userId: string) {
 export async function requireAdmin() {
   const { supabase, userId } = await requireUser("/admin")
   const profile = await getProfile(userId)
+  if (profile?.must_change_password) redirect("/reset-password")
   if (profile?.role !== "admin") {
     notFound()
   }
@@ -54,6 +59,9 @@ export async function getMyPortfolio(userId: string) {
 
 export async function requirePortfolio(nextPath?: string) {
   const { supabase, userId } = await requireUser(nextPath)
+  const profile = await getProfile(userId)
+  if (profile?.must_change_password) redirect("/reset-password")
+  if (profile?.role === "admin") redirect("/admin")
   const portfolio = await getMyPortfolio(userId)
   if (!portfolio) redirect("/onboarding")
   return { supabase, userId, portfolio }

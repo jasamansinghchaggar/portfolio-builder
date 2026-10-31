@@ -74,8 +74,23 @@ export async function loginAction(
   }
 
   const next = resolveSafeNextPath(text(formData, "next"))
+  const { data: claimsData } = await supabase.auth.getClaims()
+  const signedInUserId =
+    typeof claimsData?.claims?.sub === "string" ? claimsData.claims.sub : null
+  let isAdmin = false
+  let mustChangePassword = false
+  if (signedInUserId) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role, must_change_password")
+      .eq("id", signedInUserId)
+      .maybeSingle()
+    isAdmin = profile?.role === "admin"
+    mustChangePassword = profile?.must_change_password === true
+  }
   revalidatePath("/", "layout")
-  redirect(next ?? "/dashboard")
+  if (mustChangePassword) redirect("/reset-password")
+  redirect(next ?? (isAdmin ? "/admin" : "/dashboard"))
 }
 
 export async function registerAction(
@@ -183,13 +198,29 @@ export async function updatePasswordAction(
     }
   }
 
+  const userId = data.claims.sub
+
   const { error: updateError } = await supabase.auth.updateUser({ password })
   if (updateError) {
     return { status: "error", message: friendlyAuthError(updateError.message) }
   }
 
+  // Clear the forced-change flag (if set) and route admins home.
+  await supabase
+    .from("profiles")
+    .update({ must_change_password: false })
+    .eq("id", userId)
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .maybeSingle()
+
   revalidatePath("/", "layout")
-  redirect("/dashboard?password=updated")
+  redirect(
+    profile?.role === "admin" ? "/admin?password=updated" : "/dashboard?password=updated"
+  )
 }
 
 export async function logoutAction() {

@@ -15,6 +15,7 @@ export type Database = {
           email: string
           full_name: string
           role: Database["public"]["Enums"]["app_role"]
+          must_change_password: boolean
           created_at: string
           updated_at: string
         }
@@ -23,11 +24,13 @@ export type Database = {
           email: string
           full_name?: string
           role?: Database["public"]["Enums"]["app_role"]
+          must_change_password?: boolean
           created_at?: string
           updated_at?: string
         }
         Update: {
           full_name?: string
+          must_change_password?: boolean
         }
         Relationships: [
           {

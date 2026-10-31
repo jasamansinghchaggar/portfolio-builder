@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 import { getAuthUserId } from "@/lib/auth"
+import { createServiceClient } from "@/lib/supabase/server"
 import { publicPortfolioUrl } from "@/lib/config"
 import { parsePortfolioContent } from "@/lib/portfolio/defaults"
 import { buildPublishSnapshot } from "@/lib/portfolio/publish"
@@ -685,4 +686,89 @@ export async function adminDeletePromoBannerAction(input: {
 
   revalidatePath("/", "layout")
   return { ok: true }
+}
+
+export async function adminCreateAdminAction(input: {
+  fullName: string
+  email: string
+  password: string
+}): Promise<
+  { ok: true; userId: string } | { ok: false; error: string }
+> {
+  const fullName = input.fullName.trim()
+  const email = input.email.trim().toLowerCase()
+  const password = input.password
+
+  if (fullName.length < 2 || fullName.length > 80) {
+    return { ok: false, error: "Enter a full name (2–80 characters)." }
+  }
+  if (!z.email().safeParse(email).success) {
+    return { ok: false, error: "Enter a valid email address." }
+  }
+  if (password.length < 8 || password.length > 72) {
+    return { ok: false, error: "Use a password between 8 and 72 characters." }
+  }
+
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  let service
+  try {
+    service = createServiceClient()
+  } catch {
+    return {
+      ok: false,
+      error: "Server is missing SUPABASE_SERVICE_ROLE_KEY.",
+    }
+  }
+
+  const { data: created, error: createError } =
+    await service.auth.admin.createUser({
+      email,
+      password,
+      email_confirm: true,
+      user_metadata: { full_name: fullName },
+    })
+
+  if (createError || !created?.user) {
+    const message = createError?.message?.toLowerCase() ?? ""
+    if (message.includes("already") || message.includes("registered")) {
+      return { ok: false, error: "An account with that email already exists." }
+    }
+    return { ok: false, error: "Couldn't create the administrator." }
+  }
+
+  const newUserId = created.user.id
+
+  const { error: promoteError } = await service
+    .from("profiles")
+    .update({
+      role: "admin",
+      full_name: fullName,
+      must_change_password: true,
+    } as never)
+    .eq("id", newUserId)
+
+  if (promoteError) {
+    return { ok: false, error: "Account created but promotion failed." }
+  }
+
+  const { supabase, userId } = guard.context
+  const { data: actor } = await supabase
+    .from("profiles")
+    .select("email")
+    .eq("id", userId)
+    .maybeSingle()
+
+  await supabase.from("admin_audit_log").insert({
+    actor_id: userId,
+    actor_email: actor?.email ?? "",
+    action: "admin.created",
+    target_type: "profile",
+    target_id: newUserId,
+    detail: { email, full_name: fullName },
+  })
+
+  revalidatePath("/admin")
+  return { ok: true, userId: newUserId }
 }

@@ -9,6 +9,7 @@ import {
   IconWorld,
 } from "@tabler/icons-react"
 
+import { AdminManager } from "@/components/admin/admin-manager"
 import { BannerManager } from "@/components/admin/banner-manager"
 import {
   PortfolioAccessSwitch,
@@ -53,7 +54,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"
 
-type Tab = "portfolios" | "users" | "banners"
+type Tab = "portfolios" | "users" | "banners" | "admins"
 
 type PageProps = {
   searchParams: Promise<{
@@ -124,6 +125,7 @@ function buildHref({
   const query = new URLSearchParams()
   if (tab === "users") query.set("tab", "users")
   if (tab === "banners") query.set("tab", "banners")
+  if (tab === "admins") query.set("tab", "admins")
   if (q) query.set("q", q)
   if (tab === "portfolios" && status !== "all") query.set("status", status)
   const value = query.toString()
@@ -139,7 +141,9 @@ export default async function AdminPage({ searchParams }: PageProps) {
       ? "users"
       : requestedTab === "banners"
         ? "banners"
-        : "portfolios"
+        : requestedTab === "admins"
+          ? "admins"
+          : "portfolios"
   const requestedStatus = single(params.status)
   const status = STATUSES.some((item) => item.value === requestedStatus)
     ? (requestedStatus as "all" | PortfolioStatus)
@@ -153,6 +157,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
     { count: liveCount },
     { count: disabledCount },
     { count: totalBanners },
+    { count: totalAdmins },
   ] = await Promise.all([
     supabase
       .from("portfolios")
@@ -174,6 +179,10 @@ export default async function AdminPage({ searchParams }: PageProps) {
       .eq("is_disabled", true)
       .neq("user_id", userId),
     supabase.from("promo_banners").select("id", { count: "exact", head: true }),
+    supabase
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "admin"),
   ])
 
   let portfolios: AdminPortfolio[] = []
@@ -233,6 +242,16 @@ export default async function AdminPage({ searchParams }: PageProps) {
   if (tab === "banners") {
     const result = await adminListPromoBannersAction()
     banners = result.ok ? result.banners : []
+  }
+
+  let admins: Pick<Profile, "id" | "email" | "full_name" | "created_at">[] = []
+  if (tab === "admins") {
+    const { data } = await supabase
+      .from("profiles")
+      .select("id, email, full_name, created_at")
+      .eq("role", "admin")
+      .order("created_at", { ascending: false })
+    admins = data ?? []
   }
 
   if (tab === "users") {
@@ -354,6 +373,21 @@ export default async function AdminPage({ searchParams }: PageProps) {
           Banners
           <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-semibold text-muted-foreground tabular-nums">
             {totalBanners ?? 0}
+          </span>
+        </Link>
+        <Link
+          href={buildHref({ tab: "admins", status, q })}
+          aria-current={tab === "admins" ? "page" : undefined}
+          className={cn(
+            "-mb-px inline-flex items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium transition-colors",
+            tab === "admins"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          Admins
+          <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-semibold text-muted-foreground tabular-nums">
+            {totalAdmins ?? 0}
           </span>
         </Link>
       </nav>
@@ -619,6 +653,8 @@ export default async function AdminPage({ searchParams }: PageProps) {
             </p>
           </CardContent>
         </Card>
+      ) : tab === "admins" ? (
+        <AdminManager initialAdmins={admins} />
       ) : (
         <BannerManager initialBanners={banners} />
       )}

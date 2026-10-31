@@ -14,6 +14,25 @@ function getSupabaseConfig() {
   return { url, key }
 }
 
+export function createServiceClient() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY
+  if (!url || !key) {
+    throw new Error(
+      "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY."
+    )
+  }
+  // Service-role client bypasses RLS. Use only in trusted server code.
+  return createServerClient<Database>(url, key, {
+    cookies: {
+      getAll() {
+        return []
+      },
+      setAll() {},
+    },
+  })
+}
+
 export async function createClient() {
   const cookieStore = await cookies()
   const { url, key } = getSupabaseConfig()

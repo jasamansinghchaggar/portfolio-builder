@@ -39,6 +39,7 @@ const ACTION_LABEL: Record<string, string> = {
   "promo_banner.created": "Created promo banner",
   "promo_banner.updated": "Updated promo banner",
   "promo_banner.deleted": "Deleted promo banner",
+  "admin.created": "Created administrator",
 }
 
 export default async function AdminAuditPage() {

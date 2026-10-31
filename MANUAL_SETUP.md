@@ -58,6 +58,7 @@ The old project can stay running until the new one passes the smoke test.
    ```dotenv
    NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable-key>
+   SUPABASE_SERVICE_ROLE_KEY=<service-role-key>   # server-only, never expose to the client
    NEXT_PUBLIC_SITE_URL=http://localhost:3000
    NEXT_PUBLIC_APP_NAME=Folio
    NEXT_PUBLIC_PORTFOLIO_URL_MODE=path
@@ -72,13 +73,15 @@ The old project can stay running until the new one passes the smoke test.
    testing, or use a real inbox. Built-in Supabase email has tight rate limits;
    custom SMTP is optional locally.
 
-5. **Admin account** — after registering your local user, run:
+5. **Admin account** — either promote an existing account:
    ```sql
    update public.profiles
    set role = 'admin'
    where email = 'you@example.com';
    ```
-   Sign out and back in, then open `/admin`.
+   or create one directly from `/admin` → **Admins** tab (requires
+   `SUPABASE_SERVICE_ROLE_KEY` in the server environment). Sign out and back
+   in, then open `/admin`.
 
 6. **Run the app**:
    ```bash
@@ -96,6 +99,7 @@ The old project can stay running until the new one passes the smoke test.
    ```dotenv
    NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
    NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=<publishable-key>
+   SUPABASE_SERVICE_ROLE_KEY=<service-role-key>   # server-only, never expose to the client
    NEXT_PUBLIC_SITE_URL=https://yourdomain.com
    NEXT_PUBLIC_APP_NAME=Folio
    NEXT_PUBLIC_PORTFOLIO_URL_MODE=path
