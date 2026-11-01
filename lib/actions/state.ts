@@ -24,6 +24,8 @@ export type AuthFormState = {
   status: "idle" | "error" | "success"
   message?: string
   email?: string
+  /** Epoch seconds before which another email request should be blocked. */
+  retryAt?: number
 }
 
 export const INITIAL_AUTH_STATE: AuthFormState = { status: "idle" }

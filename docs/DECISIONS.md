@@ -333,7 +333,9 @@ never lost.
 
 ## Known limitations
 
-- Email delivery uses Supabase’s default SMTP until a custom provider is set.
+- Auth email is delivered by Resend over Supabase custom SMTP; the built-in
+  Supabase provider is limited to 2 messages per hour and is not used in
+  production (see the decision below).
 - There is no account deletion flow; Supabase cascade rules are the cleanup
   path if an operator removes a user.
 - Admin MFA and step-up authentication are not implemented yet.
@@ -357,3 +359,26 @@ Why:
   independent.
 - When no active banners exist, the public bar falls back to built-in defaults
   so the page never renders an empty banner.
+
+## Auth email goes through Resend SMTP
+
+Supabase Auth stays responsible for identity, sessions, JWTs, RLS, and storage
+policies. Only email delivery moved: Resend's SMTP relay is configured as the
+project's custom SMTP sender (`no-reply@auth.jasaman.me`), and the project email
+rate limit is raised above the built-in provider's 2/hour cap.
+
+Why:
+
+- The built-in provider only delivers to Supabase organization members and is
+  capped at 2 messages per hour, so password resets failed with
+  `over_email_send_rate_limit` (HTTP 429) under normal use.
+- Replacing Supabase Auth would have meant rewriting 24 RLS policies, 39
+  `auth.uid()` calls, the `handle_new_user` trigger on `auth.users`, storage
+  policies, session refresh in `proxy.ts`, and every server action that calls
+  `getClaims()`. That is a large security surface for no functional gain.
+- The Resend free tier (3,000 emails/month, 100/day) comfortably covers auth
+  volume, and the API key lives in Supabase's SMTP settings, so no app secret is
+  added.
+- Email failures are surfaced instead of swallowed: `lib/auth-errors.ts` maps
+  `over_email_send_rate_limit` to a retry message, and the forgot-password form
+  disables itself for the cooldown window.

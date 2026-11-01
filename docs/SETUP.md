@@ -92,6 +92,30 @@ npm run dev
 
 Open http://localhost:3000.
 
+## 8. Configure auth email delivery
+
+Supabase's built-in email provider is capped at **2 messages per hour** and only
+delivers to members of your Supabase organization, so it cannot be used for real
+signups or password resets. Production sends auth email through Resend over
+Supabase's custom SMTP.
+
+1. Create a [Resend](https://resend.com) account and add a sending subdomain
+   such as `auth.<your-domain>` (for example `auth.jasaman.me`). Add the SPF,
+   DKIM, and MX records Resend shows. On Cloudflare, keep them **DNS-only**.
+2. In Supabase: **Authentication → Emails → SMTP Settings**:
+   - Host `smtp.resend.com`, port `465`
+   - Username `resend`, password = your Resend API key
+   - Sender email `no-reply@auth.<your-domain>`, sender name `Folio`
+3. In **Authentication → Rate Limits**, confirm "Rate limit for sending emails"
+   is at least 30 per hour. Custom SMTP defaults to 30/hour; raise it only if
+   your Resend plan allows the volume. Keep the per-user 60-second windows.
+4. Send a test to a Gmail and an Outlook address and confirm it lands in the
+   inbox. Check Resend → Logs for `delivered`.
+
+The app maps `over_email_send_rate_limit` to a retry message and disables the
+reset button for the cooldown window, so a delivery failure is never reported
+as "link sent".
+
 ## Useful commands
 
 ```bash
@@ -108,8 +132,7 @@ npm test             # Vitest
    `SUPABASE_SERVICE_ROLE_KEY`), with `NEXT_PUBLIC_SITE_URL` pointing at your
    domain (no trailing slash).
 3. Set Supabase Auth URLs to your production domain and its `/auth/callback`.
-4. Configure custom SMTP in Supabase for production email delivery.
+4. Configure Resend SMTP and the email rate limit (see
+   [Configure auth email delivery](#8-configure-auth-email-delivery)).
 5. Deploy, register a test account, publish a portfolio, and confirm the public
    page and media load in a private browser window.
-EOF
-echo created

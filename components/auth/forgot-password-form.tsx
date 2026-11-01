@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useActionState, useEffect, useState } from "react"
 import { IconMailForward } from "@tabler/icons-react"
 
 import { FormFeedback } from "@/components/auth/form-feedback"
@@ -12,11 +12,28 @@ import { Spinner } from "@/components/ui/spinner"
 import { forgotPasswordAction } from "@/lib/actions/auth"
 import { INITIAL_AUTH_STATE } from "@/lib/actions/state"
 
-export function ForgotPasswordForm({ initialEmail = "" }: { initialEmail?: string }) {
+export function ForgotPasswordForm({
+  initialEmail = "",
+}: {
+  initialEmail?: string
+}) {
   const [state, formAction, pending] = useActionState(
     forgotPasswordAction,
     INITIAL_AUTH_STATE
   )
+
+  // Block repeat submissions for the server-provided cooldown window. The
+  // timeout only flips state asynchronously, which keeps this lint-clean.
+  const retryAt = state.retryAt ?? 0
+  const [expiredRetryAt, setExpiredRetryAt] = useState(0)
+  const coolingDown = retryAt > 0 && expiredRetryAt !== retryAt
+
+  useEffect(() => {
+    if (!retryAt) return
+    const delay = Math.max(0, retryAt * 1000 - Date.now())
+    const id = window.setTimeout(() => setExpiredRetryAt(retryAt), delay)
+    return () => window.clearTimeout(id)
+  }, [retryAt])
 
   if (state.status === "success") {
     return (
@@ -25,9 +42,7 @@ export function ForgotPasswordForm({ initialEmail = "" }: { initialEmail?: strin
           <span className="grid size-10 place-items-center rounded-full bg-amber-500/10 text-amber-700 dark:text-amber-400">
             <IconMailForward className="size-5" />
           </span>
-          <h2 className="mt-4 font-heading text-lg font-semibold">
-            Link sent
-          </h2>
+          <h2 className="mt-4 font-heading text-lg font-semibold">Link sent</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
             {state.message}
           </p>
@@ -69,9 +84,17 @@ export function ForgotPasswordForm({ initialEmail = "" }: { initialEmail?: strin
         </Field>
       </FieldGroup>
 
-      <Button type="submit" className="h-10 w-full text-sm" disabled={pending}>
+      <Button
+        type="submit"
+        className="h-10 w-full text-sm"
+        disabled={pending || coolingDown}
+      >
         {pending ? <Spinner className="size-4" /> : null}
-        {pending ? "Sending…" : "Send reset link"}
+        {pending
+          ? "Sending…"
+          : coolingDown
+            ? "Try again in a minute"
+            : "Send reset link"}
       </Button>
 
       <Button

@@ -4,6 +4,12 @@ import { revalidatePath } from "next/cache"
 import { redirect } from "next/navigation"
 import { z } from "zod"
 
+import {
+  emailRetryAt,
+  emailSendErrorMessage,
+  friendlyAuthError,
+  isEmailRateLimitError,
+} from "@/lib/auth-errors"
 import { resolveSafeNextPath, SITE_URL } from "@/lib/config"
 import { TEMPLATE_IDS, type TemplateId } from "@/lib/portfolio/constants"
 import { createClient, createServiceClient } from "@/lib/supabase/server"
@@ -28,29 +34,6 @@ function validatePassword(value: string) {
   if (value.length < 8) return "Use at least 8 characters."
   if (value.length > 72) return "Use 72 characters or fewer."
   return null
-}
-
-function friendlyAuthError(message: string | undefined) {
-  const value = message?.toLowerCase() ?? ""
-  if (value.includes("invalid login credentials")) {
-    return "That email and password don't match an account."
-  }
-  if (value.includes("email not confirmed")) {
-    return "Confirm your email address before signing in. Check your inbox for the verification link."
-  }
-  if (value.includes("user already registered")) {
-    return "An account with that email already exists. Try signing in instead."
-  }
-  if (value.includes("rate limit") || value.includes("too many")) {
-    return "Too many attempts. Wait a minute and try again."
-  }
-  if (value.includes("password should be")) {
-    return "Choose a stronger password with at least 8 characters."
-  }
-  if (value.includes("same password")) {
-    return "Choose a password you haven't used before."
-  }
-  return "Something went wrong. Please try again."
 }
 
 export async function loginAction(
@@ -107,7 +90,11 @@ export async function registerAction(
     return { status: "error", message: "Enter your full name.", email }
   }
   if (fullName.length > 80) {
-    return { status: "error", message: "Keep your name under 80 characters.", email }
+    return {
+      status: "error",
+      message: "Keep your name under 80 characters.",
+      email,
+    }
   }
   const emailError = validateEmail(email)
   if (emailError) return { status: "error", message: emailError, email }
@@ -133,6 +120,15 @@ export async function registerAction(
   })
 
   if (error) {
+    if (isEmailRateLimitError(error)) {
+      return {
+        status: "error",
+        email,
+        message:
+          "We couldn't send the verification email because email delivery is temporarily limited. Please try again in a few minutes.",
+        retryAt: emailRetryAt(),
+      }
+    }
     return { status: "error", message: friendlyAuthError(error.message), email }
   }
 
@@ -163,9 +159,34 @@ export async function forgotPasswordAction(
   if (emailError) return { status: "error", message: emailError, email }
 
   const supabase = await createClient()
-  await supabase.auth.resetPasswordForEmail(email, {
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: `${SITE_URL}/auth/callback?next=/reset-password`,
   })
+
+  if (isEmailRateLimitError(error)) {
+    return {
+      status: "error",
+      email,
+      message: emailSendErrorMessage(error),
+      retryAt: emailRetryAt(),
+    }
+  }
+
+  if (error) {
+    // Account existence is not revealed by Supabase here, so any error is an
+    // infrastructure failure (SMTP, provider outage) and should be surfaced.
+    console.error("[auth] resetPasswordForEmail failed", {
+      code: error.code,
+      status: error.status,
+    })
+    return {
+      status: "error",
+      email,
+      message:
+        "We couldn't send the reset email just now. Please try again in a few minutes.",
+      retryAt: emailRetryAt(),
+    }
+  }
 
   // Always report success so the form cannot be used to enumerate accounts.
   return {
@@ -233,7 +254,9 @@ export async function updatePasswordAction(
 
   revalidatePath("/", "layout")
   redirect(
-    profile?.role === "admin" ? "/admin?password=updated" : "/dashboard?password=updated"
+    profile?.role === "admin"
+      ? "/admin?password=updated"
+      : "/dashboard?password=updated"
   )
 }
 

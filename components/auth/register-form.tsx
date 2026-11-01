@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { useActionState } from "react"
+import { useActionState, useEffect, useState } from "react"
 import { IconMailCheck } from "@tabler/icons-react"
 
 import { FormFeedback } from "@/components/auth/form-feedback"
@@ -31,6 +31,19 @@ export function RegisterForm({
     registerAction,
     INITIAL_AUTH_STATE
   )
+
+  // Mirror the forgot-password cooldown so a rate-limited signup cannot be
+  // retried immediately and burn the remaining quota.
+  const retryAt = state.retryAt ?? 0
+  const [expiredRetryAt, setExpiredRetryAt] = useState(0)
+  const coolingDown = retryAt > 0 && expiredRetryAt !== retryAt
+
+  useEffect(() => {
+    if (!retryAt) return
+    const delay = Math.max(0, retryAt * 1000 - Date.now())
+    const id = window.setTimeout(() => setExpiredRetryAt(retryAt), delay)
+    return () => window.clearTimeout(id)
+  }, [retryAt])
 
   if (state.status === "success") {
     return (
@@ -66,7 +79,9 @@ export function RegisterForm({
 
   return (
     <form action={formAction} className="space-y-5">
-      {template ? <input type="hidden" name="template" value={template} /> : null}
+      {template ? (
+        <input type="hidden" name="template" value={template} />
+      ) : null}
       {next ? <input type="hidden" name="next" value={next} /> : null}
 
       <FormFeedback status={state.status} message={state.message} />
@@ -131,9 +146,17 @@ export function RegisterForm({
         </div>
       </FieldGroup>
 
-      <Button type="submit" className="h-10 w-full text-sm" disabled={pending}>
+      <Button
+        type="submit"
+        className="h-10 w-full text-sm"
+        disabled={pending || coolingDown}
+      >
         {pending ? <Spinner className="size-4" /> : null}
-        {pending ? "Creating account…" : "Create account"}
+        {pending
+          ? "Creating account…"
+          : coolingDown
+            ? "Try again in a minute"
+            : "Create account"}
       </Button>
 
       <FieldDescription className="text-center text-sm">
