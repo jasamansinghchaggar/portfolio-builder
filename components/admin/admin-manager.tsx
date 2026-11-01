@@ -120,7 +120,7 @@ export function AdminManager({
         </div>
       </div>
 
-      <div className="rounded-xl border">
+      <div className="overflow-x-auto rounded-xl border">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-xs text-muted-foreground">
@@ -142,10 +142,12 @@ export function AdminManager({
             ) : null}
             {admins.map((admin) => (
               <tr key={admin.id} className="border-b last:border-0">
-                <td className="px-4 py-3 font-medium">
+                <td className="px-4 py-3 font-medium break-words">
                   {admin.full_name || "—"}
                 </td>
-                <td className="px-4 py-3 text-muted-foreground">{admin.email}</td>
+                <td className="px-4 py-3 break-all text-muted-foreground">
+                  {admin.email}
+                </td>
                 <td className="px-4 py-3 text-xs text-muted-foreground">
                   {formatDate(admin.created_at)}
                 </td>

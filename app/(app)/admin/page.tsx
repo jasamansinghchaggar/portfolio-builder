@@ -301,14 +301,14 @@ export default async function AdminPage({ searchParams }: PageProps) {
         <form
           action="/admin"
           method="get"
-          className="flex items-center gap-2 self-start lg:self-auto"
+          className="flex w-full items-center gap-2 lg:w-auto"
         >
           {tab === "users" ? (
             <input type="hidden" name="tab" value="users" />
           ) : status !== "all" ? (
             <input type="hidden" name="status" value={status} />
           ) : null}
-          <div className="relative">
+          <div className="relative min-w-0 flex-1 sm:flex-none">
             <IconSearch className="pointer-events-none absolute top-1/2 left-2.5 size-3.5 -translate-y-1/2 text-muted-foreground" />
             <Input
               name="q"
@@ -327,12 +327,12 @@ export default async function AdminPage({ searchParams }: PageProps) {
         </form>
       </div>
 
-      <nav className="flex items-center gap-5 border-b">
+      <nav className="-mx-4 flex [scrollbar-width:none] items-center gap-5 overflow-x-auto border-b px-4 sm:mx-0 sm:px-0 [&::-webkit-scrollbar]:hidden">
         <Link
           href={buildHref({ tab: "portfolios", status, q })}
           aria-current={tab === "portfolios" ? "page" : undefined}
           className={cn(
-            "-mb-px inline-flex items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium transition-colors",
+            "-mb-px inline-flex shrink-0 items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium whitespace-nowrap transition-colors",
             tab === "portfolios"
               ? "border-foreground text-foreground"
               : "border-transparent text-muted-foreground hover:text-foreground"
@@ -348,7 +348,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
           href={buildHref({ tab: "users", status, q })}
           aria-current={tab === "users" ? "page" : undefined}
           className={cn(
-            "-mb-px inline-flex items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium transition-colors",
+            "-mb-px inline-flex shrink-0 items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium whitespace-nowrap transition-colors",
             tab === "users"
               ? "border-foreground text-foreground"
               : "border-transparent text-muted-foreground hover:text-foreground"
@@ -364,7 +364,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
           href={buildHref({ tab: "banners", status, q })}
           aria-current={tab === "banners" ? "page" : undefined}
           className={cn(
-            "-mb-px inline-flex items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium transition-colors",
+            "-mb-px inline-flex shrink-0 items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium whitespace-nowrap transition-colors",
             tab === "banners"
               ? "border-foreground text-foreground"
               : "border-transparent text-muted-foreground hover:text-foreground"
@@ -379,7 +379,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
           href={buildHref({ tab: "admins", status, q })}
           aria-current={tab === "admins" ? "page" : undefined}
           className={cn(
-            "-mb-px inline-flex items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium transition-colors",
+            "-mb-px inline-flex shrink-0 items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium whitespace-nowrap transition-colors",
             tab === "admins"
               ? "border-foreground text-foreground"
               : "border-transparent text-muted-foreground hover:text-foreground"

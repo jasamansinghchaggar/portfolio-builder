@@ -271,7 +271,7 @@ export function BannerManager({
         </div>
       ) : null}
 
-      <div className="rounded-xl border">
+      <div className="overflow-x-auto rounded-xl border">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-xs text-muted-foreground">
@@ -377,7 +377,7 @@ export function BannerManager({
                 ) : (
                   <>
                     <td className="px-4 py-3 align-top">
-                      <p className="line-clamp-2">{banner.message}</p>
+                      <p className="line-clamp-2 break-words">{banner.message}</p>
                     </td>
                     <td className="hidden px-4 py-3 align-top text-muted-foreground md:table-cell">
                       {banner.linkUrl ? (
@@ -385,7 +385,7 @@ export function BannerManager({
                           href={banner.linkUrl}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="underline underline-offset-2"
+                          className="underline underline-offset-2 break-all"
                         >
                           {banner.linkLabel}
                         </a>
