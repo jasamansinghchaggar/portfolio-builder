@@ -1,6 +1,5 @@
 "use client"
 
-import Link from "next/link"
 import { usePathname } from "next/navigation"
 import {
   IconHistory,
@@ -13,6 +12,7 @@ import {
 } from "@tabler/icons-react"
 
 import { Brand } from "@/components/marketing/brand"
+import { PendingLink } from "@/components/app/pending-link"
 import { logoutAction } from "@/lib/actions/auth"
 import type { PortfolioStatus } from "@/lib/supabase/database.types"
 import { cn } from "@/lib/utils"
@@ -86,7 +86,7 @@ export function AppHeader({
           {links.map((link) => {
             const active = isActive(link.href)
             return (
-              <Link
+              <PendingLink
                 key={link.href}
                 href={link.href}
                 className={cn(
@@ -98,7 +98,7 @@ export function AppHeader({
               >
                 <link.icon className="size-3.5" />
                 {link.label}
-              </Link>
+              </PendingLink>
             )
           })}
         </nav>
@@ -149,7 +149,7 @@ export function AppHeader({
         {links.map((link) => {
           const active = isActive(link.href)
           return (
-            <Link
+            <PendingLink
               key={link.href}
               href={link.href}
               className={cn(
@@ -161,7 +161,7 @@ export function AppHeader({
             >
               <link.icon className="size-3.5" />
               {link.label}
-            </Link>
+            </PendingLink>
           )
         })}
       </nav>
