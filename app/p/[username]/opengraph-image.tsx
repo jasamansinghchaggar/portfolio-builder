@@ -1,7 +1,8 @@
 import { ImageResponse } from "next/og"
 
+import { APP_NAME } from "@/lib/config"
 import { getTemplate } from "@/lib/portfolio/templates"
-import { getPublicPortfolio } from "@/lib/portfolio/queries"
+import { getPublicPortfolio, getPublicSettings } from "@/lib/portfolio/queries"
 
 export const dynamic = "force-dynamic"
 export const revalidate = 0
@@ -15,7 +16,10 @@ export default async function OpenGraphImage({
   params: Promise<{ username: string }>
 }) {
   const { username } = await params
-  const portfolio = await getPublicPortfolio(username)
+  const [portfolio, settings] = await Promise.all([
+    getPublicPortfolio(username),
+    getPublicSettings(),
+  ])
 
   if (!portfolio) {
     return new ImageResponse(
@@ -118,7 +122,9 @@ export default async function OpenGraphImage({
               .filter(Boolean)
               .join(" · ")}
           </span>
-          <span>Made with Folio</span>
+          {settings.showAttribution ? (
+            <span>Made with {APP_NAME}</span>
+          ) : null}
         </div>
 
         <div

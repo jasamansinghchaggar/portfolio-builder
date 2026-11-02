@@ -5,12 +5,14 @@ import {
   IconEye,
   IconPencil,
   IconSearch,
+  IconSettings,
   IconUsers,
   IconWorld,
 } from "@tabler/icons-react"
 
 import { AdminManager } from "@/components/admin/admin-manager"
 import { BannerManager } from "@/components/admin/banner-manager"
+import { SettingsManager } from "@/components/admin/settings-manager"
 import {
   PortfolioAccessSwitch,
   PortfolioBannerSwitch,
@@ -35,8 +37,10 @@ import {
 } from "@/components/ui/table"
 import { requireAdmin } from "@/lib/auth"
 import {
+  adminGetPlatformSettingsAction,
   adminListPromoBannersAction,
   type AdminPromoBanner,
+  type PlatformSettings,
 } from "@/lib/actions/admin"
 import { publicPortfolioUrl } from "@/lib/config"
 import { formatDate, formatDateTime } from "@/lib/format"
@@ -54,7 +58,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"
 
-type Tab = "portfolios" | "users" | "banners" | "admins"
+type Tab = "portfolios" | "users" | "banners" | "settings" | "admins"
 
 type PageProps = {
   searchParams: Promise<{
@@ -125,6 +129,7 @@ function buildHref({
   const query = new URLSearchParams()
   if (tab === "users") query.set("tab", "users")
   if (tab === "banners") query.set("tab", "banners")
+  if (tab === "settings") query.set("tab", "settings")
   if (tab === "admins") query.set("tab", "admins")
   if (q) query.set("q", q)
   if (tab === "portfolios" && status !== "all") query.set("status", status)
@@ -141,9 +146,11 @@ export default async function AdminPage({ searchParams }: PageProps) {
       ? "users"
       : requestedTab === "banners"
         ? "banners"
-        : requestedTab === "admins"
-          ? "admins"
-          : "portfolios"
+        : requestedTab === "settings"
+          ? "settings"
+          : requestedTab === "admins"
+            ? "admins"
+            : "portfolios"
   const requestedStatus = single(params.status)
   const status = STATUSES.some((item) => item.value === requestedStatus)
     ? (requestedStatus as "all" | PortfolioStatus)
@@ -242,6 +249,12 @@ export default async function AdminPage({ searchParams }: PageProps) {
   if (tab === "banners") {
     const result = await adminListPromoBannersAction()
     banners = result.ok ? result.banners : []
+  }
+
+  let settings: PlatformSettings = { showAttribution: true, updatedAt: null }
+  if (tab === "settings") {
+    const result = await adminGetPlatformSettingsAction()
+    if (result.ok) settings = result.settings
   }
 
   let admins: Pick<Profile, "id" | "email" | "full_name" | "created_at">[] = []
@@ -374,6 +387,19 @@ export default async function AdminPage({ searchParams }: PageProps) {
           <span className="rounded-full bg-muted px-2 py-0.5 text-[0.65rem] font-semibold text-muted-foreground tabular-nums">
             {totalBanners ?? 0}
           </span>
+        </Link>
+        <Link
+          href={buildHref({ tab: "settings", status, q })}
+          aria-current={tab === "settings" ? "page" : undefined}
+          className={cn(
+            "-mb-px inline-flex shrink-0 items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium whitespace-nowrap transition-colors",
+            tab === "settings"
+              ? "border-foreground text-foreground"
+              : "border-transparent text-muted-foreground hover:text-foreground"
+          )}
+        >
+          <IconSettings className="size-4" />
+          Settings
         </Link>
         <Link
           href={buildHref({ tab: "admins", status, q })}
@@ -655,6 +681,8 @@ export default async function AdminPage({ searchParams }: PageProps) {
         </Card>
       ) : tab === "admins" ? (
         <AdminManager initialAdmins={admins} />
+      ) : tab === "settings" ? (
+        <SettingsManager initialSettings={settings} />
       ) : (
         <BannerManager initialBanners={banners} />
       )}

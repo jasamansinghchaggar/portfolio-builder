@@ -39,6 +39,7 @@ const ACTION_LABEL: Record<string, string> = {
   "promo_banner.created": "Created promo banner",
   "promo_banner.updated": "Updated promo banner",
   "promo_banner.deleted": "Deleted promo banner",
+  "platform_setting.updated": "Updated platform settings",
   "admin.created": "Created administrator",
 }
 

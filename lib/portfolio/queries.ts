@@ -43,6 +43,21 @@ export const getPublicPortfolio = cache(
   }
 )
 
+export type PublicSettings = {
+  showAttribution: boolean
+}
+
+/**
+ * Site-wide settings that are safe to expose publicly. Falls back to the
+ * pre-setting behaviour (attribution visible) if the RPC is unavailable.
+ */
+export const getPublicSettings = cache(async (): Promise<PublicSettings> => {
+  const supabase = createPublicClient()
+  const { data, error } = await supabase.rpc("get_public_settings")
+  if (error || !data?.length) return { showAttribution: true }
+  return { showAttribution: data[0].show_attribution }
+})
+
 export type PublicPromoBanner = {
   id: string
   message: string
