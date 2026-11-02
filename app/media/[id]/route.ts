@@ -1,7 +1,7 @@
 import type { NextRequest } from "next/server"
 import { z } from "zod"
 
-import { createClient } from "@/lib/supabase/server"
+import { createClient, createServiceClient } from "@/lib/supabase/server"
 import { createPublicClient } from "@/lib/supabase/public"
 import { getPublicMediaInfo } from "@/lib/portfolio/queries"
 
@@ -22,6 +22,37 @@ function safeFileName(name: string) {
   return ascii
 }
 
+async function getServicePublicMediaInfo(
+  id: string,
+  service: ReturnType<typeof createServiceClient>
+) {
+  const { data: media, error: mediaError } = await service
+    .from("portfolio_media")
+    .select("storage_path, mime_type, file_name, width, height, portfolio_id")
+    .eq("id", id)
+    .maybeSingle()
+
+  if (mediaError || !media) return null
+
+  const { data: portfolio, error: portfolioError } = await service
+    .from("portfolios")
+    .select("status, is_disabled, published_media_ids")
+    .eq("id", media.portfolio_id)
+    .maybeSingle()
+
+  if (
+    portfolioError ||
+    !portfolio ||
+    portfolio.status !== "published" ||
+    portfolio.is_disabled ||
+    !portfolio.published_media_ids.includes(id)
+  ) {
+    return null
+  }
+
+  return media
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -35,8 +66,13 @@ export async function GET(
   let mimeType = "application/octet-stream"
   let fileName = "file"
   let isPublic = false
+  let serviceClient: ReturnType<typeof createServiceClient> | null = null
 
-  const publicInfo = await getPublicMediaInfo(id)
+  let publicInfo = await getPublicMediaInfo(id)
+  if (!publicInfo && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    serviceClient = createServiceClient()
+    publicInfo = await getServicePublicMediaInfo(id, serviceClient)
+  }
   if (publicInfo) {
     storagePath = publicInfo.storage_path
     mimeType = publicInfo.mime_type
@@ -88,9 +124,18 @@ export async function GET(
   }
 
   const client = ownerClient ?? createPublicClient()
-  const { data: blob, error } = await client.storage
+  let { data: blob, error } = await client.storage
     .from("portfolio-media")
     .download(storagePath)
+
+  if ((error || !blob) && isPublic && process.env.SUPABASE_SERVICE_ROLE_KEY) {
+    serviceClient ??= createServiceClient()
+    const serviceResult = await serviceClient.storage
+      .from("portfolio-media")
+      .download(storagePath)
+    blob = serviceResult.data
+    error = serviceResult.error
+  }
 
   if (error || !blob) return notFound()
 
