@@ -32,7 +32,10 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditorMode } from "@/components/editor/editor-mode"
-import { adminDeleteMediaAction, adminUploadMediaAction } from "@/lib/actions/admin"
+import {
+  adminDeleteMediaAction,
+  adminUploadMediaAction,
+} from "@/lib/actions/admin"
 import { deleteMediaAction, uploadMediaAction } from "@/lib/actions/media"
 import {
   isImageMime,
@@ -329,7 +332,7 @@ export function MediaField({
                         : "hover:border-foreground/30"
                     )}
                   >
-                    <div className="grid aspect-[4/3] place-items-center overflow-hidden bg-muted/40">
+                    <div className="grid aspect-4/3 place-items-center overflow-hidden bg-muted/40">
                       {isImageMime(item.mimeType) ? (
                         /* eslint-disable-next-line @next/next/no-img-element */
                         <img
@@ -362,7 +365,7 @@ export function MediaField({
               className="h-8 text-xs"
               onClick={() => {
                 setPickerOpen(false)
-                inputRef.current?.click()
+                requestAnimationFrame(() => inputRef.current?.click())
               }}
             >
               <IconUpload />
