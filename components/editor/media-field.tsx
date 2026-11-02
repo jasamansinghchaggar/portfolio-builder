@@ -2,11 +2,12 @@
 
 import { useEffect, useRef, useState } from "react"
 import {
+  IconCrop,
+  IconDotsVertical,
   IconFileTypePdf,
   IconPhoto,
   IconTrash,
   IconUpload,
-  IconX,
 } from "@tabler/icons-react"
 import { toast } from "sonner"
 
@@ -20,6 +21,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 import { Spinner } from "@/components/ui/spinner"
 import { useEditorMode } from "@/components/editor/editor-mode"
 import { adminDeleteMediaAction, adminUploadMediaAction } from "@/lib/actions/admin"
@@ -28,6 +37,7 @@ import {
   isImageMime,
   mediaHref,
   mediaObjectPosition,
+  focalObjectPosition,
   DEFAULT_FOCAL,
   type EditorMedia,
   type FocalPoint,
@@ -80,15 +90,22 @@ export function MediaField({
       : isImageMime(item.mimeType)
   )
 
-  async function upload(file: File, focal?: FocalPoint) {
+  function openCropDialog() {
+    if (!selected || !isImageMime(selected.mimeType)) return
+    setCropFile(null)
+    setCropSrc(mediaHref(selected.id))
+    setCropInitial(crop ?? { x: selected.focalX, y: selected.focalY })
+  }
+
+  async function upload(file: File, point?: FocalPoint) {
     setUploading(true)
     try {
       const formData = new FormData()
       formData.set("file", file)
       formData.set("kind", kind)
-      if (focal) {
-        formData.set("focalX", String(focal.x))
-        formData.set("focalY", String(focal.y))
+      if (point) {
+        formData.set("focalX", String(point.x))
+        formData.set("focalY", String(point.y))
       }
       const result =
         admin && portfolioId
@@ -100,7 +117,7 @@ export function MediaField({
       }
       setCropSrc(null)
       setCropFile(null)
-      if (slot && onCropChange && focal) onCropChange(focal)
+      if (slot && onCropChange && point) onCropChange(point)
       onMediaAdded(result.media)
       onChange(result.media.id)
       toast.success("File uploaded")
@@ -121,7 +138,7 @@ export function MediaField({
                 src={mediaHref(selected.id)}
                 alt=""
                 className="size-full object-cover"
-                style={{ objectPosition: mediaObjectPosition(selected) }}
+                style={{ objectPosition: focalObjectPosition(crop, selected) }}
               />
             ) : selected ? (
               <IconFileTypePdf className="size-5 text-muted-foreground" />
@@ -142,55 +159,90 @@ export function MediaField({
           </div>
 
           <div className="flex shrink-0 items-center gap-1">
-            {value && selected && isImageMime(selected.mimeType) && onCropChange ? (
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                className="h-7 text-xs"
-                onClick={() => {
-                  setCropFile(null)
-                  setCropSrc(mediaHref(selected.id))
-                  setCropInitial(
-                    crop ?? { x: selected.focalX, y: selected.focalY }
-                  )
-                }}
-              >
-                Crop
-              </Button>
-            ) : null}
             {value ? (
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="Remove file"
-                onClick={() => onChange(null)}
-              >
-                <IconX />
-              </Button>
-            ) : null}
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs"
-              onClick={() => setPickerOpen(true)}
-              disabled={!options.length}
-            >
-              Choose
-            </Button>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              className="h-7 text-xs"
-              onClick={() => inputRef.current?.click()}
-              disabled={uploading}
-            >
-              {uploading ? <Spinner className="size-3" /> : <IconUpload />}
-              {uploading ? "Uploading" : "Upload"}
-            </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="icon-sm"
+                      aria-label={
+                        selected
+                          ? `Options for ${selected.fileName}`
+                          : "File options"
+                      }
+                    />
+                  }
+                  disabled={uploading}
+                >
+                  {uploading ? (
+                    <Spinner className="size-3" />
+                  ) : (
+                    <IconDotsVertical />
+                  )}
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="min-w-44">
+                  <DropdownMenuLabel>
+                    {accept === "pdf" ? "File options" : "Image options"}
+                  </DropdownMenuLabel>
+                  {selected &&
+                  isImageMime(selected.mimeType) &&
+                  onCropChange ? (
+                    <DropdownMenuItem onClick={openCropDialog}>
+                      <IconCrop />
+                      Adjust crop
+                    </DropdownMenuItem>
+                  ) : null}
+                  <DropdownMenuItem
+                    onClick={() => setPickerOpen(true)}
+                    disabled={!options.length}
+                  >
+                    <IconPhoto />
+                    Choose existing
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => inputRef.current?.click()}
+                    disabled={uploading}
+                  >
+                    <IconUpload />
+                    Upload new
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    variant="destructive"
+                    onClick={() => onChange(null)}
+                  >
+                    <IconTrash />
+                    Remove
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            ) : (
+              <>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => setPickerOpen(true)}
+                  disabled={!options.length}
+                >
+                  Choose
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  className="h-7 text-xs"
+                  onClick={() => inputRef.current?.click()}
+                  disabled={uploading}
+                >
+                  {uploading ? <Spinner className="size-3" /> : <IconUpload />}
+                  {uploading ? "Uploading" : "Upload"}
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -228,7 +280,7 @@ export function MediaField({
         src={cropSrc}
         open={Boolean(cropSrc)}
         busy={uploading}
-        initialFocal={cropInitial}
+        initialCrop={cropInitial}
         confirmLabel={cropFile ? "Upload image" : "Apply crop"}
         onOpenChange={(open) => {
           if (!open) {
@@ -236,12 +288,12 @@ export function MediaField({
             setCropFile(null)
           }
         }}
-        onConfirm={(focal) => {
+        onConfirm={(nextCrop) => {
           if (cropFile) {
-            void upload(cropFile, focal)
+            void upload(cropFile, nextCrop)
             return
           }
-          if (onCropChange) onCropChange(focal)
+          if (onCropChange) onCropChange(nextCrop)
           setCropSrc(null)
         }}
       />
