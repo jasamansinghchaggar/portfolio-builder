@@ -33,6 +33,13 @@ const ASPECTS = [
 
 type AspectId = (typeof ASPECTS)[number]["id"]
 
+export type CropSelection = {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
 function round(value: number) {
   return Math.round(value * 1000) / 1000
 }
@@ -56,7 +63,7 @@ export function MediaCropDialog({
   initialCrop?: FocalPoint
   confirmLabel?: string
   onOpenChange: (open: boolean) => void
-  onConfirm: (crop: FocalPoint) => void
+  onConfirm: (selection: CropSelection) => void
 }) {
   const frameRef = useRef<HTMLDivElement>(null)
   const dragStart = useRef<{
@@ -136,6 +143,25 @@ export function MediaCropDialog({
       x: round(clampFocal(current.x + move[0])),
       y: round(clampFocal(current.y + move[1])),
     }))
+  }
+
+  function selection(): CropSelection | null {
+    if (!natural) return null
+    const sourceRatio = natural.width / natural.height
+    const cropWidth =
+      sourceRatio > activeAspect.ratio
+        ? natural.height * activeAspect.ratio
+        : natural.width
+    const cropHeight =
+      sourceRatio > activeAspect.ratio
+        ? natural.height
+        : natural.width / activeAspect.ratio
+    return {
+      x: (natural.width - cropWidth) * crop.x,
+      y: (natural.height - cropHeight) * crop.y,
+      width: cropWidth,
+      height: cropHeight,
+    }
   }
 
   return (
@@ -268,8 +294,11 @@ export function MediaCropDialog({
             <Button
               type="button"
               className="h-8 text-xs"
-              onClick={() => onConfirm(crop)}
-              disabled={busy || !src}
+              onClick={() => {
+                const next = selection()
+                if (next) onConfirm(next)
+              }}
+              disabled={busy || !src || !natural}
             >
               {busy ? <Spinner className="size-3" /> : null}
               {busy ? "Uploading…" : confirmLabel}

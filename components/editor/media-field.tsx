@@ -47,6 +47,7 @@ import {
   type FocalPoint,
   type MediaKind,
 } from "@/lib/portfolio/media"
+import type { CropSelection } from "@/components/editor/media-crop-dialog"
 import { cn } from "@/lib/utils"
 
 export function MediaField({
@@ -72,7 +73,7 @@ export function MediaField({
   accept?: "image" | "pdf"
   slot?: string
   crop?: FocalPoint | null
-  onCropChange?: (crop: FocalPoint) => void
+  onCropChange?: (crop: FocalPoint | null) => void
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
@@ -101,16 +102,12 @@ export function MediaField({
     setCropInitial(crop ?? { x: selected.focalX, y: selected.focalY })
   }
 
-  async function upload(file: File, point?: FocalPoint) {
+  async function upload(file: File) {
     setUploading(true)
     try {
       const formData = new FormData()
       formData.set("file", file)
       formData.set("kind", kind)
-      if (point) {
-        formData.set("focalX", String(point.x))
-        formData.set("focalY", String(point.y))
-      }
       const result =
         admin && portfolioId
           ? await adminUploadMediaAction(portfolioId, formData)
@@ -121,13 +118,55 @@ export function MediaField({
       }
       setCropSrc(null)
       setCropFile(null)
-      if (slot && onCropChange && point) onCropChange(point)
+      if (slot && onCropChange) onCropChange(null)
       onMediaAdded(result.media)
       onChange(result.media.id)
       toast.success("File uploaded")
     } finally {
       setUploading(false)
       if (inputRef.current) inputRef.current.value = ""
+    }
+  }
+
+  async function cropToFile(
+    source: Blob,
+    selection: CropSelection,
+    fileName: string
+  ) {
+    const url = URL.createObjectURL(source)
+    try {
+      const image = new Image()
+      image.src = url
+      await new Promise<void>((resolve, reject) => {
+        image.onload = () => resolve()
+        image.onerror = () => reject(new Error("Unable to read image"))
+      })
+
+      const canvas = document.createElement("canvas")
+      canvas.width = Math.max(1, Math.round(selection.width))
+      canvas.height = Math.max(1, Math.round(selection.height))
+      const context = canvas.getContext("2d")
+      if (!context) throw new Error("Unable to prepare image crop")
+      context.drawImage(
+        image,
+        Math.round(selection.x),
+        Math.round(selection.y),
+        canvas.width,
+        canvas.height,
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      )
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/webp", 0.9)
+      )
+      if (!blob) throw new Error("Unable to create image crop")
+      return new File([blob], fileName.replace(/\.[^.]+$/, "") + ".webp", {
+        type: "image/webp",
+      })
+    } finally {
+      URL.revokeObjectURL(url)
     }
   }
 
@@ -294,13 +333,24 @@ export function MediaField({
             setCropFile(null)
           }
         }}
-        onConfirm={(nextCrop) => {
-          if (cropFile) {
-            void upload(cropFile, nextCrop)
-            return
-          }
-          if (onCropChange) onCropChange(nextCrop)
-          setCropSrc(null)
+        onConfirm={(selection) => {
+          void (async () => {
+            try {
+              const source = cropFile
+                ? cropFile
+                : await fetch(cropSrc as string).then((response) => {
+                    if (!response.ok) throw new Error("Unable to load image")
+                    return response.blob()
+                  })
+              const sourceName = cropFile?.name ?? selected?.fileName ?? "image"
+              const cropped = await cropToFile(source, selection, sourceName)
+              await upload(cropped)
+            } catch {
+              toast.error("Crop failed", {
+                description: "We couldn't create that crop. Please try again.",
+              })
+            }
+          })()
         }}
       />
 

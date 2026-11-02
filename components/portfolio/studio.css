@@ -1606,9 +1606,10 @@
 
 .pf-lightbox-image {
   width: 100%;
+  height: min(72vh, 60vw);
   max-height: 72vh;
   border-radius: 12px;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .pf-lightbox-placeholder {

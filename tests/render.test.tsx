@@ -97,6 +97,36 @@ describe("portfolio renderer", () => {
     expect(html).not.toContain("pf-hero-avatar")
   })
 
+  it("applies per-usage crops to payment QR images", () => {
+    const content = createSampleContent()
+    const payment = content.sections.find((section) => section.type === "payment")
+    if (payment?.type !== "payment") {
+      throw new Error("Sample content needs a payment section.")
+    }
+    payment.qrMediaId = "media-qr"
+    content.mediaCrops = {
+      [`qr.${payment.id}`]: { x: 0.1, y: 0.9 },
+    }
+
+    const html = renderToStaticMarkup(
+      <PortfolioRenderer
+        content={content}
+        media={{
+          "media-qr": {
+            width: 400,
+            height: 400,
+            mimeType: "image/png",
+            fileName: "qr.png",
+            focalX: 0.5,
+            focalY: 0.5,
+          },
+        }}
+      />
+    )
+
+    expect(html).toMatch(/object-position:\s*10(?:\.00)?%\s+90(?:\.00)?%/)
+  })
+
   it("omits hidden sections from public output", () => {
     const content = createSampleContent()
     const about = content.sections.find((section) => section.type === "about")

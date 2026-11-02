@@ -546,6 +546,7 @@ function StudioSection({
           <PaymentSection
             section={section}
             media={media}
+            mediaCrops={content.mediaCrops}
             businessName={contentBusinessName(content)}
             preview={preview}
           />
@@ -861,15 +862,18 @@ function VideosSection({
 function PaymentSection({
   section,
   media,
+  mediaCrops,
   businessName,
   preview,
 }: {
   section: SectionOfType<"payment">
   media: MediaMap
+  mediaCrops?: Record<string, FocalPoint>
   businessName: string
   preview: boolean
 }) {
   const qrMeta = section.qrMediaId ? media[section.qrMediaId] : undefined
+  const qrCrop = mediaCrops?.[`qr.${section.id}`]
   const payee = section.payeeName.trim() || businessName
   const upiLink = section.upiId.trim()
     ? `upi://pay?pa=${encodeURIComponent(section.upiId.trim())}&pn=${encodeURIComponent(payee || section.heading)}&cu=INR`
@@ -891,6 +895,7 @@ function PaymentSection({
             height={260}
             unoptimized={preview}
             className="pf-pay-qr"
+            style={{ objectPosition: focalObjectPosition(qrCrop, qrMeta) }}
           />
         ) : upiLink ? (
           <QrCard

@@ -248,6 +248,12 @@ export function GalleryGrid({
                 height={900}
                 unoptimized={preview}
                 className="pf-lightbox-image"
+                style={{
+                  objectPosition: focalObjectPosition(
+                    mediaCrops?.[`gallery.${current.id}`],
+                    media[current.imageMediaId]
+                  ),
+                }}
               />
             ) : (
               <div className="pf-lightbox-placeholder">{current.title}</div>
