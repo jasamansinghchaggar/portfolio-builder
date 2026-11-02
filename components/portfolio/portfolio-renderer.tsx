@@ -9,6 +9,8 @@ type PortfolioRendererProps = {
   /** Disables smooth scrolling and floating actions inside the editor. */
   preview?: boolean
   username?: string
+  /** Hides the "Made with" credit when the platform setting is off. */
+  showAttribution?: boolean
 }
 
 /**
@@ -20,6 +22,7 @@ export function PortfolioRenderer({
   media = {},
   preview = false,
   username,
+  showAttribution = true,
 }: PortfolioRendererProps) {
   return (
     <StudioRenderer
@@ -27,6 +30,7 @@ export function PortfolioRenderer({
       media={media}
       preview={preview}
       username={username}
+      showAttribution={showAttribution}
     />
   )
 }

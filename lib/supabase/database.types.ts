@@ -229,6 +229,26 @@ export type Database = {
         }
         Relationships: []
       }
+      platform_settings: {
+        Row: {
+          id: boolean
+          show_attribution: boolean
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          id?: boolean
+          show_attribution?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          show_attribution?: boolean
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: { [_ in never]: never }
     Functions: {
@@ -385,6 +405,14 @@ export type Database = {
       }
       admin_delete_promo_banner: {
         Args: { p_id: string }
+        Returns: boolean
+      }
+      get_public_settings: {
+        Args: Record<PropertyKey, never>
+        Returns: { show_attribution: boolean }[]
+      }
+      admin_update_platform_settings: {
+        Args: { p_show_attribution: boolean }
         Returns: boolean
       }
     }

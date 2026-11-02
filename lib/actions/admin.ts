@@ -42,6 +42,8 @@ function errorMessage(message: string | undefined) {
       return "Link label must be between 1 and 40 characters."
     case "banner_not_found":
       return "That banner no longer exists."
+    case "invalid_settings":
+      return "That setting could not be saved."
     default:
       return "Something went wrong. Please try again."
   }
@@ -683,6 +685,55 @@ export async function adminDeletePromoBannerAction(input: {
   if (error) {
     return { ok: false, error: errorMessage(error.message) }
   }
+
+  revalidatePath("/", "layout")
+  return { ok: true }
+}
+
+export type PlatformSettings = {
+  showAttribution: boolean
+  updatedAt: string | null
+}
+
+export async function adminGetPlatformSettingsAction(): Promise<
+  { ok: true; settings: PlatformSettings } | { ok: false; error: string }
+> {
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const { data, error } = await guard.context.supabase
+    .from("platform_settings")
+    .select("show_attribution, updated_at")
+    .eq("id", true)
+    .maybeSingle()
+
+  if (error) return { ok: false, error: errorMessage(error.message) }
+
+  return {
+    ok: true,
+    settings: {
+      showAttribution: data?.show_attribution ?? true,
+      updatedAt: data?.updated_at ?? null,
+    },
+  }
+}
+
+export async function adminUpdatePlatformSettingsAction(input: {
+  showAttribution: boolean
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (typeof input.showAttribution !== "boolean") {
+    return { ok: false, error: "Invalid setting." }
+  }
+
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const { error } = await guard.context.supabase.rpc(
+    "admin_update_platform_settings",
+    { p_show_attribution: input.showAttribution }
+  )
+
+  if (error) return { ok: false, error: errorMessage(error.message) }
 
   revalidatePath("/", "layout")
   return { ok: true }

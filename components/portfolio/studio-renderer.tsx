@@ -80,6 +80,7 @@ type StudioRendererProps = {
   media?: MediaMap
   preview?: boolean
   username?: string
+  showAttribution?: boolean
 }
 
 export function StudioRenderer({
@@ -87,6 +88,7 @@ export function StudioRenderer({
   media = {},
   preview = false,
   username = "",
+  showAttribution = true,
 }: StudioRendererProps) {
   const sections = renderedSections(content.sections)
   const hero = sections.find((section) => section.type === "hero")
@@ -416,12 +418,14 @@ export function StudioRenderer({
             <span>
               © {new Date().getFullYear()} {footerName}. All rights reserved.
             </span>
-            <span>
-              Made with{" "}
-              <a href={SITE_URL} rel="noopener noreferrer">
-                {APP_NAME}
-              </a>
-            </span>
+            {showAttribution ? (
+              <span>
+                Made with{" "}
+                <a href={SITE_URL} rel="noopener noreferrer">
+                  {APP_NAME}
+                </a>
+              </span>
+            ) : null}
           </div>
         </div>
       </footer>

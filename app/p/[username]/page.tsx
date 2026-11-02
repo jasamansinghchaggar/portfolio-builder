@@ -4,7 +4,11 @@ import { notFound } from "next/navigation"
 import { PortfolioRenderer } from "@/components/portfolio/portfolio-renderer"
 import { PromoBar } from "@/components/portfolio/promo-bar"
 import { APP_NAME, SITE_URL, portfolioPath, publicPortfolioUrl } from "@/lib/config"
-import { getPublicPortfolio, getPublicPromoBanners } from "@/lib/portfolio/queries"
+import {
+  getPublicPortfolio,
+  getPublicPromoBanners,
+  getPublicSettings,
+} from "@/lib/portfolio/queries"
 import { businessName } from "@/lib/portfolio/sections"
 
 export const dynamic = "force-dynamic"
@@ -69,7 +73,11 @@ export default async function PublicPortfolioPage({ params }: PageProps) {
   const portfolio = await getPublicPortfolio(username)
   if (!portfolio) notFound()
 
-  const banners = (await getPublicPromoBanners()).map((banner) => ({
+  const [bannerRows, settings] = await Promise.all([
+    getPublicPromoBanners(),
+    getPublicSettings(),
+  ])
+  const banners = bannerRows.map((banner) => ({
     id: banner.id,
     message: banner.message,
     linkUrl: banner.linkUrl,
@@ -83,6 +91,7 @@ export default async function PublicPortfolioPage({ params }: PageProps) {
         content={portfolio.content}
         media={portfolio.media}
         username={portfolio.username}
+        showAttribution={settings.showAttribution}
       />
     </div>
   )
