@@ -11,6 +11,7 @@ import {
 import { toast } from "sonner"
 
 import { EditorField } from "@/components/editor/fields"
+import { MediaCropDialog } from "@/components/editor/media-crop-dialog"
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -26,7 +27,9 @@ import { deleteMediaAction, uploadMediaAction } from "@/lib/actions/media"
 import {
   isImageMime,
   mediaHref,
+  mediaObjectPosition,
   type EditorMedia,
+  type FocalPoint,
   type MediaKind,
 } from "@/lib/portfolio/media"
 import { cn } from "@/lib/utils"
@@ -53,6 +56,7 @@ export function MediaField({
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [cropFile, setCropFile] = useState<File | null>(null)
   const { admin, portfolioId } = useEditorMode()
 
   const selected = media.find((item) => item.id === value)
@@ -62,12 +66,16 @@ export function MediaField({
       : isImageMime(item.mimeType)
   )
 
-  async function upload(file: File) {
+  async function upload(file: File, focal?: FocalPoint) {
     setUploading(true)
     try {
       const formData = new FormData()
       formData.set("file", file)
       formData.set("kind", kind)
+      if (focal) {
+        formData.set("focalX", String(focal.x))
+        formData.set("focalY", String(focal.y))
+      }
       const result =
         admin && portfolioId
           ? await adminUploadMediaAction(portfolioId, formData)
@@ -76,6 +84,7 @@ export function MediaField({
         toast.error("Upload failed", { description: result.error })
         return
       }
+      setCropFile(null)
       onMediaAdded(result.media)
       onChange(result.media.id)
       toast.success("File uploaded")
@@ -96,6 +105,7 @@ export function MediaField({
                 src={mediaHref(selected.id)}
                 alt=""
                 className="size-full object-cover"
+                style={{ objectPosition: mediaObjectPosition(selected) }}
               />
             ) : selected ? (
               <IconFileTypePdf className="size-5 text-muted-foreground" />
@@ -163,7 +173,35 @@ export function MediaField({
         className="sr-only"
         onChange={(event) => {
           const file = event.target.files?.[0]
-          if (file) void upload(file)
+          event.target.value = ""
+          if (!file) return
+          if (
+            accept === "image" &&
+            (file.type === "image/jpeg" ||
+              file.type === "image/png" ||
+              file.type === "image/webp")
+          ) {
+            setCropFile(file)
+            return
+          }
+          void upload(file)
+        }}
+      />
+
+      <MediaCropDialog
+        key={
+          cropFile
+            ? `${cropFile.name}:${cropFile.size}:${cropFile.lastModified}`
+            : "empty"
+        }
+        file={cropFile}
+        open={Boolean(cropFile)}
+        busy={uploading}
+        onOpenChange={(open) => {
+          if (!open) setCropFile(null)
+        }}
+        onConfirm={(focal) => {
+          if (cropFile) void upload(cropFile, focal)
         }}
       />
 
@@ -202,6 +240,7 @@ export function MediaField({
                           src={mediaHref(item.id)}
                           alt={item.fileName}
                           className="size-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                          style={{ objectPosition: mediaObjectPosition(item) }}
                         />
                       ) : (
                         <IconFileTypePdf className="size-7 text-muted-foreground" />

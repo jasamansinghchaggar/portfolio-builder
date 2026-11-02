@@ -23,7 +23,7 @@ export default async function PreviewFramePage() {
 
   const { data: mediaRows } = await supabase
     .from("portfolio_media")
-    .select("id, mime_type, file_name, width, height")
+    .select("id, mime_type, file_name, width, height, focal_x, focal_y")
     .eq("portfolio_id", portfolio.id)
 
   return (

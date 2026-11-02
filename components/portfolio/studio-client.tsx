@@ -15,7 +15,12 @@ import {
 } from "@tabler/icons-react"
 
 import { sendPortfolioMessageAction } from "@/lib/actions/messages"
-import { isImageMime, mediaHref, type MediaMap } from "@/lib/portfolio/media"
+import {
+  isImageMime,
+  mediaHref,
+  mediaObjectPosition,
+  type MediaMap,
+} from "@/lib/portfolio/media"
 
 export function ReadMore({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false)
@@ -195,6 +200,7 @@ export function GalleryGrid({
                   alt={item.title || item.caption || "Portfolio image"}
                   fill
                   sizes="(min-width: 900px) 33vw, 50vw"
+                  style={{ objectPosition: mediaObjectPosition(meta) }}
                 />
               ) : (
                 <span>{item.title || "Image"}</span>

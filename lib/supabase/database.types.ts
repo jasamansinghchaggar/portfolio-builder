@@ -98,6 +98,8 @@ export type Database = {
           size_bytes: number
           width: number | null
           height: number | null
+          focal_x: number
+          focal_y: number
           created_at: string
         }
         Insert: {
@@ -111,11 +113,15 @@ export type Database = {
           size_bytes: number
           width?: number | null
           height?: number | null
+          focal_x?: number
+          focal_y?: number
           created_at?: string
         }
         Update: {
           kind?: Database["public"]["Enums"]["media_kind"]
           file_name?: string
+          focal_x?: number
+          focal_y?: number
         }
         Relationships: [
           {

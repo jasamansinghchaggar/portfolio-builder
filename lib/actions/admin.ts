@@ -15,7 +15,7 @@ import {
   sanitizeFileName,
   toMediaItem,
 } from "@/lib/portfolio/upload"
-import type { EditorMedia } from "@/lib/portfolio/media"
+import { parseFocalPoint, type EditorMedia } from "@/lib/portfolio/media"
 import type { MediaKind, PortfolioStatus } from "@/lib/supabase/database.types"
 
 import type { PublishResult, SaveResult } from "./state"
@@ -425,6 +425,10 @@ export async function adminUploadMediaAction(
   const kind: MediaKind = MEDIA_KINDS.has(requestedKind as MediaKind)
     ? (requestedKind as MediaKind)
     : "general"
+  const focal = parseFocalPoint(
+    formData.get("focalX"),
+    formData.get("focalY")
+  )
 
   if (!(file instanceof File)) {
     return { ok: false, error: "Choose a file to upload." }
@@ -462,9 +466,11 @@ export async function adminUploadMediaAction(
       size_bytes: output.byteLength,
       width,
       height,
+      focal_x: focal.x,
+      focal_y: focal.y,
     })
     .select(
-      "id, kind, mime_type, file_name, size_bytes, width, height, created_at"
+      "id, kind, mime_type, file_name, size_bytes, width, height, focal_x, focal_y, created_at"
     )
     .single()
 
