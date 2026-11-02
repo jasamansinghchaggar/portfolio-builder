@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import {
   IconFileTypePdf,
   IconPhoto,
@@ -28,6 +28,7 @@ import {
   isImageMime,
   mediaHref,
   mediaObjectPosition,
+  DEFAULT_FOCAL,
   type EditorMedia,
   type FocalPoint,
   type MediaKind,
@@ -43,6 +44,9 @@ export function MediaField({
   onMediaAdded,
   kind = "general",
   accept = "image",
+  slot,
+  crop,
+  onCropChange,
 }: {
   label: string
   hint?: React.ReactNode
@@ -52,12 +56,22 @@ export function MediaField({
   onMediaAdded: (media: EditorMedia) => void
   kind?: MediaKind
   accept?: "image" | "pdf"
+  slot?: string
+  crop?: FocalPoint | null
+  onCropChange?: (crop: FocalPoint) => void
 }) {
   const inputRef = useRef<HTMLInputElement>(null)
   const [uploading, setUploading] = useState(false)
   const [pickerOpen, setPickerOpen] = useState(false)
+  const [cropSrc, setCropSrc] = useState<string | null>(null)
   const [cropFile, setCropFile] = useState<File | null>(null)
+  const [cropInitial, setCropInitial] = useState<FocalPoint>(DEFAULT_FOCAL)
   const { admin, portfolioId } = useEditorMode()
+
+  useEffect(() => {
+    if (!cropSrc || !cropFile) return
+    return () => URL.revokeObjectURL(cropSrc)
+  }, [cropSrc, cropFile])
 
   const selected = media.find((item) => item.id === value)
   const options = media.filter((item) =>
@@ -84,7 +98,9 @@ export function MediaField({
         toast.error("Upload failed", { description: result.error })
         return
       }
+      setCropSrc(null)
       setCropFile(null)
+      if (slot && onCropChange && focal) onCropChange(focal)
       onMediaAdded(result.media)
       onChange(result.media.id)
       toast.success("File uploaded")
@@ -126,6 +142,23 @@ export function MediaField({
           </div>
 
           <div className="flex shrink-0 items-center gap-1">
+            {value && selected && isImageMime(selected.mimeType) && onCropChange ? (
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={() => {
+                  setCropFile(null)
+                  setCropSrc(mediaHref(selected.id))
+                  setCropInitial(
+                    crop ?? { x: selected.focalX, y: selected.focalY }
+                  )
+                }}
+              >
+                Crop
+              </Button>
+            ) : null}
             {value ? (
               <Button
                 type="button"
@@ -182,6 +215,8 @@ export function MediaField({
               file.type === "image/webp")
           ) {
             setCropFile(file)
+            setCropSrc(URL.createObjectURL(file))
+            setCropInitial(DEFAULT_FOCAL)
             return
           }
           void upload(file)
@@ -189,19 +224,25 @@ export function MediaField({
       />
 
       <MediaCropDialog
-        key={
-          cropFile
-            ? `${cropFile.name}:${cropFile.size}:${cropFile.lastModified}`
-            : "empty"
-        }
-        file={cropFile}
-        open={Boolean(cropFile)}
+        key={cropSrc ?? "empty"}
+        src={cropSrc}
+        open={Boolean(cropSrc)}
         busy={uploading}
+        initialFocal={cropInitial}
+        confirmLabel={cropFile ? "Upload image" : "Apply crop"}
         onOpenChange={(open) => {
-          if (!open) setCropFile(null)
+          if (!open) {
+            setCropSrc(null)
+            setCropFile(null)
+          }
         }}
         onConfirm={(focal) => {
-          if (cropFile) void upload(cropFile, focal)
+          if (cropFile) {
+            void upload(cropFile, focal)
+            return
+          }
+          if (onCropChange) onCropChange(focal)
+          setCropSrc(null)
         }}
       />
 

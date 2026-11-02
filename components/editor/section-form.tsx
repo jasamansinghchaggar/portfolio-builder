@@ -106,6 +106,8 @@ export function SectionForm({
   media,
   onMediaAdded,
   onOpenPageDetails,
+  mediaCrops,
+  onMediaCropChange,
 }: {
   section: Section
   basics: Basics
@@ -113,6 +115,8 @@ export function SectionForm({
   media: EditorMedia[]
   onMediaAdded: (media: EditorMedia) => void
   onOpenPageDetails?: () => void
+  mediaCrops?: Record<string, { x: number; y: number }>
+  onMediaCropChange?: (slot: string, crop: { x: number; y: number } | null) => void
 }) {
   switch (section.type) {
     case "hero":
@@ -449,6 +453,9 @@ export function SectionForm({
                   media={media}
                   onMediaAdded={onMediaAdded}
                   kind="project"
+                  slot={`project.${item.id}`}
+                  crop={mediaCrops?.[`project.${item.id}`] ?? null}
+                  onCropChange={(c) => onMediaCropChange?.(`project.${item.id}`, c)}
                 />
                 <label className="flex items-center gap-2 text-xs">
                   <Checkbox
@@ -1266,6 +1273,11 @@ export function SectionForm({
                   media={media}
                   onMediaAdded={onMediaAdded}
                   kind="project"
+                  slot={`product.${item.id}`}
+                  crop={mediaCrops?.[`product.${item.id}`] ?? null}
+                  onCropChange={(c) =>
+                    onMediaCropChange?.(`product.${item.id}`, c)
+                  }
                 />
               </ItemCard>
             ))}
@@ -1348,6 +1360,11 @@ export function SectionForm({
                   media={media}
                   onMediaAdded={onMediaAdded}
                   kind="project"
+                  slot={`gallery.${item.id}`}
+                  crop={mediaCrops?.[`gallery.${item.id}`] ?? null}
+                  onCropChange={(c) =>
+                    onMediaCropChange?.(`gallery.${item.id}`, c)
+                  }
                 />
               </ItemCard>
             ))}
@@ -1492,6 +1509,9 @@ export function SectionForm({
               onMediaAdded={onMediaAdded}
               kind="general"
               hint="A screenshot or export from your payment app. Displayed as-is."
+              slot={`qr.${section.id}`}
+              crop={mediaCrops?.[`qr.${section.id}`] ?? null}
+              onCropChange={(c) => onMediaCropChange?.(`qr.${section.id}`, c)}
             />
           </FormSection>
         </div>
@@ -1687,6 +1707,11 @@ export function SectionForm({
                   media={media}
                   onMediaAdded={onMediaAdded}
                   kind="avatar"
+                  slot={`testimonial.${item.id}`}
+                  crop={mediaCrops?.[`testimonial.${item.id}`] ?? null}
+                  onCropChange={(c) =>
+                    onMediaCropChange?.(`testimonial.${item.id}`, c)
+                  }
                 />
               </ItemCard>
             ))}

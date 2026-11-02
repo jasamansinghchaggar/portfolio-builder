@@ -56,6 +56,7 @@ export type Database = {
           last_saved_at: string
           is_disabled: boolean
           promo_bar_enabled: boolean
+          show_attribution: boolean
           created_at: string
           updated_at: string
         }
@@ -72,6 +73,7 @@ export type Database = {
           last_saved_at?: string
           is_disabled?: boolean
           promo_bar_enabled?: boolean
+          show_attribution?: boolean
           created_at?: string
           updated_at?: string
         }
@@ -297,6 +299,7 @@ export type Database = {
           published_at: string | null
           updated_at: string
           promo_bar_enabled: boolean
+          show_attribution: boolean
         }[]
       }
       get_public_media: {
@@ -364,6 +367,10 @@ export type Database = {
       admin_set_portfolio_promo_bar: {
         Args: { p_portfolio_id: string; p_enabled: boolean }
         Returns: { promo_bar_enabled: boolean }[]
+      }
+      admin_set_portfolio_attribution: {
+        Args: { p_portfolio_id: string; p_enabled: boolean }
+        Returns: { show_attribution: boolean }[]
       }
       get_public_promo_banners: {
         Args: Record<PropertyKey, never>

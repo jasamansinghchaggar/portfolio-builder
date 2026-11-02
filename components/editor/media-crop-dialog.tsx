@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { IconCrosshair } from "@tabler/icons-react"
 
 import { Button } from "@/components/ui/button"
@@ -33,33 +33,26 @@ function objectPosition(focal: FocalPoint) {
   return `${(focal.x * 100).toFixed(2)}% ${(focal.y * 100).toFixed(2)}%`
 }
 
-/**
- * Lets the owner pick which part of an image stays visible when the renderers
- * crop it with `object-fit: cover`. The chosen point is stored with the media
- * row and reused everywhere the image appears.
- */
 export function MediaCropDialog({
-  file,
+  src,
   open,
   busy = false,
+  initialFocal = DEFAULT_FOCAL,
+  confirmLabel = "Apply crop",
   onOpenChange,
   onConfirm,
 }: {
-  file: File | null
+  src: string | null
   open: boolean
   busy?: boolean
+  initialFocal?: FocalPoint
+  confirmLabel?: string
   onOpenChange: (open: boolean) => void
   onConfirm: (focal: FocalPoint) => void
 }) {
   const frameRef = useRef<HTMLDivElement>(null)
   const dragging = useRef(false)
-  const [src] = useState(() => (file ? URL.createObjectURL(file) : null))
-  const [focal, setFocal] = useState<FocalPoint>(DEFAULT_FOCAL)
-
-  useEffect(() => {
-    if (!src) return
-    return () => URL.revokeObjectURL(src)
-  }, [src])
+  const [focal, setFocal] = useState<FocalPoint>(initialFocal)
 
   function pointFromEvent(event: React.PointerEvent<HTMLDivElement>) {
     const rect = frameRef.current?.getBoundingClientRect()
@@ -234,7 +227,7 @@ export function MediaCropDialog({
               disabled={busy || !src}
             >
               {busy ? <Spinner className="size-3" /> : null}
-              {busy ? "Uploading…" : "Upload image"}
+              {busy ? "Uploading…" : confirmLabel}
             </Button>
           </div>
         </div>

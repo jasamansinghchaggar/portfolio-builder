@@ -5,16 +5,15 @@ import {
   IconEye,
   IconPencil,
   IconSearch,
-  IconSettings,
   IconUsers,
   IconWorld,
 } from "@tabler/icons-react"
 
 import { AdminManager } from "@/components/admin/admin-manager"
 import { BannerManager } from "@/components/admin/banner-manager"
-import { SettingsManager } from "@/components/admin/settings-manager"
 import {
   PortfolioAccessSwitch,
+  PortfolioAttributionSwitch,
   PortfolioBannerSwitch,
 } from "@/components/admin/portfolio-controls"
 import { Badge } from "@/components/ui/badge"
@@ -37,10 +36,8 @@ import {
 } from "@/components/ui/table"
 import { requireAdmin } from "@/lib/auth"
 import {
-  adminGetPlatformSettingsAction,
   adminListPromoBannersAction,
   type AdminPromoBanner,
-  type PlatformSettings,
 } from "@/lib/actions/admin"
 import { publicPortfolioUrl } from "@/lib/config"
 import { formatDate, formatDateTime } from "@/lib/format"
@@ -58,7 +55,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic"
 
-type Tab = "portfolios" | "users" | "banners" | "settings" | "admins"
+type Tab = "portfolios" | "users" | "banners" | "admins"
 
 type PageProps = {
   searchParams: Promise<{
@@ -76,6 +73,7 @@ type AdminPortfolio = Pick<
   | "status"
   | "is_disabled"
   | "promo_bar_enabled"
+  | "show_attribution"
   | "created_at"
   | "updated_at"
 >
@@ -129,7 +127,6 @@ function buildHref({
   const query = new URLSearchParams()
   if (tab === "users") query.set("tab", "users")
   if (tab === "banners") query.set("tab", "banners")
-  if (tab === "settings") query.set("tab", "settings")
   if (tab === "admins") query.set("tab", "admins")
   if (q) query.set("q", q)
   if (tab === "portfolios" && status !== "all") query.set("status", status)
@@ -146,11 +143,9 @@ export default async function AdminPage({ searchParams }: PageProps) {
       ? "users"
       : requestedTab === "banners"
         ? "banners"
-        : requestedTab === "settings"
-          ? "settings"
-          : requestedTab === "admins"
-            ? "admins"
-            : "portfolios"
+        : requestedTab === "admins"
+          ? "admins"
+          : "portfolios"
   const requestedStatus = single(params.status)
   const status = STATUSES.some((item) => item.value === requestedStatus)
     ? (requestedStatus as "all" | PortfolioStatus)
@@ -209,7 +204,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
     let query = supabase
       .from("portfolios")
       .select(
-        "id, username, user_id, status, is_disabled, promo_bar_enabled, created_at, updated_at"
+        "id, username, user_id, status, is_disabled, promo_bar_enabled, show_attribution, created_at, updated_at"
       )
       .neq("user_id", userId)
       .order("updated_at", { ascending: false })
@@ -249,12 +244,6 @@ export default async function AdminPage({ searchParams }: PageProps) {
   if (tab === "banners") {
     const result = await adminListPromoBannersAction()
     banners = result.ok ? result.banners : []
-  }
-
-  let settings: PlatformSettings = { showAttribution: true, updatedAt: null }
-  if (tab === "settings") {
-    const result = await adminGetPlatformSettingsAction()
-    if (result.ok) settings = result.settings
   }
 
   let admins: Pick<Profile, "id" | "email" | "full_name" | "created_at">[] = []
@@ -389,19 +378,6 @@ export default async function AdminPage({ searchParams }: PageProps) {
           </span>
         </Link>
         <Link
-          href={buildHref({ tab: "settings", status, q })}
-          aria-current={tab === "settings" ? "page" : undefined}
-          className={cn(
-            "-mb-px inline-flex shrink-0 items-center gap-2 border-b-2 px-0.5 pb-2.5 text-sm font-medium whitespace-nowrap transition-colors",
-            tab === "settings"
-              ? "border-foreground text-foreground"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          )}
-        >
-          <IconSettings className="size-4" />
-          Settings
-        </Link>
-        <Link
           href={buildHref({ tab: "admins", status, q })}
           aria-current={tab === "admins" ? "page" : undefined}
           className={cn(
@@ -467,6 +443,7 @@ export default async function AdminPage({ searchParams }: PageProps) {
                   <TableHead>Status</TableHead>
                   <TableHead>Access</TableHead>
                   <TableHead>Banner</TableHead>
+                  <TableHead>Attribution</TableHead>
                   <TableHead className="hidden xl:table-cell">
                     Updated
                   </TableHead>
@@ -518,6 +495,13 @@ export default async function AdminPage({ searchParams }: PageProps) {
                           portfolioId={portfolio.id}
                           username={portfolio.username}
                           enabled={portfolio.promo_bar_enabled}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        <PortfolioAttributionSwitch
+                          portfolioId={portfolio.id}
+                          username={portfolio.username}
+                          enabled={portfolio.show_attribution}
                         />
                       </TableCell>
                       <TableCell className="hidden text-xs whitespace-nowrap text-muted-foreground xl:table-cell">
@@ -681,8 +665,6 @@ export default async function AdminPage({ searchParams }: PageProps) {
         </Card>
       ) : tab === "admins" ? (
         <AdminManager initialAdmins={admins} />
-      ) : tab === "settings" ? (
-        <SettingsManager initialSettings={settings} />
       ) : (
         <BannerManager initialBanners={banners} />
       )}

@@ -36,6 +36,8 @@ const ACTION_LABEL: Record<string, string> = {
   "portfolio.disable": "Disabled portfolio",
   "portfolio.promo_bar_on": "Showed promo banner",
   "portfolio.promo_bar_off": "Hid promo banner",
+  "portfolio.attribution_on": "Showed attribution",
+  "portfolio.attribution_off": "Hid attribution",
   "promo_banner.created": "Created promo banner",
   "promo_banner.updated": "Updated promo banner",
   "promo_banner.deleted": "Deleted promo banner",

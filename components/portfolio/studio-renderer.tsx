@@ -21,11 +21,12 @@ import {
 import { APP_NAME, SITE_URL } from "@/lib/config"
 import { designStyle } from "@/lib/portfolio/colors"
 import {
+  focalObjectPosition,
   isImageMime,
   mediaDownloadHref,
   mediaHref,
-  mediaObjectPosition,
   type MediaMap,
+  type FocalPoint,
 } from "@/lib/portfolio/media"
 import {
   businessName as contentBusinessName,
@@ -151,7 +152,8 @@ export function StudioRenderer({
                 height={44}
                 className="pf-brand-logo"
                 style={{
-                  objectPosition: mediaObjectPosition(
+                  objectPosition: focalObjectPosition(
+                    content.mediaCrops?.["basics.logo"],
                     media[content.basics.logoMediaId]
                   ),
                 }}
@@ -220,7 +222,12 @@ export function StudioRenderer({
             priority
             sizes="100vw"
             className="pf-hero-media"
-            style={{ objectPosition: mediaObjectPosition(heroMeta) }}
+            style={{
+              objectPosition: focalObjectPosition(
+                content.mediaCrops?.["basics.hero"],
+                heroMeta
+              ),
+            }}
           />
         ) : null}
         <div className="pf-hero-veil" aria-hidden="true" />
@@ -234,7 +241,12 @@ export function StudioRenderer({
                 height={160}
                 sizes="(max-width: 640px) 96px, 144px"
                 className="pf-hero-avatar-image"
-                style={{ objectPosition: mediaObjectPosition(avatarMeta) }}
+                style={{
+                  objectPosition: focalObjectPosition(
+                    content.mediaCrops?.["basics.avatar"],
+                    avatarMeta
+                  ),
+                }}
               />
             </span>
           ) : null}
@@ -502,9 +514,26 @@ function StudioSection({
         ) : section.type === "events" ? (
           <EventsSection section={section} title={title} />
         ) : section.type === "products" ? (
-          <ProductsSection section={section} media={media} title={title} />
+          <ProductsSection
+            section={section}
+            media={media}
+            mediaCrops={content.mediaCrops}
+            title={title}
+          />
         ) : section.type === "gallery" ? (
-          <GallerySection section={section} media={media} title={title} />
+          <GallerySection
+            section={section}
+            media={media}
+            mediaCrops={content.mediaCrops}
+            title={title}
+          />
+        ) : section.type === "projects" ? (
+          <LegacySection
+            section={section}
+            media={media}
+            mediaCrops={content.mediaCrops}
+            title={title}
+          />
         ) : section.type === "videos" ? (
           <VideosSection section={section} title={title} />
         ) : section.type === "payment" ? (
@@ -701,10 +730,12 @@ function EventsSection({
 function ProductsSection({
   section,
   media,
+  mediaCrops,
   title,
 }: {
   section: SectionOfType<"products">
   media: MediaMap
+  mediaCrops?: Record<string, FocalPoint>
   title: string
 }) {
   return (
@@ -713,6 +744,7 @@ function ProductsSection({
       <div className="pf-products">
         {section.items.map((item) => {
           const meta = item.imageMediaId ? media[item.imageMediaId] : undefined
+          const crop = mediaCrops?.[`product.${item.id}`]
           return (
             <article key={item.id} className="pf-product">
               <div className="pf-product-image">
@@ -722,7 +754,7 @@ function ProductsSection({
                     alt={item.title || "Product image"}
                     fill
                     sizes="(min-width: 900px) 33vw, 50vw"
-                    style={{ objectPosition: mediaObjectPosition(meta) }}
+                    style={{ objectPosition: focalObjectPosition(crop, meta) }}
                   />
                 ) : (
                   <span>{initials(item.title || "Product")}</span>
@@ -756,10 +788,12 @@ function ProductsSection({
 function GallerySection({
   section,
   media,
+  mediaCrops,
   title,
 }: {
   section: SectionOfType<"gallery">
   media: MediaMap
+  mediaCrops?: Record<string, FocalPoint>
   title: string
 }) {
   return (
@@ -773,6 +807,7 @@ function GallerySection({
           imageMediaId: item.imageMediaId,
         }))}
         media={media}
+        mediaCrops={mediaCrops}
       />
     </>
   )
@@ -1050,10 +1085,12 @@ function QrSection({
 function LegacySection({
   section,
   media,
+  mediaCrops,
   title,
 }: {
   section: Section
   media: MediaMap
+  mediaCrops?: Record<string, FocalPoint>
   title: string
 }) {
   switch (section.type) {
@@ -1066,6 +1103,7 @@ function LegacySection({
               const meta = item.imageMediaId
                 ? media[item.imageMediaId]
                 : undefined
+              const crop = mediaCrops?.[`project.${item.id}`]
               return (
                 <article key={item.id} className="pf-card pf-project">
                   {item.imageMediaId && meta && isImageMime(meta.mimeType) ? (
@@ -1075,7 +1113,7 @@ function LegacySection({
                         alt={item.title}
                         fill
                         sizes="(min-width: 900px) 33vw, 100vw"
-                        style={{ objectPosition: mediaObjectPosition(meta) }}
+                        style={{ objectPosition: focalObjectPosition(crop, meta) }}
                       />
                     </div>
                   ) : null}

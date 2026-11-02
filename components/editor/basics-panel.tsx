@@ -21,11 +21,15 @@ export function BasicsPanel({
   onChange,
   media,
   onMediaAdded,
+  mediaCrops,
+  onMediaCropChange,
 }: {
   basics: Basics
   onChange: (basics: Basics) => void
   media: EditorMedia[]
   onMediaAdded: (media: EditorMedia) => void
+  mediaCrops?: Record<string, { x: number; y: number }>
+  onMediaCropChange?: (slot: string, crop: { x: number; y: number } | null) => void
 }) {
   return (
     <div className="space-y-5">
@@ -141,6 +145,9 @@ export function BasicsPanel({
           onMediaAdded={onMediaAdded}
           kind="avatar"
           hint="Square or circular images work best."
+          slot="basics.logo"
+          crop={mediaCrops?.["basics.logo"] ?? null}
+          onCropChange={(c) => onMediaCropChange?.("basics.logo", c)}
         />
         <MediaField
           label="Hero background image"
@@ -150,6 +157,9 @@ export function BasicsPanel({
           onMediaAdded={onMediaAdded}
           kind="general"
           hint="A wide photo of your space, work, or team. Text stays readable."
+          slot="basics.hero"
+          crop={mediaCrops?.["basics.hero"] ?? null}
+          onCropChange={(c) => onMediaCropChange?.("basics.hero", c)}
         />
         <MediaField
           label="Profile image"
@@ -159,6 +169,9 @@ export function BasicsPanel({
           onMediaAdded={onMediaAdded}
           kind="avatar"
           hint="A square portrait works best. Shown as a circle in the hero."
+          slot="basics.avatar"
+          crop={mediaCrops?.["basics.avatar"] ?? null}
+          onCropChange={(c) => onMediaCropChange?.("basics.avatar", c)}
         />
       </FormSection>
     </div>

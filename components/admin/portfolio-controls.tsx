@@ -8,6 +8,7 @@ import { Switch } from "@/components/ui/switch"
 import {
   adminSetPortfolioEnabledAction,
   adminSetPortfolioPromoBarAction,
+  adminSetPortfolioAttributionAction,
 } from "@/lib/actions/admin"
 import { cn } from "@/lib/utils"
 
@@ -96,7 +97,67 @@ export function PortfolioAccessSwitch({
   )
 }
 
-/** Per-portfolio promo banner visibility. */
+/** Per-portfolio "Made with" attribution visibility. */
+export function PortfolioAttributionSwitch({
+  portfolioId,
+  username,
+  enabled,
+}: {
+  portfolioId: string
+  username: string
+  enabled: boolean
+}) {
+  const router = useRouter()
+  const [checked, setChecked] = useState(enabled)
+  const [pending, startTransition] = useTransition()
+
+  function change(next: boolean) {
+    setChecked(next)
+    startTransition(async () => {
+      try {
+        const result = await adminSetPortfolioAttributionAction({
+          portfolioId,
+          enabled: next,
+        })
+
+        if (!result.ok) {
+          setChecked(!next)
+          toast.error("Couldn't change attribution", {
+            description: result.error,
+          })
+          return
+        }
+
+        toast.success(
+          next ? "Attribution shown" : "Attribution hidden",
+          {
+            description: next
+              ? "Visitors will see the credit in the footer."
+              : "This portfolio now renders without the credit.",
+          }
+        )
+        router.refresh()
+      } catch {
+        setChecked(!next)
+        toast.error("Couldn't change attribution", {
+          description: "Check your connection and try again.",
+        })
+      }
+    })
+  }
+
+  return (
+    <div className="flex items-center gap-2">
+      <Switch
+        checked={checked}
+        onCheckedChange={change}
+        disabled={pending}
+        aria-label={`${checked ? "Hide" : "Show"} attribution on /${username}`}
+      />
+      <ToggleLabel checked={checked} onLabel="Shown" offLabel="Hidden" />
+    </div>
+  )
+}
 export function PortfolioBannerSwitch({
   portfolioId,
   username,

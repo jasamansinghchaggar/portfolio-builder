@@ -53,6 +53,11 @@ const phone = z
 
 const mediaId = z.uuid().nullable()
 
+const focalPointSchema = z.object({
+  x: z.number().min(0).max(1),
+  y: z.number().min(0).max(1),
+})
+
 const shortText = z.string().trim().max(120)
 const mediumText = z.string().trim().max(600)
 const longText = z.string().trim().max(5000)
@@ -432,6 +437,7 @@ export const portfolioContentSchema = z
     basics: basicsSchema,
     design: designSchema,
     sections: z.array(sectionSchema).max(SECTION_TYPES.length),
+    mediaCrops: z.record(z.string(), focalPointSchema).optional(),
   })
   .superRefine((value, ctx) => {
     const ids = new Set<string>()

@@ -408,6 +408,37 @@ export async function adminSetPortfolioPromoBarAction(input: {
   return { ok: true }
 }
 
+export async function adminSetPortfolioAttributionAction(input: {
+  portfolioId: string
+  enabled: boolean
+}): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (
+    !uuid.safeParse(input.portfolioId).success ||
+    typeof input.enabled !== "boolean"
+  ) {
+    return { ok: false, error: "Invalid attribution setting." }
+  }
+
+  const guard = await requireAdminAction()
+  if (!guard.ok) return guard
+
+  const target = await loadTargetPortfolio(guard.context, input.portfolioId)
+  if (!target) return { ok: false, error: "Portfolio not found." }
+
+  const { error } = await guard.context.supabase.rpc(
+    "admin_set_portfolio_attribution",
+    {
+      p_portfolio_id: input.portfolioId,
+      p_enabled: input.enabled,
+    }
+  )
+
+  if (error) return { ok: false, error: errorMessage(error.message) }
+
+  revalidatePortfolio(target.username, input.portfolioId)
+  return { ok: true }
+}
+
 export type AdminUploadResult =
   | { ok: true; media: EditorMedia }
   | { ok: false; error: string }

@@ -16,9 +16,9 @@ import {
 
 import { sendPortfolioMessageAction } from "@/lib/actions/messages"
 import {
+  focalObjectPosition,
   isImageMime,
   mediaHref,
-  mediaObjectPosition,
   type MediaMap,
 } from "@/lib/portfolio/media"
 
@@ -160,10 +160,12 @@ export type GalleryEntry = {
 export function GalleryGrid({
   items,
   media,
+  mediaCrops,
   emptyLabel = "Photos will appear here.",
 }: {
   items: GalleryEntry[]
   media: MediaMap
+  mediaCrops?: Record<string, { x: number; y: number }>
   emptyLabel?: string
 }) {
   const [active, setActive] = useState<number | null>(null)
@@ -200,7 +202,12 @@ export function GalleryGrid({
                   alt={item.title || item.caption || "Portfolio image"}
                   fill
                   sizes="(min-width: 900px) 33vw, 50vw"
-                  style={{ objectPosition: mediaObjectPosition(meta) }}
+                  style={{
+                    objectPosition: focalObjectPosition(
+                      mediaCrops?.[`gallery.${item.id}`],
+                      meta
+                    ),
+                  }}
                 />
               ) : (
                 <span>{item.title || "Image"}</span>
