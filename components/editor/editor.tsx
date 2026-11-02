@@ -980,6 +980,14 @@ export function Editor({
                   onMediaAdded={(item) =>
                     setMedia((current) => [item, ...current])
                   }
+                  mediaCrops={content.mediaCrops}
+                  onMediaCropChange={(slot, crop) => {
+                    const current = contentRef.current
+                    const next = { ...(current.mediaCrops ?? {}) }
+                    if (crop) next[slot] = crop
+                    else delete next[slot]
+                    commit({ ...current, mediaCrops: next })
+                  }}
                 />
               ) : view === "design" ? (
                 <DesignPanel
@@ -997,6 +1005,14 @@ export function Editor({
                     setMedia((current) => [item, ...current])
                   }
                   onOpenPageDetails={() => setView("page")}
+                  mediaCrops={content.mediaCrops}
+                  onMediaCropChange={(slot, crop) => {
+                    const current = contentRef.current
+                    const next = { ...(current.mediaCrops ?? {}) }
+                    if (crop) next[slot] = crop
+                    else delete next[slot]
+                    commit({ ...current, mediaCrops: next })
+                  }}
                 />
               ) : (
                 <div className="py-16 text-center">

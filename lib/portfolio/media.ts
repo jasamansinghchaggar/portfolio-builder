@@ -27,6 +27,16 @@ export function mediaObjectPosition(
   return `${(x * 100).toFixed(2)}% ${(y * 100).toFixed(2)}%`
 }
 
+/** CSS `object-position` honouring a per-usage crop with media-level fallback. */
+export function focalObjectPosition(
+  crop: { x: number; y: number } | undefined | null,
+  meta?: { focalX?: number | null; focalY?: number | null }
+): string {
+  const x = clampFocal(crop?.x ?? meta?.focalX)
+  const y = clampFocal(crop?.y ?? meta?.focalY)
+  return `${(x * 100).toFixed(2)}% ${(y * 100).toFixed(2)}%`
+}
+
 export type MediaMeta = {
   width: number | null
   height: number | null

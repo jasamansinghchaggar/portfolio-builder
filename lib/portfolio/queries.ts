@@ -13,6 +13,7 @@ export type PublicPortfolio = {
   publishedAt: string | null
   updatedAt: string
   promoBarEnabled: boolean
+  showAttribution: boolean
 }
 
 export const getPublicPortfolio = cache(
@@ -39,6 +40,7 @@ export const getPublicPortfolio = cache(
       publishedAt: row.published_at,
       updatedAt: row.updated_at,
       promoBarEnabled: row.promo_bar_enabled,
+      showAttribution: row.show_attribution,
     }
   }
 )
