@@ -175,7 +175,12 @@ export function MediaField({
           const file = event.target.files?.[0]
           event.target.value = ""
           if (!file) return
-          if (accept === "image" && file.type.startsWith("image/")) {
+          if (
+            accept === "image" &&
+            (file.type === "image/jpeg" ||
+              file.type === "image/png" ||
+              file.type === "image/webp")
+          ) {
             setCropFile(file)
             return
           }
