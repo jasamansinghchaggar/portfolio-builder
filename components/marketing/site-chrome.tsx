@@ -1,4 +1,4 @@
-import Link from "next/link"
+import { PendingLink } from "@/components/app/pending-link"
 
 import { Brand } from "@/components/marketing/brand"
 import { Button } from "@/components/ui/button"
@@ -10,37 +10,37 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
       <div className="mx-auto flex h-16 w-full max-w-6xl items-center gap-6 px-5 sm:px-8">
         <Brand />
         <nav className="hidden items-center gap-6 text-sm text-muted-foreground md:flex">
-          <Link
+          <PendingLink
             className="transition-colors hover:text-foreground"
             href="/#templates"
           >
             Templates
-          </Link>
-          <Link
+          </PendingLink>
+          <PendingLink
             className="transition-colors hover:text-foreground"
             href="/#features"
           >
             Features
-          </Link>
-          <Link
+          </PendingLink>
+          <PendingLink
             className="transition-colors hover:text-foreground"
             href="/#how-it-works"
           >
             How it works
-          </Link>
-          <Link
+          </PendingLink>
+          <PendingLink
             className="transition-colors hover:text-foreground"
             href="/template-preview/studio"
           >
             Live example
-          </Link>
+          </PendingLink>
         </nav>
         <div className="ml-auto flex items-center gap-1.5">
           {signedIn ? (
             <Button
               className="h-9 px-3.5 text-sm"
               nativeButton={false}
-              render={<Link href="/dashboard" />}
+              render={<PendingLink href="/dashboard" />}
             >
               Dashboard
               <IconArrowRight />
@@ -51,14 +51,14 @@ export function SiteHeader({ signedIn = false }: { signedIn?: boolean }) {
                 variant="ghost"
                 className="h-9 px-3 text-sm"
                 nativeButton={false}
-                render={<Link href="/login" />}
+                render={<PendingLink href="/login" />}
               >
                 Log in
               </Button>
               <Button
                 className="h-9 px-3.5 text-sm"
                 nativeButton={false}
-                render={<Link href="/register" />}
+                render={<PendingLink href="/register" />}
               >
                 Start free
                 <IconArrowRight />
@@ -87,15 +87,15 @@ export function SiteFooter({ signedIn = false }: { signedIn?: boolean }) {
             <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
               Product
             </p>
-            <Link className="hover:underline" href="/#templates">
+            <PendingLink className="hover:underline" href="/#templates">
               Templates
-            </Link>
-            <Link className="hover:underline" href="/#features">
+            </PendingLink>
+            <PendingLink className="hover:underline" href="/#features">
               Features
-            </Link>
-            <Link className="hover:underline" href="/template-preview/studio">
+            </PendingLink>
+            <PendingLink className="hover:underline" href="/template-preview/studio">
               Example
-            </Link>
+            </PendingLink>
           </div>
           <div className="flex flex-col gap-2">
             <p className="text-xs font-medium tracking-[0.14em] text-muted-foreground uppercase">
@@ -103,27 +103,27 @@ export function SiteFooter({ signedIn = false }: { signedIn?: boolean }) {
             </p>
             {signedIn ? (
               <>
-                <Link className="hover:underline" href="/dashboard">
+                <PendingLink className="hover:underline" href="/dashboard">
                   Dashboard
-                </Link>
-                <Link className="hover:underline" href="/editor">
+                </PendingLink>
+                <PendingLink className="hover:underline" href="/editor">
                   Editor
-                </Link>
-                <Link className="hover:underline" href="/settings">
+                </PendingLink>
+                <PendingLink className="hover:underline" href="/settings">
                   Settings
-                </Link>
+                </PendingLink>
               </>
             ) : (
               <>
-                <Link className="hover:underline" href="/login">
+                <PendingLink className="hover:underline" href="/login">
                   Log in
-                </Link>
-                <Link className="hover:underline" href="/register">
+                </PendingLink>
+                <PendingLink className="hover:underline" href="/register">
                   Create account
-                </Link>
-                <Link className="hover:underline" href="/forgot-password">
+                </PendingLink>
+                <PendingLink className="hover:underline" href="/forgot-password">
                   Reset password
-                </Link>
+                </PendingLink>
               </>
             )}
           </div>
