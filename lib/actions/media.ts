@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 import { z } from "zod"
 
 import { getAuthUserId } from "@/lib/auth"
-import type { EditorMedia } from "@/lib/portfolio/media"
+import { parseFocalPoint, type EditorMedia } from "@/lib/portfolio/media"
 import {
   MEDIA_KINDS,
   prepareUpload,
@@ -23,6 +23,10 @@ export async function uploadMediaAction(formData: FormData): Promise<UploadResul
   const kind: MediaKind = MEDIA_KINDS.has(requestedKind as MediaKind)
     ? (requestedKind as MediaKind)
     : "general"
+  const focal = parseFocalPoint(
+    formData.get("focalX"),
+    formData.get("focalY")
+  )
 
   if (!(file instanceof File)) {
     return { ok: false, error: "Choose a file to upload." }
@@ -67,9 +71,11 @@ export async function uploadMediaAction(formData: FormData): Promise<UploadResul
       size_bytes: output.byteLength,
       width,
       height,
+      focal_x: focal.x,
+      focal_y: focal.y,
     })
     .select(
-      "id, kind, mime_type, file_name, size_bytes, width, height, created_at"
+      "id, kind, mime_type, file_name, size_bytes, width, height, focal_x, focal_y, created_at"
     )
     .single()
 

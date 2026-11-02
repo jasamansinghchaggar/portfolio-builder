@@ -24,6 +24,7 @@ import {
   isImageMime,
   mediaDownloadHref,
   mediaHref,
+  mediaObjectPosition,
   type MediaMap,
 } from "@/lib/portfolio/media"
 import {
@@ -147,6 +148,11 @@ export function StudioRenderer({
                 width={44}
                 height={44}
                 className="pf-brand-logo"
+                style={{
+                  objectPosition: mediaObjectPosition(
+                    media[content.basics.logoMediaId]
+                  ),
+                }}
               />
             ) : (
               <span className="pf-brand-mark" aria-hidden="true">
@@ -212,6 +218,7 @@ export function StudioRenderer({
             priority
             sizes="100vw"
             className="pf-hero-media"
+            style={{ objectPosition: mediaObjectPosition(heroMeta) }}
           />
         ) : null}
         <div className="pf-hero-veil" aria-hidden="true" />
@@ -225,6 +232,7 @@ export function StudioRenderer({
                 height={160}
                 sizes="(max-width: 640px) 96px, 144px"
                 className="pf-hero-avatar-image"
+                style={{ objectPosition: mediaObjectPosition(avatarMeta) }}
               />
             </span>
           ) : null}
@@ -710,6 +718,7 @@ function ProductsSection({
                     alt={item.title || "Product image"}
                     fill
                     sizes="(min-width: 900px) 33vw, 50vw"
+                    style={{ objectPosition: mediaObjectPosition(meta) }}
                   />
                 ) : (
                   <span>{initials(item.title || "Product")}</span>
@@ -1062,6 +1071,7 @@ function LegacySection({
                         alt={item.title}
                         fill
                         sizes="(min-width: 900px) 33vw, 100vw"
+                        style={{ objectPosition: mediaObjectPosition(meta) }}
                       />
                     </div>
                   ) : null}

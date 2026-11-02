@@ -1,7 +1,7 @@
 import sharp from "sharp"
 
 import { MAX_UPLOAD_BYTES } from "@/lib/config"
-import type { EditorMedia } from "@/lib/portfolio/media"
+import { clampFocal, type EditorMedia } from "@/lib/portfolio/media"
 import type { MediaKind } from "@/lib/supabase/database.types"
 
 export const MEDIA_KINDS = new Set<MediaKind>([
@@ -31,6 +31,8 @@ export function toMediaItem(row: {
   size_bytes: number
   width: number | null
   height: number | null
+  focal_x?: number | null
+  focal_y?: number | null
   created_at: string
 }): EditorMedia {
   return {
@@ -41,6 +43,8 @@ export function toMediaItem(row: {
     sizeBytes: row.size_bytes,
     width: row.width,
     height: row.height,
+    focalX: clampFocal(row.focal_x),
+    focalY: clampFocal(row.focal_y),
     createdAt: row.created_at,
   }
 }

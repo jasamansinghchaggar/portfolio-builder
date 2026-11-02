@@ -44,7 +44,7 @@ export default async function AdminPortfolioEditorPage({
   const { data: mediaRows } = await supabase
     .from("portfolio_media")
     .select(
-      "id, kind, mime_type, file_name, size_bytes, width, height, created_at"
+      "id, kind, mime_type, file_name, size_bytes, width, height, focal_x, focal_y, created_at"
     )
     .eq("portfolio_id", portfolio.id)
     .order("created_at", { ascending: false })
@@ -57,6 +57,8 @@ export default async function AdminPortfolioEditorPage({
     sizeBytes: row.size_bytes,
     width: row.width,
     height: row.height,
+    focalX: row.focal_x,
+    focalY: row.focal_y,
     createdAt: row.created_at,
   }))
 

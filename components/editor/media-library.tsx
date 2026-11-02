@@ -12,7 +12,12 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { isImageMime, mediaHref, type EditorMedia } from "@/lib/portfolio/media"
+import {
+  isImageMime,
+  mediaHref,
+  mediaObjectPosition,
+  type EditorMedia,
+} from "@/lib/portfolio/media"
 
 function fileSize(bytes: number) {
   if (bytes < 1024) return `${bytes} B`
@@ -69,6 +74,7 @@ export function MediaLibrary({
                         src={mediaHref(item.id)}
                         alt={item.fileName}
                         className="size-full object-cover"
+                        style={{ objectPosition: mediaObjectPosition(item) }}
                       />
                     ) : (
                       <IconFileTypePdf className="size-7 text-muted-foreground" />

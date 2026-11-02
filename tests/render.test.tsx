@@ -61,6 +61,8 @@ describe("portfolio renderer", () => {
             height: 400,
             mimeType: "image/jpeg",
             fileName: "portrait.jpg",
+            focalX: 0.2,
+            focalY: 0.8,
           },
         }}
       />
@@ -69,6 +71,7 @@ describe("portfolio renderer", () => {
     expect(html).toContain("pf-hero-avatar")
     expect(html).toContain("/media/media-avatar")
     expect(html).toContain("profile photo")
+    expect(html).toMatch(/object-position:\s*20(?:\.00)?%\s+80(?:\.00)?%/)
   })
 
   it("skips the hero profile image when the file is not an image", () => {
@@ -84,6 +87,8 @@ describe("portfolio renderer", () => {
             height: null,
             mimeType: "application/pdf",
             fileName: "profile.pdf",
+            focalX: 0.5,
+            focalY: 0.5,
           },
         }}
       />
