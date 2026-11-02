@@ -24,6 +24,7 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -183,39 +184,41 @@ export function MediaField({
                   )}
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="min-w-44">
-                  <DropdownMenuLabel>
-                    {accept === "pdf" ? "File options" : "Image options"}
-                  </DropdownMenuLabel>
-                  {selected &&
-                  isImageMime(selected.mimeType) &&
-                  onCropChange ? (
-                    <DropdownMenuItem onClick={openCropDialog}>
-                      <IconCrop />
-                      Adjust crop
+                  <DropdownMenuGroup>
+                    <DropdownMenuLabel>
+                      {accept === "pdf" ? "File options" : "Image options"}
+                    </DropdownMenuLabel>
+                    {selected &&
+                    isImageMime(selected.mimeType) &&
+                    onCropChange ? (
+                      <DropdownMenuItem onClick={openCropDialog}>
+                        <IconCrop />
+                        Adjust crop
+                      </DropdownMenuItem>
+                    ) : null}
+                    <DropdownMenuItem
+                      onClick={() => setPickerOpen(true)}
+                      disabled={!options.length}
+                    >
+                      <IconPhoto />
+                      Choose existing
                     </DropdownMenuItem>
-                  ) : null}
-                  <DropdownMenuItem
-                    onClick={() => setPickerOpen(true)}
-                    disabled={!options.length}
-                  >
-                    <IconPhoto />
-                    Choose existing
-                  </DropdownMenuItem>
-                  <DropdownMenuItem
-                    onClick={() => inputRef.current?.click()}
-                    disabled={uploading}
-                  >
-                    <IconUpload />
-                    Upload new
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    variant="destructive"
-                    onClick={() => onChange(null)}
-                  >
-                    <IconTrash />
-                    Remove
-                  </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => inputRef.current?.click()}
+                      disabled={uploading}
+                    >
+                      <IconUpload />
+                      Upload new
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      onClick={() => onChange(null)}
+                    >
+                      <IconTrash />
+                      Remove
+                    </DropdownMenuItem>
+                  </DropdownMenuGroup>
                 </DropdownMenuContent>
               </DropdownMenu>
             ) : (
