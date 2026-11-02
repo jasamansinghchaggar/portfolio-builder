@@ -1,5 +1,6 @@
 "use client"
 
+import Image from "next/image"
 import { useState } from "react"
 import { IconFileTypePdf, IconFolder, IconPhoto } from "@tabler/icons-react"
 
@@ -69,10 +70,13 @@ export function MediaLibrary({
                 >
                   <div className="grid aspect-[4/3] place-items-center overflow-hidden bg-muted/40">
                     {isImageMime(item.mimeType) ? (
-                      /* eslint-disable-next-line @next/next/no-img-element */
-                      <img
+                      <Image
                         src={mediaHref(item.id)}
                         alt={item.fileName}
+                        width={item.width ?? 1200}
+                        height={item.height ?? 800}
+                        loading="lazy"
+                        unoptimized
                         className="size-full object-cover"
                         style={{ objectPosition: mediaObjectPosition(item) }}
                       />

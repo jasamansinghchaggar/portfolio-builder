@@ -103,12 +103,12 @@ export async function prepareUpload(file: File): Promise<PreparedUpload> {
       const result = await sharp(input, { failOn: "error" })
         .rotate()
         .resize({
-          width: 2000,
-          height: 2000,
+          width: 1600,
+          height: 1600,
           fit: "inside",
           withoutEnlargement: true,
         })
-        .webp({ quality: 82, effort: 4 })
+        .webp({ quality: 80, effort: 2 })
         .toBuffer({ resolveWithObject: true })
 
       output = result.data

@@ -149,7 +149,7 @@ export async function GET(
       "Content-Length": String(blob.size),
       "Content-Disposition": disposition,
       "Cache-Control": isPublic
-        ? "public, max-age=60, s-maxage=60"
+        ? "public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800"
         : "private, no-store",
       "X-Content-Type-Options": "nosniff",
     },
