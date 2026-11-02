@@ -162,11 +162,13 @@ export function GalleryGrid({
   media,
   mediaCrops,
   emptyLabel = "Photos will appear here.",
+  preview = false,
 }: {
   items: GalleryEntry[]
   media: MediaMap
   mediaCrops?: Record<string, { x: number; y: number }>
   emptyLabel?: string
+  preview?: boolean
 }) {
   const [active, setActive] = useState<number | null>(null)
   const current = active === null ? null : items[active]
@@ -201,6 +203,7 @@ export function GalleryGrid({
                   src={mediaHref(item.imageMediaId as string)}
                   alt={item.title || item.caption || "Portfolio image"}
                   fill
+                  unoptimized={preview}
                   sizes="(min-width: 900px) 33vw, 50vw"
                   style={{
                     objectPosition: focalObjectPosition(
@@ -243,6 +246,7 @@ export function GalleryGrid({
                 alt={current.title || "Portfolio image"}
                 width={1200}
                 height={900}
+                unoptimized={preview}
                 className="pf-lightbox-image"
               />
             ) : (

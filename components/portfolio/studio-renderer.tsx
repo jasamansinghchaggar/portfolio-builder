@@ -150,6 +150,7 @@ export function StudioRenderer({
                 alt=""
                 width={44}
                 height={44}
+                unoptimized={preview}
                 className="pf-brand-logo"
                 style={{
                   objectPosition: focalObjectPosition(
@@ -220,6 +221,7 @@ export function StudioRenderer({
             alt=""
             fill
             priority
+            unoptimized={preview}
             sizes="100vw"
             className="pf-hero-media"
             style={{
@@ -239,6 +241,7 @@ export function StudioRenderer({
                 alt={`${ownerName || businessName} profile photo`}
                 width={160}
                 height={160}
+                unoptimized={preview}
                 sizes="(max-width: 640px) 96px, 144px"
                 className="pf-hero-avatar-image"
                 style={{
@@ -519,6 +522,7 @@ function StudioSection({
             media={media}
             mediaCrops={content.mediaCrops}
             title={title}
+            preview={preview}
           />
         ) : section.type === "gallery" ? (
           <GallerySection
@@ -526,6 +530,7 @@ function StudioSection({
             media={media}
             mediaCrops={content.mediaCrops}
             title={title}
+            preview={preview}
           />
         ) : section.type === "projects" ? (
           <LegacySection
@@ -533,6 +538,7 @@ function StudioSection({
             media={media}
             mediaCrops={content.mediaCrops}
             title={title}
+            preview={preview}
           />
         ) : section.type === "videos" ? (
           <VideosSection section={section} title={title} />
@@ -541,6 +547,7 @@ function StudioSection({
             section={section}
             media={media}
             businessName={contentBusinessName(content)}
+            preview={preview}
           />
         ) : section.type === "socials" ? (
           <SocialsSection section={section} title={title} />
@@ -732,11 +739,13 @@ function ProductsSection({
   media,
   mediaCrops,
   title,
+  preview,
 }: {
   section: SectionOfType<"products">
   media: MediaMap
   mediaCrops?: Record<string, FocalPoint>
   title: string
+  preview: boolean
 }) {
   return (
     <>
@@ -753,6 +762,7 @@ function ProductsSection({
                     src={mediaHref(item.imageMediaId)}
                     alt={item.title || "Product image"}
                     fill
+                    unoptimized={preview}
                     sizes="(min-width: 900px) 33vw, 50vw"
                     style={{ objectPosition: focalObjectPosition(crop, meta) }}
                   />
@@ -790,11 +800,13 @@ function GallerySection({
   media,
   mediaCrops,
   title,
+  preview,
 }: {
   section: SectionOfType<"gallery">
   media: MediaMap
   mediaCrops?: Record<string, FocalPoint>
   title: string
+  preview: boolean
 }) {
   return (
     <>
@@ -808,6 +820,7 @@ function GallerySection({
         }))}
         media={media}
         mediaCrops={mediaCrops}
+        preview={preview}
       />
     </>
   )
@@ -849,10 +862,12 @@ function PaymentSection({
   section,
   media,
   businessName,
+  preview,
 }: {
   section: SectionOfType<"payment">
   media: MediaMap
   businessName: string
+  preview: boolean
 }) {
   const qrMeta = section.qrMediaId ? media[section.qrMediaId] : undefined
   const payee = section.payeeName.trim() || businessName
@@ -874,6 +889,7 @@ function PaymentSection({
             alt="Payment QR code"
             width={260}
             height={260}
+            unoptimized={preview}
             className="pf-pay-qr"
           />
         ) : upiLink ? (
@@ -1087,11 +1103,13 @@ function LegacySection({
   media,
   mediaCrops,
   title,
+  preview = false,
 }: {
   section: Section
   media: MediaMap
   mediaCrops?: Record<string, FocalPoint>
   title: string
+  preview?: boolean
 }) {
   switch (section.type) {
     case "projects":
@@ -1112,6 +1130,7 @@ function LegacySection({
                         src={mediaHref(item.imageMediaId)}
                         alt={item.title}
                         fill
+                        unoptimized={preview}
                         sizes="(min-width: 900px) 33vw, 100vw"
                         style={{ objectPosition: focalObjectPosition(crop, meta) }}
                       />
