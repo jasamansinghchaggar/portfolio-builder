@@ -239,10 +239,10 @@ export function StudioRenderer({
               <Image
                 src={mediaHref(avatarId)}
                 alt={`${ownerName || businessName} profile photo`}
-                width={160}
-                height={160}
+                width={192}
+                height={192}
                 unoptimized={preview}
-                sizes="(max-width: 640px) 96px, 144px"
+                sizes="(max-width: 640px) 144px, 192px"
                 className="pf-hero-avatar-image"
                 style={{
                   objectPosition: focalObjectPosition(
