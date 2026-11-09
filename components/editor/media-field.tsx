@@ -355,7 +355,7 @@ export function MediaField({
       />
 
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="max-h-[85vh] grid-rows-[auto_minmax(0,1fr)_auto] sm:max-w-lg">
           <DialogHeader>
             <DialogTitle>Choose a file</DialogTitle>
             <DialogDescription>
@@ -364,7 +364,7 @@ export function MediaField({
           </DialogHeader>
 
           {options.length ? (
-            <div className="grid max-h-[50vh] grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3">
+            <div className="grid min-h-0 auto-rows-max grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3">
               {options.map((item) => {
                 const active = item.id === value
                 return (

@@ -51,7 +51,7 @@ export function MediaLibrary({
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="sm:max-w-3xl">
+        <DialogContent className="max-h-[85vh] grid-rows-[auto_minmax(0,1fr)] sm:max-w-3xl">
           <DialogHeader>
             <DialogTitle>Media library</DialogTitle>
             <DialogDescription>
@@ -62,7 +62,7 @@ export function MediaLibrary({
           </DialogHeader>
 
           {media.length ? (
-            <div className="grid max-h-[60vh] grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3">
+            <div className="grid min-h-0 auto-rows-max grid-cols-2 gap-2 overflow-y-auto pr-1 sm:grid-cols-3">
               {media.map((item) => (
                 <div
                   key={item.id}
