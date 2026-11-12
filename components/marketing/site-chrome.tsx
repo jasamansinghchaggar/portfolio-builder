@@ -130,12 +130,11 @@ export function SiteFooter({ signedIn = false }: { signedIn?: boolean }) {
         </div>
       </div>
       <div className="border-t">
-        <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-5 py-5 text-xs text-muted-foreground sm:flex-row sm:items-center sm:justify-between sm:px-8">
+        <div className="mx-auto w-full max-w-6xl px-5 py-5 text-xs text-muted-foreground sm:px-8">
           <p>
-            © {new Date().getFullYear()} Folio. Built for people with something
+             © {new Date().getFullYear()} MyFolio. Built for people with something
             to show.
           </p>
-          <p>Next.js · Supabase · Vercel</p>
         </div>
       </div>
     </footer>

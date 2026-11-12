@@ -161,7 +161,7 @@ export function TemplateThumbnail({
             >
               <div className="mb-1 h-1 w-6" style={{ background: accent }} />
               <p className="text-[5px] leading-relaxed opacity-60">
-                TypeScript · React · Postgres
+                Product · Systems · Craft
               </p>
             </div>
           </div>

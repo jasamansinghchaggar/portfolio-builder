@@ -1,6 +1,6 @@
-# Folio — dynamic portfolio builder
+# MyFolio — dynamic portfolio builder
 
-Folio is a small business website and portfolio platform built with Next.js. An
+MyFolio is a small business website and portfolio platform built with Next.js. An
 account owns one portfolio, writes it in a section-based editor, previews it, and
 publishes it to a public address. Draft edits never touch the live page until the
 owner publishes. Every public site uses the business-first **Studio** design and
@@ -33,7 +33,7 @@ Open <http://localhost:3000>.
 | `NEXT_PUBLIC_SUPABASE_URL` | yes | Supabase project URL. |
 | `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` | yes | Supabase publishable (anon) key. Only the public key is used by the app. |
 | `NEXT_PUBLIC_SITE_URL` | yes | Canonical app origin, no trailing slash. Used for auth redirects, metadata, and share URLs. |
-| `NEXT_PUBLIC_APP_NAME` | no | Brand name. Defaults to `Folio`. |
+| `NEXT_PUBLIC_APP_NAME` | no | Brand name. Defaults to `MyFolio`. |
 | `NEXT_PUBLIC_PORTFOLIO_URL_MODE` | no | `path` (default) or `subdomain`. |
 | `NEXT_PUBLIC_ROOT_DOMAIN` | subdomain mode | Root domain used for portfolio subdomains, e.g. `example.com`. |
 
@@ -132,11 +132,11 @@ Set:
 
 ```dotenv
 NEXT_PUBLIC_PORTFOLIO_URL_MODE=subdomain
-NEXT_PUBLIC_ROOT_DOMAIN=example.com
-NEXT_PUBLIC_SITE_URL=https://example.com
+NEXT_PUBLIC_ROOT_DOMAIN=myfolio.co.in
+NEXT_PUBLIC_SITE_URL=https://myfolio.co.in
 ```
 
-Add a wildcard domain (`*.example.com`) to the Vercel project and configure the
+Add a wildcard domain (`*.myfolio.co.in`) to the Vercel project and configure the
 DNS record Vercel gives you. `proxy.ts` rewrites a portfolio hostname’s `/` to
 `/p/<username>` and redirects app routes back to the root domain. A published
 portfolio remains reachable at `/p/<username>` as a fallback.

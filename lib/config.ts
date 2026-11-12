@@ -1,4 +1,4 @@
-export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME?.trim() || "Folio"
+export const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME?.trim() || "MyFolio"
 export const APP_DESCRIPTION =
   "Build a polished portfolio in minutes. Choose a template, add your story, and publish to your own corner of the web."
 

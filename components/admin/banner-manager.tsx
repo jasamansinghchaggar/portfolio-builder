@@ -200,7 +200,7 @@ export function BannerManager({
               onChange={(event) =>
                 setDraft((current) => ({ ...current, message: event.target.value }))
               }
-              placeholder="Built with Folio — a website that works as hard as you do."
+              placeholder="Built with MyFolio — a website that works as hard as you do."
               maxLength={240}
             />
           </div>

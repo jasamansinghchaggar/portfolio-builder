@@ -91,7 +91,7 @@ export function LoginForm({
       </Button>
 
       <FieldDescription className="text-center text-sm">
-        New to Folio?{" "}
+        New to MyFolio?{" "}
         <Link
           href={next ? `/register?next=${encodeURIComponent(next)}` : "/register"}
           className="font-medium text-foreground underline underline-offset-4"
