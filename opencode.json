@@ -12,7 +12,7 @@
     },
     "supabase": {
       "type": "remote",
-      "url": "https://mcp.supabase.com/mcp?project_ref=hrswpjrwnnpbejhhmyvy&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching%2Cfeedback",
+      "url": "https://mcp.supabase.com/mcp?project_ref=hrswpjrwnnpbejhhmyvy&features=docs%2Caccount%2Cdatabase%2Cdebugging%2Cdevelopment%2Cfunctions%2Cbranching%2Cfeedback%2Cnotebooks",
       "enabled": true
     }
   }
