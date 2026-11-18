@@ -31,6 +31,7 @@ export default async function PreviewFramePage() {
       content={content}
       media={mediaMapFromRows(mediaRows ?? [])}
       preview
+      username={portfolio.username}
     />
   )
 }

@@ -460,7 +460,8 @@ export function QrTabs({
   if (!current) {
     return (
       <p className="pf-empty">
-        Add a WhatsApp number or Instagram profile to create a QR code.
+        Add your portfolio link, WhatsApp number, or Instagram profile to
+        create a QR code.
       </p>
     )
   }

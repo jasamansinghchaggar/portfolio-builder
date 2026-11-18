@@ -27,7 +27,7 @@ export default async function AdminPortfolioPreviewPage({ params }: PageProps) {
 
   const { data: portfolio } = await supabase
     .from("portfolios")
-    .select("id, user_id, draft_content")
+    .select("id, user_id, username, draft_content")
     .eq("id", id)
     .maybeSingle()
   if (!portfolio) notFound()
@@ -53,6 +53,7 @@ export default async function AdminPortfolioPreviewPage({ params }: PageProps) {
       content={content}
       media={mediaMapFromRows(mediaRows ?? [])}
       preview
+      username={portfolio.username}
     />
   )
 }

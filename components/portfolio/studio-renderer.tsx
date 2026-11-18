@@ -18,7 +18,7 @@ import {
   IconX,
 } from "@tabler/icons-react"
 
-import { APP_NAME, SITE_URL } from "@/lib/config"
+import { APP_NAME, SITE_URL, publicPortfolioUrl } from "@/lib/config"
 import { designStyle } from "@/lib/portfolio/colors"
 import {
   focalObjectPosition,
@@ -1075,7 +1075,7 @@ function QrSection({
     {
       id: "website",
       label: "Portfolio link",
-      text: username ? `${SITE_URL}/p/${username}` : SITE_URL,
+      text: username ? publicPortfolioUrl(username) : "",
       caption: "Scan to open our portfolio instantly.",
     },
     {
