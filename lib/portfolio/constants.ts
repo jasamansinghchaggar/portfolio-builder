@@ -27,6 +27,7 @@ export const SECTION_TYPES = [
   "videos",
   "payment",
   "socials",
+  "location",
   "contact",
   "qr",
   "projects",
@@ -57,6 +58,10 @@ export type CornerStyle = (typeof CORNER_STYLES)[number]
 export const BACKDROPS = ["clean", "grid", "glow"] as const
 export type Backdrop = (typeof BACKDROPS)[number]
 
+/** Google Maps Embed API supports exactly these two map types. */
+export const MAP_TYPES = ["roadmap", "satellite"] as const
+export type MapType = (typeof MAP_TYPES)[number]
+
 export const SECTION_LABELS: Record<SectionType, string> = {
   hero: "Hero",
   about: "About",
@@ -68,6 +73,7 @@ export const SECTION_LABELS: Record<SectionType, string> = {
   videos: "Videos",
   payment: "Payments",
   socials: "Social links",
+  location: "Location",
   contact: "Contact",
   qr: "QR codes",
   projects: "Projects",
@@ -91,6 +97,7 @@ export const SECTION_DESCRIPTIONS: Record<SectionType, string> = {
   videos: "YouTube videos embedded on your page.",
   payment: "Show a UPI ID or an uploaded payment QR code for easy checkout.",
   socials: "Instagram, Facebook, and other profiles visitors can follow.",
+  location: "A Google map of your address, with one-tap directions.",
   contact: "Phone, WhatsApp, email, address, and a working enquiry form.",
   qr: "Shareable QR codes for your website, WhatsApp, and Instagram.",
   projects: "Case studies and selected work with links and images.",
@@ -121,6 +128,7 @@ export const NAV_SECTION_ORDER: SectionType[] = [
   "payment",
   "socials",
   "resume",
+  "location",
   "contact",
   "qr",
 ]

@@ -382,3 +382,27 @@ Why:
 - Email failures are surfaced instead of swallowed: `lib/auth-errors.ts` maps
   `over_email_send_rate_limit` to a retry message, and the forgot-password form
   disables itself for the cooldown window.
+
+## Location section pins from pasted links, not Places Autocomplete
+
+The Location section lets owners paste a Google Maps share link (or an address,
+or `latitude, longitude`) instead of typing into a Places Autocomplete box.
+
+Why:
+
+- Places Autocomplete needs the Maps JavaScript API and Places API, a
+  browser-exposed key, and a billing account. That is a lot of setup for one
+  field, and a failed key would break the editor rather than one map.
+- Google Maps share links already encode the exact place and pin the owner
+  picked inside Google Maps, including businesses that are hard to find by
+  address. Parsing `!3d!4d` (the pin) before `@` (the camera) gives a precise
+  marker without geocoding.
+- `maps.app.goo.gl` short links are expanded server-side in a read-only action
+  that follows at most three Google-hosted redirects with a timeout. It never
+  writes content, so it cannot bypass revision checks.
+- The embed uses `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY` when configured and
+  falls back to Google's keyless `output=embed` URL otherwise. The fallback is
+  unofficial, so it is a development and setup convenience rather than the
+  documented production path; the keyed Embed API is preferred.
+- An empty map section is hidden like an empty About section, so publishing is
+  never blocked by a section the visitor would not see anyway.

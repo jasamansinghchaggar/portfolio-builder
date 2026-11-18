@@ -62,7 +62,24 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3000
 NEXT_PUBLIC_APP_NAME=Folio
 NEXT_PUBLIC_PORTFOLIO_URL_MODE=path
 NEXT_PUBLIC_ROOT_DOMAIN=
+NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY=   # optional; see below
 ```
+
+### Optional: Google Maps key
+
+The Location section works without a key thanks to a keyless fallback. For the
+supported Google Maps Embed API, create a key in Google Cloud:
+
+1. Enable **Maps Embed API** in APIs & Services → Library.
+2. Create an API key, restrict it to *Maps Embed API*, and restrict HTTP
+   referrers to `http://localhost:3000/*`, your production domain, and
+   `*.<ROOT_DOMAIN>/*` when using subdomain mode.
+3. Add it as `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY`. The value is public by
+   design (it is inlined into the browser bundle), so the referrer restriction
+   is what protects it.
+
+`NEXT_PUBLIC_*` values are baked in at build time, so set the key before a
+production build.
 
 ## 5. Configure Supabase Auth URLs
 

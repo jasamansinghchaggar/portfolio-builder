@@ -11,6 +11,7 @@ import {
   TextInput,
 } from "@/components/editor/fields"
 import { MediaField } from "@/components/editor/media-field"
+import { LocationPicker } from "@/components/editor/location-picker"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -1823,6 +1824,32 @@ export function SectionForm({
               }
             />
           </FormSection>
+        </div>
+      )
+
+    case "location":
+      return (
+        <div className="space-y-5">
+          <TextInput
+            label="Section title"
+            value={section.title}
+            onChange={(title) => onChange({ ...section, title })}
+            maxLength={80}
+          />
+          <TextAreaInput
+            label="Intro"
+            value={section.intro}
+            onChange={(intro) => onChange({ ...section, intro })}
+            placeholder="Easy to reach, with parking right outside."
+            rows={3}
+            maxLength={400}
+          />
+          <LocationPicker
+            section={section}
+            basics={basics}
+            onChange={onChange}
+            onOpenPageDetails={onOpenPageDetails}
+          />
         </div>
       )
 

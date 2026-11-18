@@ -145,10 +145,10 @@ blur for names, emails, phone numbers, and links.
 
 **FR-EDIT-07 --- Section library (P0)**\
 The section library supports Hero, About, Mission, Services, Events, Products,
-Gallery, Videos, Payments, Socials, Contact, and QR sharing as business-first
-sections. Legacy section types (Projects, Experience, Skills, Education,
-Certifications, Testimonials, Achievements, Resume/CV) remain valid so existing
-content is preserved and renders inside the Studio design.
+Gallery, Videos, Payments, Socials, Location, Contact, and QR sharing as
+business-first sections. Legacy section types (Projects, Experience, Skills,
+Education, Certifications, Testimonials, Achievements, Resume/CV) remain valid so
+existing content is preserved and renders inside the Studio design.
 
 **FR-EDIT-08 --- Single source for identity and contact details (P0)**\
 The user shall enter business identity and contact information once in Page

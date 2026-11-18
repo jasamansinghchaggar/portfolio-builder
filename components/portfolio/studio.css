@@ -1208,6 +1208,76 @@
   color: var(--pf-muted);
 }
 
+/* Location map ---------------------------------------------------------- */
+
+.pf-map {
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-alt);
+}
+
+.pf-map-frame {
+  background: var(--pf-alt);
+}
+
+.pf-map-frame iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 0;
+}
+
+.pf-map-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: clamp(1rem, 3vw, 1.5rem);
+}
+
+.pf-map-text h3 {
+  font-size: 1.15rem;
+}
+
+.pf-map-address {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.4rem;
+  margin-top: 0.35rem;
+  color: var(--pf-muted);
+  font-size: 0.95rem;
+}
+
+.pf-map-address svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.pf-map-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+@media (max-width: 640px) {
+  .pf-map-frame iframe {
+    aspect-ratio: 4 / 3;
+  }
+
+  .pf-map-actions {
+    width: 100%;
+  }
+
+  .pf-map-actions .pf-button {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+}
+
 /* Payment and QR -------------------------------------------------------- */
 
 .pf-pay {

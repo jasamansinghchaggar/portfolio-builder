@@ -17,7 +17,7 @@ asks for (with what that field is for). Limits come from `lib/portfolio/schemas.
 
 ## Page details (`basics`) — shared across sections
 
-Not a section, but feed the hero, contact, and footer:
+Not a section, but feed the hero, contact, location, and footer:
 
 - `fullName` — the person's name (max 80).
 - `businessName` — business/brand name (max 120).
@@ -310,6 +310,33 @@ Fields:
 - `summary` — short summary (max 1200).
 - `fileMediaId` — uploaded resume file (PDF).
 - `highlights` — up to 12 highlights (max 300 chars each).
+
+### 21. Location (`location`)
+- **Purpose:** Show where the business is on a Google map.
+- **Renders:** Mid-page; an embedded map with the address, a “Get directions”
+  button, and an “Open in Google Maps” link.
+- **Setup:** The owner pastes a Google Maps share link, an address, or
+  `latitude, longitude`, or clicks “Use my page address”. The section stays
+  hidden on the public page until a place or pin is set.
+
+Fields:
+
+- `title` — section heading (max 80).
+- `intro` — short line above the map (max 400).
+- `query` — place name, address, or coordinates sent to Google Maps (max 300).
+- `label` — friendly name shown on the map card (max 120); defaults to the
+  detected place name.
+- `latitude` / `longitude` — optional precise pin, filled from Google Maps links.
+- `zoom` — map zoom level, 1–21 (default 15; the editor offers Street,
+  Local area, and City presets).
+- `mapType` — `roadmap` or `satellite`.
+- `showDirections` — show or hide the “Get directions” button (default on).
+- `showOpenInMaps` — show or hide the “Open in Google Maps” link (default on).
+
+The map uses the Google Maps Embed API when
+`NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY` is set. Without a key it falls back to
+Google's keyless embed, so local development and unconfigured deployments still
+render a map.
 
 ---
 

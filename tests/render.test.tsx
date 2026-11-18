@@ -165,6 +165,20 @@ describe("portfolio renderer", () => {
     expect(html).toContain("Independent product designer")
   })
 
+  it("renders the location map with directions and map links", () => {
+    const html = renderToStaticMarkup(
+      <PortfolioRenderer content={createSampleContent()} />
+    )
+
+    expect(html).toContain(`id="section-location"`)
+    expect(html).toContain(`class="pf-map"`)
+    expect(html).toContain("https://www.google.com/maps?")
+    expect(html).toContain("output=embed")
+    expect(html).toContain("Get directions")
+    expect(html).toContain("Open in Google Maps")
+    expect(html).toContain("82 Dean Street, Brooklyn, NY")
+  })
+
   it("escapes user-provided markup instead of rendering it", () => {
     const content = createSampleContent()
     content.basics.fullName = "<script>alert(1)</script>"

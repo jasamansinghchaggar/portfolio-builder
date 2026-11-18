@@ -31,6 +31,8 @@ export function sectionLabel(section: Section) {
       return section.title || "Payments"
     case "socials":
       return section.title || "Social links"
+    case "location":
+      return section.title || "Location"
     case "contact":
       return section.title || "Contact"
     case "qr":
@@ -77,6 +79,12 @@ export function sectionHasSubstance(section: Section): boolean {
       return Boolean(section.upiId || section.qrMediaId)
     case "socials":
       return section.items.some((item) => item.url)
+    case "location":
+      // The map is hidden until the owner picks a place or pin.
+      return Boolean(
+        section.query.trim() ||
+          (section.latitude !== null && section.longitude !== null)
+      )
     case "contact":
       // Always renders the contact card and enquiry form.
       return true

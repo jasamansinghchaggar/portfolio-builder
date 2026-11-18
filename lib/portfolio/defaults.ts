@@ -271,6 +271,21 @@ export function createSection(type: SectionType): Section {
         intro: "",
         items: [],
       }
+    case "location":
+      return {
+        ...base,
+        type: "location",
+        title: "Find us",
+        intro: "",
+        query: "",
+        label: "",
+        latitude: null,
+        longitude: null,
+        zoom: 15,
+        mapType: "roadmap",
+        showDirections: true,
+        showOpenInMaps: true,
+      }
     case "contact":
       return {
         ...base,

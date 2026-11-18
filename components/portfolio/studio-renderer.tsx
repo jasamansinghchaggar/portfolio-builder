@@ -14,12 +14,20 @@ import {
   IconMapPin,
   IconMenu2,
   IconPhone,
+  IconRoute,
   IconStar,
   IconX,
 } from "@tabler/icons-react"
 
 import { APP_NAME, SITE_URL, publicPortfolioUrl } from "@/lib/config"
 import { designStyle } from "@/lib/portfolio/colors"
+import {
+  buildDirectionsUrl,
+  buildMapEmbedUrl,
+  buildOpenInMapsUrl,
+  locationName,
+  mapQuery,
+} from "@/lib/portfolio/location"
 import {
   focalObjectPosition,
   isImageMime,
@@ -553,6 +561,8 @@ function StudioSection({
           />
         ) : section.type === "socials" ? (
           <SocialsSection section={section} title={title} />
+        ) : section.type === "location" ? (
+          <LocationSection section={section} content={content} />
         ) : section.type === "contact" ? (
           <ContactSection
             section={section}
@@ -951,6 +961,98 @@ function SocialsSection({
             </a>
           )
         })}
+      </div>
+    </>
+  )
+}
+
+function LocationSection({
+  section,
+  content,
+}: {
+  section: SectionOfType<"location">
+  content: PortfolioContent
+}) {
+  const address =
+    content.basics.address.trim() || content.basics.location.trim()
+  const location = {
+    query: mapQuery(section, content.basics),
+    latitude: section.latitude,
+    longitude: section.longitude,
+    label: section.label,
+    zoom: section.zoom,
+    mapType: section.mapType,
+  }
+  const embedUrl = buildMapEmbedUrl(location)
+  const directions = section.showDirections
+    ? buildDirectionsUrl(location)
+    : null
+  const openInMaps = section.showOpenInMaps
+    ? buildOpenInMapsUrl(location)
+    : null
+  const name = locationName(location)
+
+  if (!embedUrl) {
+    return (
+      <p className="pf-empty">
+        Add an address or map pin to show a map here.
+      </p>
+    )
+  }
+
+  return (
+    <>
+      <SectionHead
+        title={section.title.trim() || "Find us"}
+        intro={section.intro}
+      />
+      <div className="pf-map">
+        <div className="pf-map-frame">
+          <iframe
+            src={embedUrl}
+            title={`Map showing ${name}${address ? `, ${address}` : ""}`}
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            allowFullScreen
+          />
+        </div>
+        <div className="pf-map-body">
+          <div className="pf-map-text">
+            <h3>{name}</h3>
+            {address ? (
+              <p className="pf-map-address">
+                <IconMapPin aria-hidden="true" />
+                <span>{address}</span>
+              </p>
+            ) : null}
+          </div>
+          {directions || openInMaps ? (
+            <div className="pf-map-actions">
+              {directions ? (
+                <a
+                  className="pf-button"
+                  href={directions}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <IconRoute />
+                  Get directions
+                </a>
+              ) : null}
+              {openInMaps ? (
+                <a
+                  className="pf-button pf-button-ghost"
+                  href={openInMaps}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <IconMapPin />
+                  Open in Google Maps
+                </a>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
       </div>
     </>
   )

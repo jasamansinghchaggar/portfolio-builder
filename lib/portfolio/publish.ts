@@ -152,6 +152,20 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
         })
         break
       }
+      case "location": {
+        // An empty map section is hidden from the public page, so it only needs
+        // a nudge when the owner clearly started filling it in.
+        const hasPin =
+          Boolean(section.query.trim()) ||
+          (section.latitude !== null && section.longitude !== null)
+        if (!hasPin && (section.label.trim() || section.intro.trim())) {
+          issue(
+            "Choose a location on the map, or hide this section.",
+            "query"
+          )
+        }
+        break
+      }
       case "contact": {
         // Contact details are entered once in page details; legacy contact
         // links still count for old drafts that have no socials section.

@@ -108,6 +108,32 @@ describe("publish validation", () => {
   it("accepts the sample content", () => {
     expect(validateForPublish(createSampleContent())).toEqual([])
   })
+
+  it("nudges an owner who named a location but never picked a pin", () => {
+    const content = createSampleContent()
+    const location = content.sections.find(
+      (section) => section.type === "location"
+    )
+    if (location?.type !== "location") {
+      throw new Error("Sample content needs a location section.")
+    }
+    location.query = ""
+    location.latitude = null
+    location.longitude = null
+
+    const issues = validateForPublish(content)
+    expect(
+      issues.some((issue) => issue.message.includes("Choose a location"))
+    ).toBe(true)
+
+    // An entirely empty map section is hidden, so it must not block publishing.
+    location.label = ""
+    location.intro = ""
+    const after = validateForPublish(content)
+    expect(
+      after.some((issue) => issue.message.includes("Choose a location"))
+    ).toBe(false)
+  })
 })
 
 describe("publish checklist", () => {

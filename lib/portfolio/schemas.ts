@@ -5,6 +5,7 @@ import {
   BACKDROPS,
   CORNER_STYLES,
   FONT_PAIRS,
+  MAP_TYPES,
   SECTION_TYPES,
   TEMPLATE_IDS,
 } from "./constants"
@@ -329,6 +330,27 @@ const achievementsSectionSchema = z.object({
   items: z.array(achievementItemSchema).max(50),
 })
 
+const locationSectionSchema = z.object({
+  ...sectionBase,
+  type: z.literal("location"),
+  title: z.string().trim().max(80),
+  intro: z.string().trim().max(400),
+  /**
+   * Place name, address, or coordinates sent to Google Maps. Kept separate from
+   * `basics.address` so the owner can pin a shop while the page address stays
+   * postal-only.
+   */
+  query: z.string().trim().max(300).default(""),
+  /** Friendly name shown on the map card, e.g. "Our studio". */
+  label: z.string().trim().max(120).default(""),
+  latitude: z.number().min(-90).max(90).nullable().default(null),
+  longitude: z.number().min(-180).max(180).nullable().default(null),
+  zoom: z.number().int().min(1).max(21).default(15),
+  mapType: z.enum(MAP_TYPES).default("roadmap"),
+  showDirections: z.boolean().default(true),
+  showOpenInMaps: z.boolean().default(true),
+})
+
 const contactLinkSchema = z.object({
   id: z.uuid(),
   label: z.string().trim().max(60),
@@ -392,6 +414,7 @@ export const sectionSchema = z.discriminatedUnion("type", [
   testimonialsSectionSchema,
   achievementsSectionSchema,
   resumeSectionSchema,
+  locationSectionSchema,
 ])
 
 export const designSchema = z.object({

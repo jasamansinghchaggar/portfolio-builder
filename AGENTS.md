@@ -169,7 +169,7 @@ derived from it.
   image, and logo. Hero and contact editors show a summary plus an “Edit page
   details” link instead of duplicating fields. Legacy hero/contact fields remain
   only for old drafts.
-- `sections` is a discriminated union of 20 section types. Each type may appear
+- `sections` is a discriminated union of 21 section types. Each type may appear
   at most once, section IDs must be unique, and each section has `visible`.
 - `lib/portfolio/defaults.ts` creates sections/items and coerces stored JSON.
   `lib/portfolio/sections.ts` owns visibility, substance checks, navigation,
@@ -350,6 +350,7 @@ Copy `.env.example` to `.env.local`.
 | `NEXT_PUBLIC_APP_NAME` | no | Brand name, defaults to `MyFolio` |
 | `NEXT_PUBLIC_PORTFOLIO_URL_MODE` | no | `path` (default) or `subdomain` |
 | `NEXT_PUBLIC_ROOT_DOMAIN` | subdomain mode | Root domain for portfolio subdomains |
+| `NEXT_PUBLIC_GOOGLE_MAPS_EMBED_API_KEY` | no | Public Google Maps Embed API key for the Location section; keyless fallback when empty |
 
 `NEXT_PUBLIC_*` values are inlined into the client bundle. Never put a secret in
 one. `SUPABASE_SERVICE_ROLE_KEY` must never reach a Client Component.
