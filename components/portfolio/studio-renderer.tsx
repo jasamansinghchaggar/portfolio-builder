@@ -350,6 +350,7 @@ export function StudioRenderer({
                     target="_blank"
                     rel="noopener noreferrer"
                     aria-label={item.platform}
+                    data-brand={socialIconKey(item.platform)}
                   >
                     <Icon />
                   </a>
@@ -940,7 +941,10 @@ function SocialsSection({
               target="_blank"
               rel="noopener noreferrer"
             >
-              <span className="pf-social-icon">
+              <span
+                className="pf-social-icon"
+                data-brand={socialIconKey(item.platform)}
+              >
                 <Icon />
               </span>
               <span>{item.platform}</span>
@@ -1036,6 +1040,7 @@ function ContactSection({
                     aria-label={item.platform}
                     target="_blank"
                     rel="noopener noreferrer"
+                    data-brand={socialIconKey(item.platform)}
                   >
                     <Icon />
                   </a>

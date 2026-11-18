@@ -734,6 +734,76 @@
   height: 1.1rem;
 }
 
+/* Brand-coloured social icons ----------------------------------------- */
+/* Keep the original brand colours so each network is instantly
+   recognisable; icons themselves are unchanged. */
+.pf-site .pf-social-icon[data-brand],
+.pf-site .pf-quick-socials a[data-brand],
+.pf-site .pf-contact-socials a[data-brand] {
+  background: var(--pf-brand-bg, var(--pf-dark));
+  color: #ffffff;
+  box-shadow: 0 6px 18px -6px rgb(15 23 42 / 0.45);
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.pf-site .pf-social-icon[data-brand="instagram"],
+.pf-site .pf-quick-socials a[data-brand="instagram"],
+.pf-site .pf-contact-socials a[data-brand="instagram"] {
+  --pf-brand-bg: linear-gradient(
+    45deg,
+    #f09433 0%,
+    #e6683c 25%,
+    #dc2743 50%,
+    #cc2366 75%,
+    #bc1888 100%
+  );
+}
+
+.pf-site .pf-social-icon[data-brand="facebook"],
+.pf-site .pf-quick-socials a[data-brand="facebook"],
+.pf-site .pf-contact-socials a[data-brand="facebook"] {
+  --pf-brand-bg: #1877f2;
+}
+
+.pf-site .pf-social-icon[data-brand="whatsapp"],
+.pf-site .pf-quick-socials a[data-brand="whatsapp"],
+.pf-site .pf-contact-socials a[data-brand="whatsapp"] {
+  --pf-brand-bg: #25d366;
+}
+
+.pf-site .pf-social-icon[data-brand="linkedin"],
+.pf-site .pf-quick-socials a[data-brand="linkedin"],
+.pf-site .pf-contact-socials a[data-brand="linkedin"] {
+  --pf-brand-bg: #0a66c2;
+}
+
+.pf-site .pf-social-icon[data-brand="youtube"],
+.pf-site .pf-quick-socials a[data-brand="youtube"],
+.pf-site .pf-contact-socials a[data-brand="youtube"] {
+  --pf-brand-bg: #ff0000;
+}
+
+.pf-site .pf-social-icon[data-brand="twitter"],
+.pf-site .pf-quick-socials a[data-brand="twitter"],
+.pf-site .pf-contact-socials a[data-brand="twitter"] {
+  --pf-brand-bg: #000000;
+}
+
+.pf-site .pf-social-icon[data-brand="globe"],
+.pf-site .pf-quick-socials a[data-brand="globe"],
+.pf-site .pf-contact-socials a[data-brand="globe"] {
+  --pf-brand-bg: #475569;
+}
+
+.pf-site .pf-social:hover .pf-social-icon[data-brand],
+.pf-site .pf-quick-socials a[data-brand]:hover,
+.pf-site .pf-contact-socials a[data-brand]:hover {
+  transform: translateY(-2px) scale(1.07);
+  box-shadow: 0 12px 26px -8px rgb(15 23 42 / 0.55);
+}
+
 /* Sections --------------------------------------------------------------- */
 
 .pf-section {

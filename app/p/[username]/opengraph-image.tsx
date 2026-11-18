@@ -1,6 +1,5 @@
 import { ImageResponse } from "next/og"
 
-import { APP_NAME } from "@/lib/config"
 import { getTemplate } from "@/lib/portfolio/templates"
 import { getPublicPortfolio } from "@/lib/portfolio/queries"
 
@@ -68,14 +67,13 @@ export default async function OpenGraphImage({
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "flex-end",
             fontSize: 22,
             letterSpacing: 3,
             textTransform: "uppercase",
             opacity: 0.65,
           }}
         >
-          <span>{template.name} folio</span>
           <span>/{portfolio.username}</span>
         </div>
 
@@ -109,7 +107,7 @@ export default async function OpenGraphImage({
           style={{
             display: "flex",
             alignItems: "center",
-            justifyContent: "space-between",
+            justifyContent: "flex-start",
             fontSize: 20,
             opacity: 0.65,
           }}
@@ -119,9 +117,6 @@ export default async function OpenGraphImage({
               .filter(Boolean)
               .join(" · ")}
           </span>
-          {portfolio.showAttribution ? (
-            <span>Made with {APP_NAME}</span>
-          ) : null}
         </div>
 
         <div
