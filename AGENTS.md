@@ -383,3 +383,4 @@ Public URL modes:
 - Auth email is delivered by Resend over Supabase custom SMTP; the built-in
   provider is not used in production. See `docs/SETUP.md` and
   `docs/DECISIONS.md`.
+  
