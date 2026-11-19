@@ -106,6 +106,10 @@ autosaving and offers “Load latest” or “Keep mine” rather than overwriti
 another session. A save-status indicator and retry path cover network failures.
 In-app link clicks flush pending edits before navigating, `beforeunload` warns
 on tab close, and unmount triggers a best-effort save for back/forward moves.
+Revision conflicts raise SQLSTATE `P0001` with message `revision_conflict`.
+Do not use `40001` here: PostgREST's transaction library interprets that code
+as a serialization failure and retries the entire request indefinitely. A
+single stale editor save once exhausted the database and PostgREST pool.
 
 ## Media is normalised server-side
 

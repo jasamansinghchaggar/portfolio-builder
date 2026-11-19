@@ -144,7 +144,8 @@ npm test             # Vitest
 
 ## Production (Vercel)
 
-1. Apply all seven migrations to the production Supabase project.
+1. Apply all migrations in `supabase/migrations/` in filename order to the
+   production Supabase project.
 2. Set the same environment variables in Vercel (including
    `SUPABASE_SERVICE_ROLE_KEY`), with `NEXT_PUBLIC_SITE_URL` pointing at your
    domain (no trailing slash).
