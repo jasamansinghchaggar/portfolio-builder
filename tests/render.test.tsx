@@ -127,6 +127,45 @@ describe("portfolio renderer", () => {
     expect(html).toMatch(/object-position:\s*10(?:\.00)?%\s+90(?:\.00)?%/)
   })
 
+  it("renders a mission intro without any promise cards", () => {
+    const content = createSampleContent()
+    const mission = content.sections.find(
+      (section) => section.type === "mission"
+    )
+    if (mission?.type !== "mission") {
+      throw new Error("Sample content needs a mission section.")
+    }
+    mission.items = []
+    mission.intro = "A single sentence mission."
+
+    const html = renderToStaticMarkup(<PortfolioRenderer content={content} />)
+    expect(html).toContain("A single sentence mission.")
+    expect(html).not.toContain("pf-cards-three")
+  })
+
+  it("skips empty promise cards and renders partial promises", () => {
+    const content = createSampleContent()
+    const mission = content.sections.find(
+      (section) => section.type === "mission"
+    )
+    if (mission?.type !== "mission") {
+      throw new Error("Sample content needs a mission section.")
+    }
+    mission.items = [
+      { id: crypto.randomUUID(), title: "", text: "" },
+      { id: crypto.randomUUID(), title: "Only a title", text: "" },
+      { id: crypto.randomUUID(), title: "", text: "Only a description" },
+    ]
+    content.sections = content.sections.filter(
+      (section) => section.type === "hero" || section.type === "mission"
+    )
+
+    const html = renderToStaticMarkup(<PortfolioRenderer content={content} />)
+    expect(html).toContain("Only a title")
+    expect(html).toContain("Only a description")
+    expect(html.match(/class="pf-card"/g)?.length).toBe(2)
+  })
+
   it("omits hidden sections from public output", () => {
     const content = createSampleContent()
     const about = content.sections.find((section) => section.type === "about")

@@ -60,16 +60,20 @@ Fields:
 - `message` — short message shown in the card (max 600).
 
 ### 3. Mission (`mission`)
-- **Purpose:** State mission, vision, and values as titled cards.
-- **Renders:** Mid-page content block after About.
+- **Purpose:** State mission, vision, and values as optional titled cards.
+- **Renders:** Mid-page content block after About. The section shows when the
+  intro is filled even if there are no promise cards.
 
 Fields:
 
 - `title` — section heading (max 80).
 - `intro` — short intro paragraph (max 400).
-- `items` — up to 12 cards, each with:
-  - `title` — card heading (max 120).
-  - `text` — card body (max 600).
+- `items` — optional; up to 12 cards, each with:
+  - `title` — optional card heading (max 120).
+  - `text` — optional card body (max 600).
+
+Empty promise cards are ignored. A promise may have only a title or only a
+description, and the whole promise list can be left empty.
 
 ### 4. Services (`services`)
 - **Purpose:** List offered services with a call-to-action panel.

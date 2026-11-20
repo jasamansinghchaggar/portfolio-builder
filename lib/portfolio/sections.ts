@@ -64,7 +64,11 @@ export function sectionHasSubstance(section: Section): boolean {
     case "about":
       return Boolean(section.body || section.message || section.highlights.length)
     case "mission":
-      return section.items.some((item) => item.title || item.text)
+      // The intro alone can carry the section; promises are optional.
+      return (
+        Boolean(section.intro.trim()) ||
+        section.items.some((item) => item.title || item.text)
+      )
     case "services":
       return section.items.some((item) => item.title) || Boolean(section.ctaText)
     case "events":
