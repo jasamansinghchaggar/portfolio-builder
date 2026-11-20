@@ -95,6 +95,46 @@ describe("portfolio content schema", () => {
     expect(unknown.success).toBe(false)
   })
 
+  it("accepts mission promises with no title or description", () => {
+    const content = createSampleContent()
+    const mission = content.sections.find(
+      (section) => section.type === "mission"
+    )
+    if (mission?.type !== "mission") {
+      throw new Error("Sample content needs a mission section.")
+    }
+    mission.items = [{ id: crypto.randomUUID(), title: "", text: "" }]
+
+    expect(portfolioContentSchema.safeParse(content).success).toBe(true)
+  })
+
+  it("defaults missing mission promise fields", () => {
+    const content = createSampleContent()
+    const parsed = portfolioContentSchema.safeParse({
+      ...content,
+      sections: content.sections.map((section) =>
+        section.type === "mission"
+          ? { ...section, items: [{ id: crypto.randomUUID() }] }
+          : section
+      ),
+    })
+
+    expect(parsed.success).toBe(true)
+    if (parsed.success) {
+      const mission = parsed.data.sections.find(
+        (section) => section.type === "mission"
+      )
+      if (mission?.type !== "mission") {
+        throw new Error("Parsed content needs a mission section.")
+      }
+      expect(mission.items[0]).toEqual({
+        id: expect.any(String),
+        title: "",
+        text: "",
+      })
+    }
+  })
+
   it("trims fields rather than persisting whitespace", () => {
     const content = createSampleContent()
     content.basics.fullName = "  Avery Quinn  "

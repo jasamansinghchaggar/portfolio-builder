@@ -67,11 +67,8 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
         // need to block publishing.
         break
       case "mission":
-        section.items.forEach((item, index) => {
-          if ((item.text.trim() || item.title.trim()) && !item.title.trim()) {
-            issue(`Mission card ${index + 1} needs a title.`, `items.${index}.title`)
-          }
-        })
+        // Promises are optional, and a promise may have only a title or only a
+        // description. Nothing here blocks publishing.
         break
       case "services": {
         section.items.forEach((item, index) => {

@@ -109,6 +109,39 @@ describe("publish validation", () => {
     expect(validateForPublish(createSampleContent())).toEqual([])
   })
 
+  it("does not block publishing a mission with only an intro", () => {
+    const content = createSampleContent()
+    const mission = content.sections.find(
+      (section) => section.type === "mission"
+    )
+    if (mission?.type !== "mission") {
+      throw new Error("Sample content needs a mission section.")
+    }
+    mission.items = []
+    mission.intro = "Our mission in one line."
+
+    expect(validateForPublish(content)).toEqual([])
+  })
+
+  it("allows a promise with only a description", () => {
+    const content = createSampleContent()
+    const mission = content.sections.find(
+      (section) => section.type === "mission"
+    )
+    if (mission?.type !== "mission") {
+      throw new Error("Sample content needs a mission section.")
+    }
+    mission.items = [
+      {
+        id: crypto.randomUUID(),
+        title: "",
+        text: "We listen before we recommend anything.",
+      },
+    ]
+
+    expect(validateForPublish(content)).toEqual([])
+  })
+
   it("nudges an owner who named a location but never picked a pin", () => {
     const content = createSampleContent()
     const location = content.sections.find(

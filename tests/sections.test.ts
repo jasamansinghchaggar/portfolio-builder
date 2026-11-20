@@ -23,6 +23,25 @@ describe("phone links", () => {
   })
 })
 
+describe("mission sections", () => {
+  it("treats promises as optional when the intro is present", () => {
+    const content = createSampleContent()
+    const mission = content.sections.find(
+      (section) => section.type === "mission"
+    )
+    if (mission?.type !== "mission") {
+      throw new Error("Sample content needs a mission section.")
+    }
+
+    mission.items = []
+    mission.intro = "Our mission in one line."
+    expect(sectionHasSubstance(mission)).toBe(true)
+
+    mission.intro = ""
+    expect(sectionHasSubstance(mission)).toBe(false)
+  })
+})
+
 describe("location sections", () => {
   it("labels the section and stays hidden until a place or pin is set", () => {
     const content = createSampleContent()

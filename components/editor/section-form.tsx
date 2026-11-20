@@ -255,7 +255,10 @@ export function SectionForm({
             rows={3}
             maxLength={400}
           />
-          <FormSection title={`Promises (${section.items.length})`}>
+          <FormSection
+            title={`Promises (${section.items.length})`}
+            description="Optional. Add a promise only if you want one; the intro can stand on its own."
+          >
             {section.items.map((item, index) => (
               <ItemCard
                 key={item.id}

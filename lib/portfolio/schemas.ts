@@ -95,16 +95,18 @@ const aboutSectionSchema = z.object({
 
 const missionItemSchema = z.object({
   id: z.uuid(),
-  title: z.string().trim().max(120),
-  text: z.string().trim().max(600),
+  // Promises are optional: a card may be just a title, just a description, or
+  // omitted entirely while the Mission section still shows its intro.
+  title: z.string().trim().max(120).default(""),
+  text: z.string().trim().max(600).default(""),
 })
 
 const missionSectionSchema = z.object({
   ...sectionBase,
   type: z.literal("mission"),
-  title: z.string().trim().max(80),
-  intro: z.string().trim().max(400),
-  items: z.array(missionItemSchema).max(12),
+  title: z.string().trim().max(80).default(""),
+  intro: z.string().trim().max(400).default(""),
+  items: z.array(missionItemSchema).max(12).default([]),
 })
 
 const projectItemSchema = z.object({

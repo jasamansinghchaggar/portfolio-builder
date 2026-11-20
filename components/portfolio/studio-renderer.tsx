@@ -651,20 +651,27 @@ function MissionSection({
   section: SectionOfType<"mission">
   title: string
 }) {
+  // Promises are optional, so drop empty cards and let the intro stand alone.
+  const promises = section.items.filter(
+    (item) => item.title.trim() || item.text.trim()
+  )
+
   return (
     <>
       <SectionHead title={title} intro={section.intro} />
-      <div className="pf-cards pf-cards-three">
-        {section.items.map((item) => (
-          <article key={item.id} className="pf-card">
-            <span className="pf-card-icon">
-              <IconStar />
-            </span>
-            <h3>{item.title}</h3>
-            <p>{item.text}</p>
-          </article>
-        ))}
-      </div>
+      {promises.length ? (
+        <div className="pf-cards pf-cards-three">
+          {promises.map((item) => (
+            <article key={item.id} className="pf-card">
+              <span className="pf-card-icon">
+                <IconStar />
+              </span>
+              {item.title.trim() ? <h3>{item.title}</h3> : null}
+              {item.text.trim() ? <p>{item.text}</p> : null}
+            </article>
+          ))}
+        </div>
+      ) : null}
     </>
   )
 }
