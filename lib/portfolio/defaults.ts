@@ -11,6 +11,7 @@ import {
   type MissionItem,
   type PortfolioContent,
   type ProductItem,
+  type QrLink,
   type ProjectItem,
   type Section,
   type ServiceItem,
@@ -27,6 +28,10 @@ export function newId() {
     return crypto.randomUUID()
   }
   throw new Error("A secure random source is required to create content IDs.")
+}
+
+export function createQrLink(): QrLink {
+  return { id: newId(), label: "", url: "" }
 }
 
 export function createProjectItem(): ProjectItem {
@@ -308,6 +313,7 @@ export function createSection(type: SectionType): Section {
         type: "qr",
         title: "Scan and connect",
         intro: "",
+        links: [],
         whatsappUrl: "",
         instagramUrl: "",
       }
@@ -426,7 +432,11 @@ export function createDefaultContent({
   }
   if (mission.type === "mission") {
     mission.title = "Our mission"
-    mission.items = [createMissionItem(), createMissionItem(), createMissionItem()]
+    mission.items = [
+      createMissionItem(),
+      createMissionItem(),
+      createMissionItem(),
+    ]
   }
   if (services.type === "services") {
     services.title = "How we can help"
@@ -443,7 +453,7 @@ export function createDefaultContent({
   }
   if (qr.type === "qr") {
     qr.title = "Scan and connect"
-    qr.intro = "Save our link, WhatsApp, and social profiles with a single scan."
+    qr.intro = "Scan to visit our links."
   }
 
   return {

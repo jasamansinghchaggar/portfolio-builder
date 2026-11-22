@@ -23,6 +23,7 @@ import {
   createGalleryItem,
   createMissionItem,
   createProductItem,
+  createQrLink,
   createProjectItem,
   createServiceItem,
   createSkillGroup,
@@ -32,7 +33,11 @@ import {
 } from "@/lib/portfolio/defaults"
 import type { EditorMedia } from "@/lib/portfolio/media"
 import type { Basics, Section } from "@/lib/portfolio/types"
-import { validateUpiId, validateUrl, validateYoutube } from "@/lib/portfolio/validation"
+import {
+  validateUpiId,
+  validateUrl,
+  validateYoutube,
+} from "@/lib/portfolio/validation"
 import { cn } from "@/lib/utils"
 
 function ItemCard({
@@ -117,7 +122,10 @@ export function SectionForm({
   onMediaAdded: (media: EditorMedia) => void
   onOpenPageDetails?: () => void
   mediaCrops?: Record<string, { x: number; y: number }>
-  onMediaCropChange?: (slot: string, crop: { x: number; y: number } | null) => void
+  onMediaCropChange?: (
+    slot: string,
+    crop: { x: number; y: number } | null
+  ) => void
 }) {
   switch (section.type) {
     case "hero":
@@ -459,7 +467,9 @@ export function SectionForm({
                   kind="project"
                   slot={`project.${item.id}`}
                   crop={mediaCrops?.[`project.${item.id}`] ?? null}
-                  onCropChange={(c) => onMediaCropChange?.(`project.${item.id}`, c)}
+                  onCropChange={(c) =>
+                    onMediaCropChange?.(`project.${item.id}`, c)
+                  }
                 />
                 <label className="flex items-center gap-2 text-xs">
                   <Checkbox
@@ -1605,15 +1615,71 @@ export function SectionForm({
             label="Intro"
             value={section.intro}
             onChange={(intro) => onChange({ ...section, intro })}
-            placeholder="Save our link, WhatsApp, and social profiles with a single scan."
+            placeholder="Scan to visit our links."
             rows={3}
             maxLength={400}
           />
-          <p className="rounded-lg border bg-muted/20 p-3 text-sm text-muted-foreground">
-            QR codes are generated automatically: your portfolio link always
-            appears, and WhatsApp and Instagram codes are added when those
-            details are set in Page details and Social links.
-          </p>
+          <FormSection title={`Links (${section.links?.length ?? 0})`}>
+            <p className="text-sm text-muted-foreground">
+              Add a name and link for each QR code you want to share.
+            </p>
+            {(section.links ?? []).map((item, index) => (
+              <ItemCard
+                key={item.id}
+                title={item.label || `Link ${index + 1}`}
+                onRemove={() =>
+                  onChange({
+                    ...section,
+                    links: (section.links ?? []).filter(
+                      (entry) => entry.id !== item.id
+                    ),
+                  })
+                }
+              >
+                <FieldRow>
+                  <TextInput
+                    label="Name"
+                    value={item.label}
+                    onChange={(label) =>
+                      onChange({
+                        ...section,
+                        links: updateItem(section.links ?? [], item.id, {
+                          label,
+                        }),
+                      })
+                    }
+                    placeholder="Booking page"
+                    maxLength={60}
+                  />
+                  <TextInput
+                    label="Link"
+                    value={item.url}
+                    onChange={(url) =>
+                      onChange({
+                        ...section,
+                        links: updateItem(section.links ?? [], item.id, {
+                          url,
+                        }),
+                      })
+                    }
+                    placeholder="https://example.com/book"
+                    validate={validateUrl}
+                  />
+                </FieldRow>
+              </ItemCard>
+            ))}
+            {(section.links?.length ?? 0) < 20 ? (
+              <AddButton
+                label="Add QR link"
+                onClick={() =>
+                  onChange({
+                    ...section,
+                    links: [...(section.links ?? []), createQrLink()],
+                  })
+                }
+              />
+            ) : null}
+          </FormSection>
         </div>
       )
 

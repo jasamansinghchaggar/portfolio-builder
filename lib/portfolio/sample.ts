@@ -265,8 +265,13 @@ export function createSampleContent(
             theme: "Meet the team",
             text: "A relaxed hour to talk through your project, see recent work, and ask anything.",
             meta: ["12 November", "Brooklyn studio", "Free"],
-            list: ["Bring a rough idea", "Tea and pastries", "No pitch deck needed"],
-            quote: "The best conversations usually start with a question, not a proposal.",
+            list: [
+              "Bring a rough idea",
+              "Tea and pastries",
+              "No pitch deck needed",
+            ],
+            quote:
+              "The best conversations usually start with a question, not a proposal.",
           },
         ],
       },
@@ -280,7 +285,8 @@ export function createSampleContent(
           {
             id: sampleId(1201),
             title: "Fieldnotes workbook",
-            description: "A printed workbook for running calmer customer interviews.",
+            description:
+              "A printed workbook for running calmer customer interviews.",
             price: "$28",
             imageMediaId: null,
             url: "https://example.com/fieldnotes",
@@ -288,7 +294,8 @@ export function createSampleContent(
           {
             id: sampleId(1202),
             title: "Orbit pattern library",
-            description: "Twelve composable scheduling patterns with the decisions behind them.",
+            description:
+              "Twelve composable scheduling patterns with the decisions behind them.",
             price: "$42",
             imageMediaId: null,
             url: "https://example.com/orbit",
@@ -376,7 +383,14 @@ export function createSampleContent(
         type: "qr",
         visible: true,
         title: "Scan and connect",
-        intro: "Save our link, WhatsApp, and Instagram with a single scan.",
+        intro: "Scan to visit our links.",
+        links: [
+          {
+            id: sampleId(2001),
+            label: "Booking page",
+            url: "https://example.com/book",
+          },
+        ],
         whatsappUrl: "https://wa.me/15550142200",
         instagramUrl: "https://www.instagram.com",
       },
@@ -529,7 +543,8 @@ export function createSampleContent(
         whatsapp: "",
         address: "",
         formTitle: "Send us a message",
-        formNote: "Tell us a little about what you need. We will take it from there.",
+        formNote:
+          "Tell us a little about what you need. We will take it from there.",
       },
     ],
   }

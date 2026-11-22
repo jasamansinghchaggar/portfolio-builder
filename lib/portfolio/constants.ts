@@ -99,7 +99,7 @@ export const SECTION_DESCRIPTIONS: Record<SectionType, string> = {
   socials: "Instagram, Facebook, and other profiles visitors can follow.",
   location: "A Google map of your address, with one-tap directions.",
   contact: "Phone, WhatsApp, email, address, and a working enquiry form.",
-  qr: "Shareable QR codes for your website, WhatsApp, and Instagram.",
+  qr: "Create shareable QR codes for any links you choose.",
   projects: "Case studies and selected work with links and images.",
   experience: "Roles, responsibilities, and career highlights.",
   skills: "Tools, disciplines, and areas of expertise.",

@@ -192,15 +192,15 @@ Fields:
 - `formNote` — note under the form (max 240).
 
 ### 12. QR codes (`qr`)
-- **Purpose:** Shareable QR codes (portfolio link + optional socials).
+- **Purpose:** Shareable QR codes for owner-chosen links.
 - **Renders:** Lower page / footer area.
 
 Fields:
 
 - `title` — section heading (max 80).
 - `intro` — short intro paragraph (max 400).
-- `whatsappUrl` — optional WhatsApp link override.
-- `instagramUrl` — optional Instagram link override.
+- `links` — up to 20 links, each with an ID, name (max 60), and URL (max 2,048). Only complete links render; an empty section stays hidden.
+- `whatsappUrl` / `instagramUrl` — legacy overrides retained for old portfolios without `links`. Older portfolios keep their automatically generated portfolio/WhatsApp/Instagram codes until custom links are added.
 
 ### 13. Projects (`projects`)
 - **Purpose:** Showcase projects with tags, links, and images.

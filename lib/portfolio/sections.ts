@@ -62,7 +62,9 @@ export function sectionHasSubstance(section: Section): boolean {
       // The hero always renders the business identity from page details.
       return true
     case "about":
-      return Boolean(section.body || section.message || section.highlights.length)
+      return Boolean(
+        section.body || section.message || section.highlights.length
+      )
     case "mission":
       // The intro alone can carry the section; promises are optional.
       return (
@@ -70,7 +72,9 @@ export function sectionHasSubstance(section: Section): boolean {
         section.items.some((item) => item.title || item.text)
       )
     case "services":
-      return section.items.some((item) => item.title) || Boolean(section.ctaText)
+      return (
+        section.items.some((item) => item.title) || Boolean(section.ctaText)
+      )
     case "events":
       return section.items.some((item) => item.title || item.text)
     case "products":
@@ -87,14 +91,17 @@ export function sectionHasSubstance(section: Section): boolean {
       // The map is hidden until the owner picks a place or pin.
       return Boolean(
         section.query.trim() ||
-          (section.latitude !== null && section.longitude !== null)
+        (section.latitude !== null && section.longitude !== null)
       )
     case "contact":
       // Always renders the contact card and enquiry form.
       return true
     case "qr":
-      // Always renders the portfolio link QR; other codes are optional.
-      return true
+      // Older saved portfolios still use automatically generated codes.
+      return (
+        section.links === undefined ||
+        section.links.some((link) => link.label.trim() && link.url.trim())
+      )
     case "projects":
       return section.items.some((item) => item.title)
     case "experience":
@@ -200,11 +207,7 @@ export function whatsappHref(content: PortfolioContent, message?: string) {
 }
 
 export function initials(name: string) {
-  const parts = name
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
+  const parts = name.trim().split(/\s+/).filter(Boolean).slice(0, 2)
   if (!parts.length) return "•"
   return parts.map((part) => part[0]?.toUpperCase()).join("")
 }

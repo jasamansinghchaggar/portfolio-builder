@@ -40,12 +40,6 @@ export function isGoogleHost(hostname: string) {
   return /^(?:www\.|maps\.)?google\.[a-z]{2,3}(?:\.[a-z]{2})?$/.test(host)
 }
 
-function looksLikeMaps(url: URL) {
-  const host = url.hostname.toLowerCase()
-  if (SHORT_LINK_HOSTS.has(host)) return true
-  return url.pathname.startsWith("/maps") || host.startsWith("maps.")
-}
-
 const COORDINATE_PAIR = /^(-?\d{1,3}(?:\.\d+)?)\s*[, ]\s*(-?\d{1,3}(?:\.\d+)?)$/
 
 export const ZOOM_PRESETS = [

@@ -154,8 +154,9 @@ existing content is preserved and renders inside the Studio design.
 The user shall enter business identity and contact information once in Page
 details. The hero and contact sections shall read those values and show a
 read-only summary with a shortcut to Page details instead of duplicate inputs.
-QR codes shall always include the portfolio URL and derive WhatsApp and
-Instagram codes from saved contact details and social links.
+QR sharing shall let owners add named links to generate QR codes for any
+destination. Older saved portfolios retain their automatic portfolio,
+WhatsApp, and Instagram QR codes until edited.
 
 **FR-EDIT-09 --- No website field (P0)**\
 The editor shall not ask for a prior website URL, because the portfolio being

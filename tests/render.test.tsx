@@ -33,8 +33,63 @@ vi.mock("next/image", () => ({
 import { PortfolioRenderer } from "@/components/portfolio/portfolio-renderer"
 import { createSampleContent } from "@/lib/portfolio/sample"
 import { TEMPLATE_IDS } from "@/lib/portfolio/constants"
+import { portfolioContentSchema } from "@/lib/portfolio/schemas"
 
 describe("portfolio renderer", () => {
+  it("renders named QR links instead of automatic destinations", () => {
+    const content = createSampleContent()
+    const qr = content.sections.find((section) => section.type === "qr")
+    if (qr?.type !== "qr") throw new Error("Sample needs a QR section.")
+    qr.links = [
+      {
+        id: "11111111-1111-4111-8111-111111111111",
+        label: "Book a visit",
+        url: "https://example.com/book",
+      },
+      {
+        id: "22222222-2222-4222-8222-222222222222",
+        label: "Our shop",
+        url: "https://example.com/shop",
+      },
+    ]
+
+    const html = renderToStaticMarkup(
+      <PortfolioRenderer content={content} username="example" />
+    )
+    expect(html).toContain("Book a visit")
+    expect(html).toContain("Our shop")
+    expect(html).not.toContain("Portfolio link")
+    expect(html).not.toContain("WhatsApp chat")
+    expect(html).not.toContain("Instagram profile")
+  })
+
+  it("preserves automatic QR codes for older saved content", () => {
+    const content = createSampleContent()
+    const qr = content.sections.find((section) => section.type === "qr")
+    if (qr?.type !== "qr") throw new Error("Sample needs a QR section.")
+    delete qr.links
+    const parsed = portfolioContentSchema.parse(content)
+
+    const html = renderToStaticMarkup(
+      <PortfolioRenderer content={parsed} username="example" />
+    )
+    expect(html).toContain("Portfolio link")
+    expect(html).toContain("WhatsApp chat")
+    expect(html).toContain("Instagram profile")
+  })
+
+  it("hides QR sharing until a new portfolio has a complete link", () => {
+    const content = createSampleContent()
+    const qr = content.sections.find((section) => section.type === "qr")
+    if (qr?.type !== "qr") throw new Error("Sample needs a QR section.")
+    qr.links = [
+      { id: "11111111-1111-4111-8111-111111111111", label: "", url: "" },
+    ]
+
+    const html = renderToStaticMarkup(<PortfolioRenderer content={content} />)
+    expect(html).not.toContain("pf-qr-tabs")
+  })
+
   it("renders every template through the Studio design", () => {
     for (const templateId of TEMPLATE_IDS) {
       const html = renderToStaticMarkup(
@@ -99,7 +154,9 @@ describe("portfolio renderer", () => {
 
   it("applies per-usage crops to payment QR images", () => {
     const content = createSampleContent()
-    const payment = content.sections.find((section) => section.type === "payment")
+    const payment = content.sections.find(
+      (section) => section.type === "payment"
+    )
     if (payment?.type !== "payment") {
       throw new Error("Sample content needs a payment section.")
     }

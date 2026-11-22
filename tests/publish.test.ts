@@ -62,6 +62,20 @@ describe("publish snapshot", () => {
 })
 
 describe("publish validation", () => {
+  it("asks for both a name and URL on partially filled QR links", () => {
+    const content = createSampleContent()
+    const qr = content.sections.find((section) => section.type === "qr")
+    if (qr?.type !== "qr") throw new Error("Sample needs a QR section.")
+    qr.links = [
+      { id: "11111111-1111-4111-8111-111111111111", label: "Booking", url: "" },
+    ]
+    expect(
+      validateForPublish(content).some((issue) =>
+        issue.message.includes("needs both a name and a link")
+      )
+    ).toBe(true)
+  })
+
   it("requires a name and some visible substance", () => {
     const content = createSampleContent()
     content.basics.fullName = ""
@@ -73,9 +87,9 @@ describe("publish validation", () => {
 
     const issues = validateForPublish(content)
     expect(issues.some((issue) => issue.path === "basics.fullName")).toBe(true)
-    expect(issues.some((issue) => issue.message.includes("at least one section"))).toBe(
-      true
-    )
+    expect(
+      issues.some((issue) => issue.message.includes("at least one section"))
+    ).toBe(true)
   })
 
   it("flags empty contact details", () => {
@@ -101,7 +115,9 @@ describe("publish validation", () => {
 
     const issues = validateForPublish(content)
     expect(
-      issues.some((issue) => issue.message.includes("so visitors can reach you"))
+      issues.some((issue) =>
+        issue.message.includes("so visitors can reach you")
+      )
     ).toBe(true)
   })
 

@@ -137,10 +137,7 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
         break
       case "socials": {
         section.items.forEach((item, index) => {
-          if (
-            (item.platform.trim() || item.url.trim()) &&
-            !item.url.trim()
-          ) {
+          if ((item.platform.trim() || item.url.trim()) && !item.url.trim()) {
             issue(
               `Social link ${index + 1} needs a full URL.`,
               `items.${index}.url`
@@ -156,10 +153,7 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
           Boolean(section.query.trim()) ||
           (section.latitude !== null && section.longitude !== null)
         if (!hasPin && (section.label.trim() || section.intro.trim())) {
-          issue(
-            "Choose a location on the map, or hide this section.",
-            "query"
-          )
+          issue("Choose a location on the map, or hide this section.", "query")
         }
         break
       }
@@ -187,6 +181,14 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
         break
       }
       case "qr":
+        section.links?.forEach((link, index) => {
+          if (link.label.trim() && link.url.trim()) return
+          if (!link.label.trim() && !link.url.trim()) return
+          issue(
+            `QR link ${index + 1} needs both a name and a link.`,
+            `links.${index}.${link.label.trim() ? "url" : "label"}`
+          )
+        })
         break
       case "projects": {
         if (!section.items.length) {
@@ -195,10 +197,7 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
         }
         section.items.forEach((item, index) => {
           if (!item.title.trim()) {
-            issue(
-              `Project ${index + 1} needs a title.`,
-              `items.${index}.title`
-            )
+            issue(`Project ${index + 1} needs a title.`, `items.${index}.title`)
           }
         })
         break
@@ -309,7 +308,9 @@ export function validateForPublish(content: PortfolioContent): PublishIssue[] {
 }
 
 /** Builds the immutable published snapshot. Hidden sections stay draft-only. */
-export function buildPublishedContent(content: PortfolioContent): PortfolioContent {
+export function buildPublishedContent(
+  content: PortfolioContent
+): PortfolioContent {
   return {
     ...content,
     templateId: "studio",
@@ -363,9 +364,10 @@ export function collectPublishedMediaIds(content: PortfolioContent): string[] {
   return [...ids]
 }
 
-export function buildPublishSnapshot(
-  content: PortfolioContent
-): { issues: PublishIssue[]; snapshot: PublishSnapshot } {
+export function buildPublishSnapshot(content: PortfolioContent): {
+  issues: PublishIssue[]
+  snapshot: PublishSnapshot
+} {
   const issues = validateForPublish(content)
   const published = buildPublishedContent(content)
   return {
@@ -398,9 +400,9 @@ export function publishChecklist(
   const hasContact =
     Boolean(
       content.basics.email.trim() ||
-        content.basics.phone.trim() ||
-        content.basics.whatsapp.trim() ||
-        content.basics.address.trim()
+      content.basics.phone.trim() ||
+      content.basics.whatsapp.trim() ||
+      content.basics.address.trim()
     ) ||
     visible.some(
       (section) =>
@@ -409,8 +411,8 @@ export function publishChecklist(
     )
   const hasHero = Boolean(
     content.basics.headline.trim() ||
-      content.basics.role.trim() ||
-      content.basics.tagline.trim()
+    content.basics.role.trim() ||
+    content.basics.tagline.trim()
   )
 
   return [
@@ -418,8 +420,7 @@ export function publishChecklist(
       label: "Add your business name",
       hint: "Shown in the header, page title, and browser tab.",
       done: Boolean(
-        content.basics.businessName.trim() ||
-          content.basics.fullName.trim()
+        content.basics.businessName.trim() || content.basics.fullName.trim()
       ),
     },
     {
