@@ -381,7 +381,18 @@ const qrSectionSchema = z.object({
   type: z.literal("qr"),
   title: z.string().trim().max(80),
   intro: z.string().trim().max(400),
-  /** Optional legacy overrides; otherwise links come from contact details. */
+  /** Missing on older portfolios, which retain their original automatic codes. */
+  links: z
+    .array(
+      z.object({
+        id: z.uuid(),
+        label: z.string().trim().max(60),
+        url: optionalUrl,
+      })
+    )
+    .max(20)
+    .optional(),
+  /** Legacy overrides for portfolios saved before custom QR links. */
   whatsappUrl: optionalUrl,
   instagramUrl: optionalUrl,
 })
@@ -455,9 +466,7 @@ export const basicsSchema = z.object({
  */
 export const portfolioContentSchema = z
   .object({
-    version: z
-      .union([z.literal(1), z.literal(2)])
-      .transform(() => 2 as const),
+    version: z.union([z.literal(1), z.literal(2)]).transform(() => 2 as const),
     templateId: z.enum(TEMPLATE_IDS).transform(() => "studio" as const),
     basics: basicsSchema,
     design: designSchema,
@@ -506,6 +515,7 @@ export type ServiceItem = z.infer<typeof serviceItemSchema>
 export type TestimonialItem = z.infer<typeof testimonialItemSchema>
 export type AchievementItem = z.infer<typeof achievementItemSchema>
 export type ContactLink = z.infer<typeof contactLinkSchema>
+export type QrLink = NonNullable<SectionOfType<"qr">["links"]>[number]
 export type MissionItem = z.infer<typeof missionItemSchema>
 export type EventItem = z.infer<typeof eventItemSchema>
 export type ProductItem = z.infer<typeof productItemSchema>

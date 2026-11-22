@@ -460,8 +460,7 @@ export function QrTabs({
   if (!current) {
     return (
       <p className="pf-empty">
-        Add your portfolio link, WhatsApp number, or Instagram profile to
-        create a QR code.
+        Add a name and link in the editor to create a QR code.
       </p>
     )
   }
@@ -474,7 +473,7 @@ export function QrTabs({
             key={entry.id}
             type="button"
             role="tab"
-            aria-selected={entry.id === active}
+            aria-selected={entry.id === current.id}
             onClick={() => setActive(entry.id)}
           >
             {entry.label}

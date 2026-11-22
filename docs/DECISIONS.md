@@ -310,14 +310,15 @@ The hero and contact section render identity and contact information from
 role, tagline, hero eyebrow (`basics.headline`), location, address, phone,
 email, WhatsApp, logo, and background/profile images are entered once and
 reused everywhere: hero, navigation, quick actions, contact card, enquiry form,
-QR fallbacks, browser metadata, and social previews.
+browser metadata, and social previews.
 
 Hero and contact editors therefore show a read-only summary with an **Edit page
 details** button instead of duplicating inputs. The hero schema keeps only a
 legacy `imageMediaId` fallback; contact keeps its old fields so existing drafts
-still read, but the contact helpers prefer `basics` first. QR codes always
-include the portfolio URL and add WhatsApp/Instagram codes from contact details
-and Social links, so QR link fields are no longer editable.
+still read, but the contact helpers prefer `basics` first. QR sharing now uses
+owner-named links instead of three automatic destinations. Older portfolios
+without a `links` field keep their original automatic codes until the owner
+adds or removes a custom QR link.
 
 There is no website field. The portfolio is the destination users are building,
 so `basics.website`, `qr.websiteUrl`, the Website quick action, and the vCard URL

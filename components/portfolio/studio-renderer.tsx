@@ -1001,9 +1001,7 @@ function LocationSection({
 
   if (!embedUrl) {
     return (
-      <p className="pf-empty">
-        Add an address or map pin to show a map here.
-      </p>
+      <p className="pf-empty">Add an address or map pin to show a map here.</p>
     )
   }
 
@@ -1185,7 +1183,7 @@ function QrSection({
     section.instagramUrl.trim() ||
     socials.find((item) => socialIconKey(item.platform) === "instagram")?.url ||
     ""
-  const entries = [
+  const legacyEntries = [
     {
       id: "website",
       label: "Portfolio link",
@@ -1205,6 +1203,17 @@ function QrSection({
       caption: "Scan to follow us on Instagram.",
     },
   ].filter((entry) => entry.text.trim())
+  const entries =
+    section.links === undefined
+      ? legacyEntries
+      : section.links
+          .filter((link) => link.label.trim() && link.url.trim())
+          .map((link) => ({
+            id: link.id,
+            label: link.label,
+            text: link.url,
+            caption: `Scan to open ${link.label}.`,
+          }))
 
   return (
     <>
@@ -1251,7 +1260,9 @@ function LegacySection({
                         fill
                         unoptimized={preview}
                         sizes="(min-width: 900px) 33vw, 100vw"
-                        style={{ objectPosition: focalObjectPosition(crop, meta) }}
+                        style={{
+                          objectPosition: focalObjectPosition(crop, meta),
+                        }}
                       />
                     </div>
                   ) : null}

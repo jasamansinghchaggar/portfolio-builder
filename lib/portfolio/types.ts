@@ -11,6 +11,7 @@ export type {
   MissionItem,
   PortfolioContent,
   ProductItem,
+  QrLink,
   ProjectItem,
   Section,
   SectionOfType,

@@ -1,10 +1,16 @@
 import { describe, expect, it } from "vitest"
 
 import { createSampleContent } from "@/lib/portfolio/sample"
+import { createSection } from "@/lib/portfolio/defaults"
 import { portfolioContentSchema } from "@/lib/portfolio/schemas"
 import { TEMPLATE_IDS } from "@/lib/portfolio/constants"
 
 describe("portfolio content schema", () => {
+  it("starts new QR sections without preset destinations", () => {
+    const qr = createSection("qr")
+    expect(qr.type === "qr" && qr.links).toEqual([])
+  })
+
   it("accepts the sample content for every template", () => {
     for (const templateId of TEMPLATE_IDS) {
       const parsed = portfolioContentSchema.safeParse(
@@ -24,6 +30,16 @@ describe("portfolio content schema", () => {
 
     const parsed = portfolioContentSchema.safeParse(content)
     expect(parsed.success).toBe(false)
+  })
+
+  it("rejects unsafe QR links", () => {
+    const content = createSampleContent()
+    const qr = content.sections.find((section) => section.type === "qr")
+    if (qr?.type !== "qr" || !qr.links?.[0]) {
+      throw new Error("Sample content needs a QR link.")
+    }
+    qr.links[0].url = "javascript:alert(1)"
+    expect(portfolioContentSchema.safeParse(content).success).toBe(false)
   })
 
   it("rejects non-numeric and non-10-digit phone values", () => {
